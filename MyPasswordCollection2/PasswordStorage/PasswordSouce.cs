@@ -2,17 +2,21 @@
 using System.IO;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace PasswordStorage
 {
     class PasswordSource
     {
+        public bool SyncWithFile { get; private set; }
+
         public ObservableCollection<PasswordItem> Collection { get; private set; }
 
         private string password;
 
         public string FilePath { get; private set; }
-   
+
         public PasswordsCrypter crypter;
 
         public PasswordSource(string path, string password)
@@ -31,7 +35,7 @@ namespace PasswordStorage
             {
                 Collection = new ObservableCollection<PasswordItem>(crypter.Decrypt(File.ReadAllBytes(FilePath), this.password));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new FileLoadException("Can't load file", ex);
             }
@@ -40,8 +44,21 @@ namespace PasswordStorage
 
         private void Collection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-#warning cathc exceptions
-            File.WriteAllBytes(FilePath, crypter.Encrypt(Collection, password));
+            WriteToFile();
+        }
+
+        public void WriteToFile()
+        {
+            try
+            {
+                File.WriteAllBytes(FilePath, crypter.Encrypt(Collection, password));
+                SyncWithFile = true;
+            }
+            catch
+            {
+                SyncWithFile = false;
+            }
         }
     }
+
 }
