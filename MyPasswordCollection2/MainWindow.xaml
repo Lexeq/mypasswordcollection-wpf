@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MPC"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MyPasswordCollection" Height="350" Width="525">
+    
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisible"/>
+
         <Style x:Key="CopyButton">
             <Setter Property="Control.Margin" Value="10"/>
             <Setter Property="Control.Padding" Value="15,2,15,2"/>
@@ -84,12 +87,12 @@
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBox Grid.Column="0" Margin="2,2,5,2" Width="auto" HorizontalAlignment="Stretch" VerticalContentAlignment="Center">Grid</TextBox>
+                    <TextBox Grid.Column="0" Margin="2,2,5,2" Width="auto" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Text="{Binding Path=SearchString, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                     <Button  Grid.Column="1" Margin="2" Padding="5,2,5,2" MaxWidth="70" MinWidth="30" Width="auto">Search</Button>
                 </Grid>
             </Border>
 
-            <ListBox Margin="7" Name="lbPasswords" Grid.Row="1">
+            <ListBox ItemsSource="{Binding Passwords}" Margin="7" Name="lbPasswords" Grid.Row="1">
 
             </ListBox>
 
@@ -99,7 +102,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Button Padding="2" Grid.Column="0" Margin="10" Name="btnAdd">Add</Button>
+                <Button Command="{Binding Path=AddCommand}" Padding="2" Grid.Column="0" Margin="10" Name="btnAdd">Add</Button>
                 <Button Padding="2" Grid.Column="1" Margin="10" Name="btnRemove">Remove</Button>
 
             </Grid>
@@ -141,7 +144,7 @@
 
                 <DockPanel Grid.Row="1" VerticalAlignment="Top" LastChildFill="False">
                     <CheckBox Margin="5" DockPanel.Dock="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="5,0,0,0">Show passwords</CheckBox>
-                    <UniformGrid DockPanel.Dock="Right" Rows="1">
+                    <UniformGrid DockPanel.Dock="Right" Rows="1" Visibility="{Binding Path=EditMode, Converter={StaticResource BoolToVisible}}">
                         <Button DockPanel.Dock="Right" Padding="8,3,8,3" Margin="6,3,6,3" >Save</Button>
                         <Button DockPanel.Dock="Right" Padding="8,3,8,3" Margin="6,3,6,3">Cancel</Button>
                     </UniformGrid>
