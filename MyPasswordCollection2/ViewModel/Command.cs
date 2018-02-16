@@ -9,14 +9,14 @@ namespace MPC.ViewModel
 {
     class Command : ICommand
     {
-        private Predicate<object> canExecuteAction;
+        private Func<bool> canExecuteAction;
 
-        private Action<object> executeAction;
+        private Action executeAction;
 
-        public Command(Action<object> execute)
+        public Command(Action execute)
             : this(execute, null) { }
 
-        public Command(Action<object> execute, Predicate<object> canExecute)
+        public Command(Action execute, Func<bool> canExecute)
         {
             canExecuteAction = canExecute;
             executeAction = execute;
@@ -32,14 +32,50 @@ namespace MPC.ViewModel
         {
             if (canExecuteAction != null)
             {
-                return canExecuteAction(parameter);
+                return canExecuteAction();
             }
             return true;
         }
 
         public void Execute(object parameter)
         {
-            executeAction?.Invoke(parameter);
+            executeAction?.Invoke();
+        }
+    }
+
+    class Command<T> : ICommand
+    {
+        private Predicate<T> canExecuteAction;
+
+        private Action<T> executeAction;
+
+        public Command(Action<T> execute)
+            : this(execute, null) { }
+
+        public Command(Action<T> execute, Predicate<T> canExecute)
+        {
+            canExecuteAction = canExecute;
+            executeAction = execute;
+        }
+
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            if (canExecuteAction != null)
+            {
+                return canExecuteAction((T)parameter);
+            }
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            executeAction?.Invoke((T)parameter);
         }
     }
 }

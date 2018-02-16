@@ -10,12 +10,12 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisible"/>
 
-        <Style x:Key="CopyButton">
+        <Style TargetType="Button">
             <Setter Property="Control.Margin" Value="10"/>
             <Setter Property="Control.Padding" Value="15,2,15,2"/>
             <Setter Property="Control.Background">
                 <Setter.Value>
-                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1" Opacity="0.8">
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1" Opacity="0.9">
                         <GradientStop Color="LightBlue" Offset="1" />
                         <GradientStop Color="White" Offset="0" />
                     </LinearGradientBrush>
@@ -60,7 +60,7 @@
             </Menu.Background>
             <MenuItem Header="_File">
                 <MenuItem Header="_New..."></MenuItem>
-                <MenuItem Header="_Open..."></MenuItem>
+                <MenuItem Header="_Open..." Command="{Binding OpenFileCommand}"></MenuItem>
                 <MenuItem Header="_Exit"></MenuItem>
             </MenuItem>
             <MenuItem Header="Edit">
@@ -102,8 +102,8 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Button Command="{Binding Path=AddCommand}" Padding="2" Grid.Column="0" Margin="10" Name="btnAdd">Add</Button>
-                <Button Padding="2" Grid.Column="1" Margin="10" Name="btnRemove">Remove</Button>
+                <Button Command="{Binding AddCommand}" Padding="2" Grid.Column="0" Margin="10" Name="btnAdd">Add</Button>
+                <Button Command="{Binding RemoveCommand}" Padding="2" Grid.Column="1" Margin="10" Name="btnRemove">Remove</Button>
 
             </Grid>
 
@@ -137,9 +137,9 @@
                     <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource tbPassInfo}" Text="{Binding Path=B}" ></TextBox>
                     <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource tbPassInfo}" Text="{Binding Path=C}" ></TextBox>
 
-                    <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource CopyButton}">Copy</Button>
-                    <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource CopyButton}">Copy</Button>
-                    <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource CopyButton}">Copy</Button>
+                    <Button Grid.Row="0" Grid.Column="2" >Copy</Button>
+                    <Button Grid.Row="1" Grid.Column="2" >Copy</Button>
+                    <Button Grid.Row="2" Grid.Column="2" >Copy</Button>
                 </Grid>
 
                 <DockPanel Grid.Row="1" VerticalAlignment="Top" LastChildFill="False">

@@ -11,6 +11,10 @@ namespace MPC.ViewModel
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
+        private IMessageService messageService;
+
+        private IIOService ioService;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _searchString;
@@ -47,7 +51,6 @@ namespace MPC.ViewModel
         }
 
         private PasswordSource _passwords;
-
         public PasswordSource Passwords
         {
             get { return _passwords; }
@@ -60,24 +63,42 @@ namespace MPC.ViewModel
 
 
         #region Commands
-        private Command addCommand;
-
+        private Command _addCommand;
         public Command AddCommand
         {
-            get { return addCommand; }
-            set { addCommand = value; }
+            get
+            {
+                return _addCommand ??
+                    (_addCommand = new Command(AddPassword, () => SelectedItem != null));
+            }
+            set { _addCommand = value; }
         }
 
-
         private Command _removeCommand;
-
         public Command RemoveCommand
         {
-            get { return _removeCommand; }
+            get
+            {
+                return _removeCommand ??
+                  (_removeCommand = new Command(RemovePassword, () => SelectedItem != null));
+
+            }
             set { _removeCommand = value; }
         }
 
+        private Command _openFileCommand;
+        public Command OpenFileCommand
+        {
+            get
+            {
+                return _openFileCommand ??
+                    (_openFileCommand = new Command(OpenFile));
+            }
+            set { _openFileCommand = value; }
+        }
 
+
+        //!!!
         private Command _newPasswordCollection;
 
         public Command NewPasswordCollection
@@ -87,14 +108,17 @@ namespace MPC.ViewModel
         }
 
 
+
+
+
         #endregion
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(IMessageService mService, IIOService ioService)
         {
-            SearchString = "i'm here";
+            messageService = mService;
+            this.ioService = ioService;
 
-            AddCommand = new Command(AddPassword, (o) => SelectedItem != null);
-            RemoveCommand = new Command(RemovePassword, (o) => SelectedItem != null);
+            OpenFileCommand = new Command(OpenFile);
         }
 
         protected void OnPropertyChanged(string propName)
@@ -103,14 +127,20 @@ namespace MPC.ViewModel
             t?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        private void AddPassword(object param)
+        private void AddPassword()
         {
 
         }
 
-        private void RemovePassword(object param)
+        private void RemovePassword()
         {
 
+        }
+
+        private void OpenFile()
+        {
+            var path = ioService.OpenFileDialog(Application.Current.StartupUri.ToString());
+            Passwords = new PasswordSource(path, );
         }
     }
 }

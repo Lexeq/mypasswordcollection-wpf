@@ -1,8 +1,6 @@
-﻿using MPC.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,20 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace MPC
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Логика взаимодействия для InputWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class InputWindow : Window
     {
-        public MainWindow()
+        public InputWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel(new MessageService(), new IOService());
         }
     }
 }
