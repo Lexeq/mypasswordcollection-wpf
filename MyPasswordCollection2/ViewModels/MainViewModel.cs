@@ -1,19 +1,15 @@
 ﻿using PasswordStorage;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
-namespace MPC.ViewModel
+namespace MPC.ViewModels
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
         private IMessageService messageService;
-
         private IIOService ioService;
+        private IDialogManager dialogManager;
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -113,11 +109,11 @@ namespace MPC.ViewModel
 
         #endregion
 
-        public MainWindowViewModel(IMessageService mService, IIOService ioService)
+        public MainWindowViewModel(IMessageService mService, IIOService ioService, IDialogManager dialogManager)
         {
             messageService = mService;
             this.ioService = ioService;
-
+            this.dialogManager = dialogManager;
             OpenFileCommand = new Command(OpenFile);
         }
 
@@ -140,7 +136,7 @@ namespace MPC.ViewModel
         private void OpenFile()
         {
             var path = ioService.OpenFileDialog(Application.Current.StartupUri.ToString());
-            Passwords = new PasswordSource(path, );
+            Passwords = new PasswordSource(path, "");
         }
     }
 }
