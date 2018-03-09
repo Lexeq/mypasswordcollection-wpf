@@ -21,10 +21,10 @@ namespace PasswordStorage
 
         public PasswordSource(string path, string password)
         {
-            if (string.IsNullOrEmpty(FilePath))
+            if (string.IsNullOrEmpty(path))
                 throw new ArgumentException("path");
 
-            if (string.IsNullOrEmpty(FilePath))
+            if (string.IsNullOrEmpty(password))
                 throw new ArgumentException("password");
 
             this.password = password;

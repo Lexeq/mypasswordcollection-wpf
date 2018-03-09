@@ -7,15 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace MPC.ViewModel
+namespace MPC.ViewModels
 {
-    class MainWindowViewModel : INotifyPropertyChanged
+    class MainWindowViewModel : BaseViewModel
     {
-        private IMessageService messageService;
+        private IDialogService dialogs;
 
-        private IIOService ioService;
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        private IWindowsManager windows;
 
         private string _searchString;
         public string SearchString
@@ -99,32 +97,25 @@ namespace MPC.ViewModel
 
 
         //!!!
-        private Command _newPasswordCollection;
+        private Command _newPasswordCollectionCommand;
 
-        public Command NewPasswordCollection
+        public Command NewPasswordCollectionCommand
         {
-            get { return _newPasswordCollection; }
-            set { _newPasswordCollection = value; }
+            get
+            {
+                return _newPasswordCollectionCommand ??
+                    (_newPasswordCollectionCommand = new Command(NewFile));
+            }
+            set { _newPasswordCollectionCommand = value; }
         }
-
-
-
 
 
         #endregion
 
-        public MainWindowViewModel(IMessageService mService, IIOService ioService)
+        public MainWindowViewModel(IDialogService dialogService, IWindowsManager winManager)
         {
-            messageService = mService;
-            this.ioService = ioService;
-
-            OpenFileCommand = new Command(OpenFile);
-        }
-
-        protected void OnPropertyChanged(string propName)
-        {
-            var t = PropertyChanged;
-            t?.Invoke(this, new PropertyChangedEventArgs(propName));
+            dialogs = dialogService;
+            windows = winManager;
         }
 
         private void AddPassword()
@@ -137,10 +128,29 @@ namespace MPC.ViewModel
 
         }
 
+        private void NewFile()
+        {
+            var settings = new FileDialogSettings
+            {
+                InitialDirectory = System.IO.Directory.GetCurrentDirectory(),
+                Filter = "Password file(*.pw) | *.pw"
+            };
+
+            var result = dialogs.ShowSaveFileDialog(settings);
+            if(result)
+            {
+                InputWindowViewModel inputVM = new InputWindowViewModel(true);
+                windows.ShowDialog(inputVM);
+                if (inputVM.DialogReult)
+                {
+                    Passwords = new PasswordSource(settings.FileName, inputVM.Password);
+                }
+            }
+        }
+
         private void OpenFile()
         {
-            var path = ioService.OpenFileDialog(Application.Current.StartupUri.ToString());
-            Passwords = new PasswordSource(path, );
+
         }
     }
 }

@@ -13,11 +13,11 @@ namespace PasswordStorage
         public PasswordItem(string site, string login, string password)
         {
             if (string.IsNullOrEmpty(site))
-                throw new ArgumentException("site");
+                throw new ArgumentException("String is null or empty", nameof(site));
             if (string.IsNullOrEmpty(login))
-                throw new ArgumentException("login");
+                throw new ArgumentException("String is null or empty", nameof(login));
             if (string.IsNullOrEmpty(password))
-                throw new ArgumentException("password");
+                throw new ArgumentException("String is null or empty", nameof(password));
 
             Site = site;
             Login = login;

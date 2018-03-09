@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MPC"
         mc:Ignorable="d"
-        Title="Enter password" Height="150" MaxHeight="200" Width="300" MaxWidth="350" FontSize="15">
+        Title="Enter password" Height="150" MaxHeight="200" Width="300" MaxWidth="350" FontSize="15" x:Name="main">
+
     <Window.Resources>
+
         <Style x:Key="BaseStyle" TargetType="FrameworkElement">
             <Setter Property="Margin" Value="10,5"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -19,7 +21,12 @@
         </Style>
 
         <Style TargetType="Button" BasedOn="{StaticResource BaseStyle}"></Style>
+
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </Window.Resources>
+
+
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -36,16 +43,17 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock >Enter password</TextBlock>
-            <PasswordBox Grid.Column="1"  ></PasswordBox>
+            <TextBlock>Enter password</TextBlock>
+            <PasswordBox Grid.Column="1" VerticalAlignment="Center" x:Name="passBox"></PasswordBox>
 
-            <TextBlock Grid.Row="1" >Confirm password</TextBlock>
-            <PasswordBox Grid.Row="1"  Grid.Column="1"></PasswordBox>
+            <TextBlock Grid.Row="1" Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}">Confirm password</TextBlock>
+            <PasswordBox Grid.Row="1"  Grid.Column="1" VerticalAlignment="Center" x:Name="confBox"
+                     Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}"></PasswordBox>
         </Grid>
         
         <UniformGrid Grid.Row="1" Columns="2">
-            <Button>OK</Button>
-            <Button>Cancel</Button>
+            <Button IsDefault="True" Click="Button_Click" Content="OK"/>
+            <Button IsCancel="True">Cancel</Button>
         </UniformGrid>
     </Grid>
 </Window>

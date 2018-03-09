@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MPC"
         mc:Ignorable="d"
         Title="MyPasswordCollection" Height="350" Width="525">
-    
+
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisible"/>
 
@@ -59,7 +59,7 @@
                 </LinearGradientBrush>
             </Menu.Background>
             <MenuItem Header="_File">
-                <MenuItem Header="_New..."></MenuItem>
+                <MenuItem Header="_New..." Command="{Binding NewPasswordCollectionCommand}"></MenuItem>
                 <MenuItem Header="_Open..." Command="{Binding OpenFileCommand}"></MenuItem>
                 <MenuItem Header="_Exit"></MenuItem>
             </MenuItem>

@@ -15,9 +15,9 @@ namespace PasswordStorage
         public byte[] Encrypt(IEnumerable<PasswordItem> items, string password)
         {
             if (string.IsNullOrEmpty(password))
-                throw new ArgumentException("password is null or empty");
+                throw new ArgumentException("String is null or empty", nameof(password));
             if (items == null)
-                throw new ArgumentNullException("items");
+                throw new ArgumentNullException(nameof(items));
 
             byte[] iv = null;
             byte[] key = null;
@@ -29,7 +29,7 @@ namespace PasswordStorage
             foreach (var item in items)
             {
                 if (item == null)
-                    throw new NullReferenceException("items has null element");
+                    throw new NullReferenceException("items have a null element");
 
                 data.AddRange(PasswordItemToBytes(item));
             }
@@ -47,9 +47,9 @@ namespace PasswordStorage
         public PasswordItem[] Decrypt(byte[] bytes, string password)
         {
             if (bytes == null)
-                throw new ArgumentNullException("bytes");
+                throw new ArgumentNullException(nameof(bytes));
             if (string.IsNullOrEmpty(password))
-                throw new ArgumentException("password is null or empty");
+                throw new ArgumentException("String is null or empty", nameof(password));
 
             if (bytes.Length < 20 || BitConverter.ToInt32(TakeRange(bytes, 0, 4), 0) != HEADER)
                 throw new InvalidDataException("Invalid file.");
@@ -111,7 +111,7 @@ namespace PasswordStorage
         private byte[] TakeRange(byte[] source, int start, int length)
         {
             if (start + length > source.Length)
-                throw new ArgumentException("length is greater than the number of elements from start to the end of source.");
+                throw new ArgumentException("Length is greater than the number of elements from start to the end of source.");
 
             byte[] res = new byte[length];
             Array.Copy(source, start, res, 0, res.Length);
@@ -121,11 +121,11 @@ namespace PasswordStorage
         private byte[] EncryptBytes(byte[] data, byte[] key, byte[] IV)
         {
             if (data == null)
-                throw new ArgumentNullException("data");
-            if (key == null || key.Length <= 0)
-                throw new ArgumentNullException("key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
+                throw new ArgumentNullException(nameof(data));
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            if (IV == null)
+                throw new ArgumentNullException(nameof(IV));
 
             byte[] encrypted;
 
@@ -151,11 +151,11 @@ namespace PasswordStorage
         private byte[] DecryptBytes(byte[] data, byte[] key, byte[] IV)
         {
             if (data == null)
-                throw new ArgumentNullException("data");
-            if (key == null || key.Length <= 0)
-                throw new ArgumentNullException("key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
+                throw new ArgumentNullException(nameof(data));
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            if (IV == null)
+                throw new ArgumentNullException(nameof(IV));
 
             byte[] decr;
 

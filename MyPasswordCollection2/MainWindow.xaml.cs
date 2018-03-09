@@ -1,4 +1,4 @@
-﻿using MPC.ViewModel;
+﻿using MPC.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +25,6 @@ namespace MPC
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel(new MessageService(), new IOService());
         }
     }
 }

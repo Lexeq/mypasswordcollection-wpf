@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MPC.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,31 @@ namespace MPC
         public InputWindow()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(passBox.Password) && passBox.Password == confBox.Password)
+            {
+                if (DataContext != null)
+                {
+                    ICommand cmd = DataContext.GetType()
+                        .GetProperty("OkCommand")
+                        .GetValue(DataContext)
+                        as ICommand;
+
+                    if (cmd != null && cmd.CanExecute(null))
+                    {
+                        cmd.Execute(passBox.Password);
+                    }
+                }
+
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Wrong");
+            }
         }
     }
 }

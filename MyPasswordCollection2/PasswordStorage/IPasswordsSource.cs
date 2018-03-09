@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPC
+namespace MPC.PasswordStorage
 {
-    interface IMessageService
+    public interface IPasswordsSource
     {
-        void ShowMessage(string text, string caption);
+        
     }
 }
