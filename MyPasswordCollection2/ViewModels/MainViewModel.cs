@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace MPC.ViewModels
 
         private IWindowsManager windows;
 
+        #region Properties
         private string _searchString;
         public string SearchString
         {
@@ -58,7 +60,7 @@ namespace MPC.ViewModels
                 OnPropertyChanged(nameof(Passwords));
             }
         }
-
+        #endregion
 
         #region Commands
         private Command _addCommand;
@@ -143,14 +145,46 @@ namespace MPC.ViewModels
                 windows.ShowDialog(inputVM);
                 if (inputVM.DialogReult)
                 {
-                    Passwords = new PasswordSource(settings.FileName, inputVM.Password);
+                    try
+                    {
+                        if (File.Exists(settings.FileName))
+                            File.Delete(settings.FileName);
+
+                        Passwords = new PasswordSource(settings.FileName, inputVM.Password);
+                    }
+                    catch(Exception e)
+                    {
+                        dialogs.ShowMessage($"Failed to initialize password collection:\n{e.Message}", "Error");
+                    }
                 }
             }
         }
 
         private void OpenFile()
         {
+            var settings = new FileDialogSettings
+            {
+                InitialDirectory = System.IO.Directory.GetCurrentDirectory(),
+                Filter = "Password file(*.pw) | *.pw"
+            };
 
+            var result = dialogs.ShowOpenFileDialog(settings);
+            if (result)
+            {
+                InputWindowViewModel inputVM = new InputWindowViewModel(false);
+                windows.ShowDialog(inputVM);
+                if (inputVM.DialogReult)
+                {
+                    try
+                    {
+                        Passwords = new PasswordSource(settings.FileName, inputVM.Password);
+                    }
+                    catch (Exception e)
+                    {
+                        dialogs.ShowMessage($"Failed to load password collection:\n{e.Message}", "Error");
+                    }
+                }
+            }
         }
     }
 }

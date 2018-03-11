@@ -1,13 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace PasswordStorage
 {
-    class PasswordSource
+    sealed class PasswordSource
     {
         public bool SyncWithFile { get; private set; }
 
@@ -18,7 +15,7 @@ namespace PasswordStorage
         public string FilePath { get; private set; }
 
         public PasswordsCrypter crypter;
-
+        
         public PasswordSource(string path, string password)
         {
             if (string.IsNullOrEmpty(path))
@@ -31,23 +28,20 @@ namespace PasswordStorage
             crypter = new PasswordsCrypter();
             FilePath = path;
 
-            try
+            if (File.Exists(path))
             {
                 Collection = new ObservableCollection<PasswordItem>(crypter.Decrypt(File.ReadAllBytes(FilePath), this.password));
             }
-            catch (Exception ex)
+            else
             {
-                throw new FileLoadException("Can't load file", ex);
+                Collection = new ObservableCollection<PasswordItem>();
+                SaveToFile();
             }
-            Collection.CollectionChanged += Collection_CollectionChanged;
+
+            Collection.CollectionChanged += (o, e) => SaveToFile();
         }
 
-        private void Collection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            WriteToFile();
-        }
-
-        public void WriteToFile()
+        public void SaveToFile()
         {
             try
             {
