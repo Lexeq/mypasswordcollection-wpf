@@ -36,7 +36,11 @@
         <Style x:Key="tbPassInfo" TargetType="TextBox">
             <Setter Property="Margin" Value="10"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="IsReadOnly" Value="true"/>
+            <Setter Property="IsReadOnly">
+                <Setter.Value>
+                    <Binding Path="EditMode2"/>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Window.Resources>
 
@@ -92,7 +96,10 @@
                 </Grid>
             </Border>
 
-            <ListBox ItemsSource="{Binding Passwords}" Margin="7" Name="lbPasswords" Grid.Row="1">
+            <ListBox ItemsSource="{Binding PasswordSource.Passwords}"
+                     DisplayMemberPath="Site"
+                     SelectedItem="{Binding SelectedItem}"
+                     Margin="7" Name="lbPasswords" Grid.Row="1">
 
             </ListBox>
 
@@ -103,53 +110,13 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Command="{Binding AddCommand}" Padding="2" Grid.Column="0" Margin="10" Name="btnAdd">Add</Button>
-                <Button Command="{Binding RemoveCommand}" Padding="2" Grid.Column="1" Margin="10" Name="btnRemove">Remove</Button>
+                <Button Command="{Binding RemoveCommand}" CommandParameter="{Binding SelectedItem}" Padding="2" Grid.Column="1" Margin="10" Name="btnRemove">Remove</Button>
 
             </Grid>
 
 
         </Grid>
-
-        <Border Grid.Row="1" Grid.Column="1" Padding="10">
-            <Grid Name="gridPasswordInfo" FlowDirection="LeftToRight">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-
-                <Grid Height="auto" VerticalAlignment="Top" DataContext="{Binding ElementName=lbPasswords, Path=SelectedItem}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Padding="6,3,6,3" Grid.Row="0"  Margin="10" >Site</TextBlock>
-                    <TextBlock Padding="6,3,6,3" Grid.Row="1"  Margin="10" >Login</TextBlock>
-                    <TextBlock Padding="6,3,6,3" Grid.Row="2"  Margin="10" >Password</TextBlock>
-
-                    <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource tbPassInfo}" Text="{Binding Path=A}"></TextBox>
-                    <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource tbPassInfo}" Text="{Binding Path=B}" ></TextBox>
-                    <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource tbPassInfo}" Text="{Binding Path=C}" ></TextBox>
-
-                    <Button Grid.Row="0" Grid.Column="2" >Copy</Button>
-                    <Button Grid.Row="1" Grid.Column="2" >Copy</Button>
-                    <Button Grid.Row="2" Grid.Column="2" >Copy</Button>
-                </Grid>
-
-                <DockPanel Grid.Row="1" VerticalAlignment="Top" LastChildFill="False">
-                    <CheckBox Margin="5" DockPanel.Dock="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="5,0,0,0">Show passwords</CheckBox>
-                    <UniformGrid DockPanel.Dock="Right" Rows="1" Visibility="{Binding Path=EditMode, Converter={StaticResource BoolToVisible}}">
-                        <Button DockPanel.Dock="Right" Padding="8,3,8,3" Margin="6,3,6,3" >Save</Button>
-                        <Button DockPanel.Dock="Right" Padding="8,3,8,3" Margin="6,3,6,3">Cancel</Button>
-                    </UniformGrid>
-                </DockPanel>
-            </Grid>
-        </Border>
+        
+        <local:PasswordView Grid.Row="1" Grid.Column="1"></local:PasswordView>
     </Grid>
 </Window>

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace MPC.ViewModels
 {
@@ -50,44 +51,43 @@ namespace MPC.ViewModels
             }
         }
 
-        private PasswordSource _passwords;
-        public PasswordSource Passwords
+        private PasswordSource _passwordSrc;
+        public PasswordSource PasswordSource
         {
-            get { return _passwords; }
+            get { return _passwordSrc; }
             set
             {
-                _passwords = value;
-                OnPropertyChanged(nameof(Passwords));
+                _passwordSrc = value;
+                OnPropertyChanged(nameof(PasswordSource));
             }
         }
         #endregion
 
         #region Commands
-        private Command _addCommand;
-        public Command AddCommand
+        private ICommand _addCommand;
+        public ICommand AddCommand
         {
             get
             {
                 return _addCommand ??
-                    (_addCommand = new Command(AddPassword, () => SelectedItem != null));
+                    (_addCommand = new Command(AddPassword, ()=> PasswordSource != null && !EditMode));
             }
             set { _addCommand = value; }
         }
 
-        private Command _removeCommand;
-        public Command RemoveCommand
+        private ICommand _removeCommand;
+        public ICommand RemoveCommand
         {
             get
             {
                 return _removeCommand ??
-                  (_removeCommand = new Command(RemovePassword, () => SelectedItem != null));
-
+                  (_removeCommand = new Command<PasswordItem>(RemovePassword, (o) => SelectedItem != null && SelectedItem is PasswordItem));
             }
             set { _removeCommand = value; }
         }
 
-        private Command _openFileCommand;
-        public Command OpenFileCommand
+        private ICommand _openFileCommand;
+        public ICommand OpenFileCommand
         {
             get
             {
@@ -97,11 +97,25 @@ namespace MPC.ViewModels
             set { _openFileCommand = value; }
         }
 
+        private ICommand _cancelAddingCommand;
+        public ICommand CancelAddingCommand
+        {
+            get {
+                return _cancelAddingCommand ??
+                  (_cancelAddingCommand = new Command(CancelAdding)); }
+            set { _cancelAddingCommand = value; }
+        }
 
-        //!!!
-        private Command _newPasswordCollectionCommand;
+        private ICommand _finishlAddingCommand;
+        public ICommand FinishAddingCommand
+        {
+            get { return _finishlAddingCommand ??
+                    (_finishlAddingCommand = new Command(FinishAdding)); }
+            set { _finishlAddingCommand = value; }
+        }
 
-        public Command NewPasswordCollectionCommand
+        private ICommand _newPasswordCollectionCommand;
+        public ICommand NewPasswordCollectionCommand
         {
             get
             {
@@ -110,24 +124,24 @@ namespace MPC.ViewModels
             }
             set { _newPasswordCollectionCommand = value; }
         }
-
-
         #endregion
 
         public MainWindowViewModel(IDialogService dialogService, IWindowsManager winManager)
         {
             dialogs = dialogService;
             windows = winManager;
+            EditMode = false;
         }
 
         private void AddPassword()
         {
-
+            SelectedItem = new PasswordItem();
+            EditMode = true;
         }
 
-        private void RemovePassword()
+        private void RemovePassword(PasswordItem item)
         {
-
+            PasswordSource.Passwords.Remove(item);
         }
 
         private void NewFile()
@@ -150,7 +164,7 @@ namespace MPC.ViewModels
                         if (File.Exists(settings.FileName))
                             File.Delete(settings.FileName);
 
-                        Passwords = new PasswordSource(settings.FileName, inputVM.Password);
+                        PasswordSource = new PasswordSource(settings.FileName, inputVM.Password);
                     }
                     catch(Exception e)
                     {
@@ -177,7 +191,7 @@ namespace MPC.ViewModels
                 {
                     try
                     {
-                        Passwords = new PasswordSource(settings.FileName, inputVM.Password);
+                        PasswordSource = new PasswordSource(settings.FileName, inputVM.Password);
                     }
                     catch (Exception e)
                     {
@@ -185,6 +199,18 @@ namespace MPC.ViewModels
                     }
                 }
             }
+        }
+
+        private void CancelAdding()
+        {
+            EditMode = false;
+            SelectedItem = null;
+        }
+
+        private void FinishAdding()
+        {
+            PasswordSource.Passwords.Add(SelectedItem);
+            EditMode = false;
         }
     }
 }

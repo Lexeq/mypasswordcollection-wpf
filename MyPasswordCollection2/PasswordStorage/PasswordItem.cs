@@ -4,20 +4,23 @@ namespace PasswordStorage
 {
     public class PasswordItem
     {
-        public string Site { get; private set; }
+        public string Site { get; set; }
 
-        public string Login { get; private set; }
+        public string Login { get; set; }
 
-        public string Password { get; private set; }
+        public string Password { get; set; }
+
+        public PasswordItem() : this(string.Empty, string.Empty, string.Empty)
+        { }
 
         public PasswordItem(string site, string login, string password)
         {
-            if (string.IsNullOrEmpty(site))
-                throw new ArgumentException("String is null or empty", nameof(site));
-            if (string.IsNullOrEmpty(login))
-                throw new ArgumentException("String is null or empty", nameof(login));
-            if (string.IsNullOrEmpty(password))
-                throw new ArgumentException("String is null or empty", nameof(password));
+            if (site == null)
+                throw new ArgumentNullException("String is null", nameof(site));
+            if (login == null)
+                throw new ArgumentNullException("String is null", nameof(login));
+            if (password == null)
+                throw new ArgumentNullException("String is null", nameof(password));
 
             Site = site;
             Login = login;
