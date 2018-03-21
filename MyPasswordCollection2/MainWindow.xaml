@@ -10,38 +10,11 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisible"/>
 
-        <Style TargetType="Button">
-            <Setter Property="Control.Margin" Value="10"/>
-            <Setter Property="Control.Padding" Value="15,2,15,2"/>
-            <Setter Property="Control.Background">
-                <Setter.Value>
-                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1" Opacity="0.9">
-                        <GradientStop Color="LightBlue" Offset="1" />
-                        <GradientStop Color="White" Offset="0" />
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
-        <Style TargetType="MenuItem">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <SolidColorBrush Opacity="1" Color="#FFE0E8FF"/>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Padding" Value="6,2.5,6,2.5"></Setter>
-            <Setter Property="FontSize" Value="12"></Setter>
-        </Style>
 
-        <Style x:Key="tbPassInfo" TargetType="TextBox">
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="IsReadOnly">
-                <Setter.Value>
-                    <Binding Path="EditMode2"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
+
+
+
     </Window.Resources>
 
     <Grid>
