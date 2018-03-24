@@ -9,12 +9,6 @@
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisible"/>
-
-
-
-
-
-
     </Window.Resources>
 
     <Grid>
