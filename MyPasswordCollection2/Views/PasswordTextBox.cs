@@ -19,7 +19,7 @@ namespace MPC
                 nameof(PlainText),
                 typeof(string),
                 typeof(PasswordTextBox),
-                new PropertyMetadata(string.Empty, OnPropertyChanged));
+                new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnPropertyChanged));
 
         public static readonly DependencyProperty PasswordCharProperty =
             DependencyProperty.Register(
@@ -32,6 +32,7 @@ namespace MPC
         {
             var obj = d as PasswordTextBox;
             obj?.Update();
+
         }
 
         public string PlainText
@@ -55,8 +56,9 @@ namespace MPC
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             e.Handled = true;
-
-            if (e.Key == Key.Back)
+            if (IsReadOnly)
+            { }
+            else if (e.Key == Key.Back)
                 RemoveText(true);
             else if (e.Key == Key.Delete)
                 RemoveText(false);
@@ -69,7 +71,7 @@ namespace MPC
             else
                 e.Handled = false;
 
-            base.OnPreviewKeyDown(e);
+           base.OnPreviewKeyDown(e);
         }
 
         protected override void OnPreviewTextInput(TextCompositionEventArgs e)
