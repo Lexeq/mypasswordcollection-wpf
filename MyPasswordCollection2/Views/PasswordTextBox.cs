@@ -71,7 +71,7 @@ namespace MPC
             else
                 e.Handled = false;
 
-           base.OnPreviewKeyDown(e);
+            base.OnPreviewKeyDown(e);
         }
 
         protected override void OnPreviewTextInput(TextCompositionEventArgs e)
@@ -84,8 +84,9 @@ namespace MPC
         {
             if (SelectionLength != 0)
                 RemoveText(true);
+            var carretIndex = CaretIndex;
             PlainText = PlainText != null ? PlainText.Insert(CaretIndex, text) : text;
-            Update(CaretIndex + text.Length);
+            Update(carretIndex + text.Length);
         }
 
         protected override void OnContextMenuOpening(ContextMenuEventArgs e)
@@ -100,20 +101,21 @@ namespace MPC
                 (back == false && CaretIndex == PlainText.Length) || (back && CaretIndex == 0))
                 return;
 
+            var carretIndex = CaretIndex;
             if (SelectionLength != 0)
             {
                 PlainText = RemoveRange(PlainText, SelectionStart, SelectionLength);
-                Update(SelectionStart);
+                Update(carretIndex);
             }
             else if (back)
             {
                 PlainText = RemoveRange(PlainText, CaretIndex - 1, 1);
-                Update(CaretIndex - 1);
+                Update(carretIndex - 1);
             }
             else
             {
                 PlainText = RemoveRange(PlainText, CaretIndex, 1);
-                Update(CaretIndex);
+                Update(carretIndex);
             }
         }
 
