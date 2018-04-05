@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MPC"
         mc:Ignorable="d"
-        Title="MyPasswordCollection" Height="350" Width="525">
+        Title="MyPasswordCollection" Height="350" Width="525" MinHeight="200" MinWidth="250">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisible"/>

@@ -46,8 +46,12 @@ namespace MPC.ViewModels
             get { return _selectedItem; }
             set
             {
-                _selectedItem = value;
-                OnPropertyChanged(nameof(SelectedItem));
+                if (SelectedItem != value)
+                {
+                    _selectedItem = value;
+                    EditMode = false;
+                    OnPropertyChanged(nameof(SelectedItem));
+                }
             }
         }
 

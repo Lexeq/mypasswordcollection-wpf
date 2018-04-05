@@ -3,16 +3,15 @@ using System.Windows.Data;
 
 namespace MPC
 {
-
+    [ValueConversion(typeof(bool), typeof(bool))]
     public class InverseBooleanConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter,
+        public  object Convert(object value, Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {
-            if (targetType != typeof(bool))
-                throw new InvalidOperationException("The target must be a boolean");
-
-            return !(bool)value;
+            if(value is bool)
+                return !(bool)value;
+            throw new ArgumentException("value must be bool", nameof(value));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter,
