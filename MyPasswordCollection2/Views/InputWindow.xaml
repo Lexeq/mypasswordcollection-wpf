@@ -27,7 +27,7 @@
 
 
     
-    <Grid FocusManager.FocusedElement="{Binding ElementName=passBox}">
+    <Grid >
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="auto"/>
