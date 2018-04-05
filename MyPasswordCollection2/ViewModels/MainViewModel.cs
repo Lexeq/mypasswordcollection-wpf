@@ -29,7 +29,7 @@ namespace MPC.ViewModels
             }
         }
 
-     /*   private bool _editMode;
+        private bool _editMode;
         public bool EditMode
         {
             get { return _editMode; }
@@ -38,7 +38,7 @@ namespace MPC.ViewModels
                 _editMode = value;
                 OnPropertyChanged(nameof(EditMode));
             }
-        }*/
+        }
 
         private PasswordItem _selectedItem;
         public PasswordItem SelectedItem
@@ -70,7 +70,7 @@ namespace MPC.ViewModels
             get
             {
                 return _addCommand ??
-                    (_addCommand = new Command(AddPassword, ()=> PasswordSource != null));
+                    (_addCommand = new Command(AddPassword, ()=> PasswordSource != null && !EditMode));
             }
             set { _addCommand = value; }
         }
@@ -130,13 +130,13 @@ namespace MPC.ViewModels
         {
             dialogs = dialogService;
             windows = winManager;
-          //  EditMode = false;
+            EditMode = false;
         }
 
         private void AddPassword()
         {
             SelectedItem = new PasswordItem();
-           // EditMode = true;
+            EditMode = true;
         }
 
         private void RemovePassword(PasswordItem item)
@@ -203,14 +203,14 @@ namespace MPC.ViewModels
 
         private void CancelAdding()
         {
-          //  EditMode = false;
+            EditMode = false;
             SelectedItem = null;
         }
 
         private void FinishAdding()
         {
             PasswordSource.Passwords.Add(SelectedItem);
-          //  EditMode = false;
+            EditMode = false;
         }
     }
 }
