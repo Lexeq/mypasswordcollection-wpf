@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MPC"
         mc:Ignorable="d"
-        Title="Enter password" Height="150" MaxHeight="200" Width="300" MaxWidth="350" FontSize="15" x:Name="main">
+        Title="Enter password" Height="150" MaxHeight="200" Width="300" MaxWidth="350" FontSize="15" x:Name="main"
+        FocusManager.FocusedElement="{Binding ElementName=passBox}">
 
     <Window.Resources>
 

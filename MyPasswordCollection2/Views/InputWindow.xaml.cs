@@ -35,7 +35,7 @@ namespace MPC
             }
             else
             {
-                MessageBox.Show("Wrong");
+                MessageBox.Show("Passwords are not same");
             }
         }
     }
