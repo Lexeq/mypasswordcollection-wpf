@@ -34,13 +34,13 @@
                 <MenuItem Header="_Open..." Command="{Binding OpenFileCommand}"></MenuItem>
                 <MenuItem Header="_Exit"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Edit">
+            <MenuItem Header="_Edit">
                 <MenuItem Header="Change master password..."></MenuItem>
-                <MenuItem Header="Clear collection"></MenuItem>
-                <MenuItem Header="Delete file"></MenuItem>
+                <MenuItem Header="Clear collection" Command="{Binding ClearCommand}"></MenuItem>
+                <MenuItem Header="Delete file" Command="{Binding DeleteCollectionCommand}"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Help" >
-                <MenuItem Header="About..."></MenuItem>
+            <MenuItem Header="_Help" >
+                <MenuItem Header="_About..."></MenuItem>
             </MenuItem>
         </Menu>
 

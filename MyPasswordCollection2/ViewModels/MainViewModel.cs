@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -74,7 +75,7 @@ namespace MPC.ViewModels
             get
             {
                 return _addCommand ??
-                    (_addCommand = new Command(AddPassword, ()=> PasswordSource != null && !EditMode));
+                    (_addCommand = new Command(AddPassword, () => PasswordSource != null && !EditMode));
             }
             set { _addCommand = value; }
         }
@@ -88,6 +89,34 @@ namespace MPC.ViewModels
                   (_removeCommand = new Command<PasswordItem>(RemovePassword, (o) => SelectedItem != null && SelectedItem is PasswordItem));
             }
             set { _removeCommand = value; }
+        }
+
+        private ICommand _clearCommand;
+        public ICommand ClearCommand
+        {
+            get
+            {
+                return _clearCommand ??
+                   (_clearCommand = new Command(ClearCollection, () => PasswordSource != null));
+            }
+            set
+            {
+                _clearCommand = value;
+            }
+        }
+
+        private ICommand _deleteCollectionCommand;
+        public ICommand DeleteCollectionCommand
+        {
+            get
+            {
+                return _deleteCollectionCommand ??
+                    (_deleteCollectionCommand = new Command(DeleteCollection, () => PasswordSource != null));
+            }
+            set
+            {
+                _deleteCollectionCommand = value;
+            }
         }
 
         private ICommand _openFileCommand;
@@ -104,17 +133,22 @@ namespace MPC.ViewModels
         private ICommand _cancelAddingCommand;
         public ICommand CancelAddingCommand
         {
-            get {
+            get
+            {
                 return _cancelAddingCommand ??
-                  (_cancelAddingCommand = new Command(CancelAdding)); }
+                  (_cancelAddingCommand = new Command(CancelAdding));
+            }
             set { _cancelAddingCommand = value; }
         }
 
         private ICommand _finishlAddingCommand;
         public ICommand FinishAddingCommand
         {
-            get { return _finishlAddingCommand ??
-                    (_finishlAddingCommand = new Command(FinishAdding)); }
+            get
+            {
+                return _finishlAddingCommand ??
+                  (_finishlAddingCommand = new Command(FinishAdding));
+            }
             set { _finishlAddingCommand = value; }
         }
 
@@ -148,6 +182,40 @@ namespace MPC.ViewModels
             PasswordSource.Passwords.Remove(item);
         }
 
+        private void ClearCollection()
+        {
+            if (PasswordSource == null)
+                throw new NullReferenceException(nameof(PasswordSource));
+
+            if (dialogs.ShowDialog("All passwords will be removed. Continue?", "Warning"))
+                PasswordSource.Passwords.Clear();
+        }
+
+        private void DeleteCollection()
+        {
+            if (PasswordSource == null)
+                throw new NullReferenceException(nameof(PasswordSource));
+
+            var path = PasswordSource.FilePath;
+            PasswordSource = null;
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception e)
+            {
+                dialogs.ShowMessage($"Failed to remove file.\n [{e.Message}", "Error");
+            }
+        }
+
+        private void ChangePassword()
+        {
+            if (PasswordSource == null)
+                throw new NullReferenceException(nameof(PasswordSource));
+
+           // var oldPass = windows.ShowDialog<>
+        }
+
         private void NewFile()
         {
             var settings = new FileDialogSettings
@@ -157,7 +225,7 @@ namespace MPC.ViewModels
             };
 
             var result = dialogs.ShowSaveFileDialog(settings);
-            if(result)
+            if (result)
             {
                 InputWindowViewModel inputVM = new InputWindowViewModel(true);
                 windows.ShowDialog(inputVM);
@@ -170,7 +238,7 @@ namespace MPC.ViewModels
 
                         PasswordSource = new PasswordSource(settings.FileName, inputVM.Password);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         dialogs.ShowMessage($"Failed to initialize password collection:\n{e.Message}", "Error");
                     }
@@ -196,6 +264,10 @@ namespace MPC.ViewModels
                     try
                     {
                         PasswordSource = new PasswordSource(settings.FileName, inputVM.Password);
+                    }
+                    catch (CryptographicException e)
+                    {
+                        dialogs.ShowMessage("Decryption failed. Check password.", "");
                     }
                     catch (Exception e)
                     {

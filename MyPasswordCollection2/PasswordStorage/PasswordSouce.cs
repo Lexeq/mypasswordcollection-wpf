@@ -6,7 +6,7 @@ namespace PasswordStorage
 {
     sealed class PasswordSource
     {
-        public bool SyncWithFile { get; private set; }
+        public bool IsSyncWithFile { get; private set; }
 
         public ObservableCollection<PasswordItem> Passwords { get; private set; }
 
@@ -46,11 +46,11 @@ namespace PasswordStorage
             try
             {
                 File.WriteAllBytes(FilePath, crypter.Encrypt(Passwords, password));
-                SyncWithFile = true;
+                IsSyncWithFile = true;
             }
             catch
             {
-                SyncWithFile = false;
+                IsSyncWithFile = false;
             }
         }
     }

@@ -11,6 +11,12 @@ namespace MPC
             MessageBox.Show(message, caption);
         }
 
+        public bool ShowDialog(string message, string caption)
+        {
+            var result = MessageBox.Show(message, caption, MessageBoxButton.YesNo);
+            return result == MessageBoxResult.Yes;
+        }
+
         public bool ShowOpenFileDialog(FileDialogSettings settings)
         {
             OpenFileDialog ofd = new OpenFileDialog

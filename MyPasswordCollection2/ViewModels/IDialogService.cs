@@ -7,5 +7,7 @@
         bool ShowSaveFileDialog(FileDialogSettings settings);
 
         void ShowMessage(string message, string caption);
+
+        bool ShowDialog(string message, string caption);
     }
 }
