@@ -9,6 +9,8 @@ namespace MPC.ViewModels
 {
     class InputWindowViewModel : BaseViewModel
     {
+        public string Title { get; set; }
+
         public bool DialogReult { get; private set; }
 
         public bool PasswordConfirmationRequired { get; }
@@ -33,6 +35,7 @@ namespace MPC.ViewModels
         public InputWindowViewModel(bool passwordConfirmationRequired)
         {
             PasswordConfirmationRequired = passwordConfirmationRequired;
+            Title = "Enter password"; 
         }
     }
 }

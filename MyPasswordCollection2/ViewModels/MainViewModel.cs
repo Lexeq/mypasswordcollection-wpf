@@ -14,9 +14,13 @@ namespace MPC.ViewModels
 {
     class MainWindowViewModel : BaseViewModel
     {
+        #region Fields
         private IDialogService dialogs;
 
         private IWindowsManager windows;
+
+        private PasswordItem _editingItemCopy;
+        #endregion
 
         #region Properties
         private string _searchString;
@@ -131,7 +135,7 @@ namespace MPC.ViewModels
         }
 
         private ICommand _cancelAddingCommand;
-        public ICommand CancelAddingCommand
+        public ICommand CancelEditCommand
         {
             get
             {
@@ -142,7 +146,7 @@ namespace MPC.ViewModels
         }
 
         private ICommand _finishlAddingCommand;
-        public ICommand FinishAddingCommand
+        public ICommand FinishEditCommand
         {
             get
             {
@@ -162,15 +166,52 @@ namespace MPC.ViewModels
             }
             set { _newPasswordCollectionCommand = value; }
         }
+
+        private ICommand _changePasswordCommand;
+        public ICommand ChangePasswordCommand
+        {
+            get
+            {
+                return _changePasswordCommand ??
+                  (_changePasswordCommand = new Command(ChangePassword, () => PasswordSource != null));
+            }
+            set { _changePasswordCommand = value; }
+        }
+
+        private ICommand _copyCommand;
+        public ICommand CopyCommand
+        {
+            get
+            {
+                return _copyCommand ??
+                  (_copyCommand = new Command<string>(CopyToClipboard, (s) => SelectedItem != null));
+            }
+            set { _copyCommand = value; }
+        }
+
+        private ICommand _editCommand;
+        public ICommand EditCommand
+        {
+            get
+            {
+                return _editCommand ??
+                  (_editCommand = new Command(EditItem, () => SelectedItem != null));
+            }
+            set { _editCommand = value; }
+        }
+
         #endregion
 
+        #region Ctor
         public MainWindowViewModel(IDialogService dialogService, IWindowsManager winManager)
         {
             dialogs = dialogService;
             windows = winManager;
             EditMode = false;
         }
+        #endregion
 
+        #region Methods
         private void AddPassword()
         {
             SelectedItem = new PasswordItem();
@@ -213,7 +254,22 @@ namespace MPC.ViewModels
             if (PasswordSource == null)
                 throw new NullReferenceException(nameof(PasswordSource));
 
-           // var oldPass = windows.ShowDialog<>
+            var oldPassInputVM = new InputWindowViewModel(false) { Title = "Enter old password" };
+            windows.ShowDialog(oldPassInputVM);
+            if (oldPassInputVM.DialogReult == false)
+                return;
+            var newPassInputVW = new InputWindowViewModel(true) { Title = "Enter new password" };
+            windows.ShowDialog(newPassInputVW);
+            if (newPassInputVW.DialogReult == false)
+                return;
+            try
+            {
+                PasswordSource.ChangePassword(oldPassInputVM.Password, newPassInputVW.Password);
+            }
+            catch (Exception e)
+            {
+                dialogs.ShowMessage($"Can't change password\n{e.Message}", "Failed");
+            }
         }
 
         private void NewFile()
@@ -265,7 +321,7 @@ namespace MPC.ViewModels
                     {
                         PasswordSource = new PasswordSource(settings.FileName, inputVM.Password);
                     }
-                    catch (CryptographicException e)
+                    catch (CryptographicException)
                     {
                         dialogs.ShowMessage("Decryption failed. Check password.", "");
                     }
@@ -281,12 +337,35 @@ namespace MPC.ViewModels
         {
             EditMode = false;
             SelectedItem = null;
+            _editingItemCopy = null;
         }
 
         private void FinishAdding()
         {
-            PasswordSource.Passwords.Add(SelectedItem);
             EditMode = false;
+            if (_editingItemCopy == null)
+                PasswordSource.Passwords.Add(SelectedItem);
+            else
+            {
+                _editingItemCopy.Password = SelectedItem.Password;
+                _editingItemCopy.Login = SelectedItem.Login;
+                _editingItemCopy.Site = SelectedItem.Site;
+                PasswordSource.SaveToFile();
+            }
         }
+
+        private void CopyToClipboard(string text)
+        {
+            Clipboard.SetText(text);
+        }
+
+        private void EditItem()
+        {
+            _editingItemCopy = SelectedItem;
+            SelectedItem = new PasswordItem(_editingItemCopy.Site, _editingItemCopy.Login, _editingItemCopy.Password);
+            EditMode = true;
+        }
+
+        #endregion
     }
 }

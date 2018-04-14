@@ -6,23 +6,23 @@ namespace PasswordStorage
 {
     sealed class PasswordSource
     {
+        private string password;
+
+        private PasswordsCrypter crypter;
+
         public bool IsSyncWithFile { get; private set; }
 
         public ObservableCollection<PasswordItem> Passwords { get; private set; }
 
-        private string password;
-
         public string FilePath { get; private set; }
-
-        public PasswordsCrypter crypter;
 
         public PasswordSource(string path, string password)
         {
             if (string.IsNullOrEmpty(path))
-                throw new ArgumentException("path");
+                throw new ArgumentException(nameof(path));
 
             if (string.IsNullOrEmpty(password))
-                throw new ArgumentException("password");
+                throw new ArgumentException(nameof(password));
 
             this.password = password;
             crypter = new PasswordsCrypter();
@@ -38,20 +38,42 @@ namespace PasswordStorage
                 SaveToFile();
             }
 
-            Passwords.CollectionChanged += (o, e) => SaveToFile();
+            Passwords.CollectionChanged += Passwords_CollectionChanged;
         }
 
-        public void SaveToFile()
+        private void Passwords_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             try
             {
-                File.WriteAllBytes(FilePath, crypter.Encrypt(Passwords, password));
+                SaveToFile();
                 IsSyncWithFile = true;
             }
             catch
             {
                 IsSyncWithFile = false;
             }
+        }
+
+        public void ChangePassword(string oldPassword, string newPassword)
+        {
+            if (oldPassword != password)
+                throw new ArgumentException("Wrong password");
+
+            password = newPassword;
+            try
+            {
+                SaveToFile();
+            }
+            catch
+            {
+                password = oldPassword;
+                throw;
+            }
+        }
+
+        public void SaveToFile()
+        {
+            File.WriteAllBytes(FilePath, crypter.Encrypt(Passwords, password));
         }
     }
 }

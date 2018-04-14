@@ -35,7 +35,7 @@
                 <MenuItem Header="_Exit"></MenuItem>
             </MenuItem>
             <MenuItem Header="_Edit">
-                <MenuItem Header="Change master password..."></MenuItem>
+                <MenuItem Header="Change master password..." Command="{Binding ChangePasswordCommand}"></MenuItem>
                 <MenuItem Header="Clear collection" Command="{Binding ClearCommand}"></MenuItem>
                 <MenuItem Header="Delete file" Command="{Binding DeleteCollectionCommand}"></MenuItem>
             </MenuItem>
