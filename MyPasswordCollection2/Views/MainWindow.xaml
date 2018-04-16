@@ -59,7 +59,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBox Grid.Column="0" Margin="2,2,5,2" Width="auto" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Text="{Binding Path=SearchString, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    <Button  Grid.Column="1" Margin="2" Padding="5,2,5,2" MaxWidth="70" MinWidth="30" Width="auto">Search</Button>
+                    <Button  Grid.Column="1" Margin="2" Padding="5,2,5,2" MaxWidth="70" MinWidth="30" Width="auto" Command="{Binding FindCommand}">Find</Button>
                 </Grid>
             </Border>
 

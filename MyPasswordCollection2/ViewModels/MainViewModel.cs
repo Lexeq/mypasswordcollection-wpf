@@ -1,12 +1,7 @@
 ﻿using PasswordStorage;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -15,11 +10,13 @@ namespace MPC.ViewModels
     class MainWindowViewModel : BaseViewModel
     {
         #region Fields
+        private SearchHelper searchHelper;
+
         private IDialogService dialogs;
 
         private IWindowsManager windows;
 
-        private PasswordItem _editingItemCopy;
+        private PasswordItem editingItemCopy;
         #endregion
 
         #region Properties
@@ -30,6 +27,12 @@ namespace MPC.ViewModels
             set
             {
                 _searchString = value;
+                if (searchHelper != null)
+                {
+                    searchHelper.SearchString = value;
+                    FindNext();
+                }
+
                 OnPropertyChanged(nameof(SearchString));
             }
         }
@@ -67,6 +70,7 @@ namespace MPC.ViewModels
             set
             {
                 _passwordSrc = value;
+                searchHelper = new SearchHelper(_passwordSrc.Passwords) { AutoReset = true };
                 OnPropertyChanged(nameof(PasswordSource));
             }
         }
@@ -198,6 +202,17 @@ namespace MPC.ViewModels
                   (_editCommand = new Command(EditItem, () => SelectedItem != null));
             }
             set { _editCommand = value; }
+        }
+
+        private ICommand _findCommand;
+        public ICommand FindCommand
+        {
+            get
+            {
+                return _findCommand ??
+                    (_findCommand = new Command(FindNext, () => PasswordSource != null));
+            }
+            set { _findCommand = value; }
         }
 
         #endregion
@@ -337,19 +352,19 @@ namespace MPC.ViewModels
         {
             EditMode = false;
             SelectedItem = null;
-            _editingItemCopy = null;
+            editingItemCopy = null;
         }
 
         private void FinishAdding()
         {
             EditMode = false;
-            if (_editingItemCopy == null)
+            if (editingItemCopy == null)
                 PasswordSource.Passwords.Add(SelectedItem);
             else
             {
-                _editingItemCopy.Password = SelectedItem.Password;
-                _editingItemCopy.Login = SelectedItem.Login;
-                _editingItemCopy.Site = SelectedItem.Site;
+                editingItemCopy.Password = SelectedItem.Password;
+                editingItemCopy.Login = SelectedItem.Login;
+                editingItemCopy.Site = SelectedItem.Site;
                 PasswordSource.SaveToFile();
             }
         }
@@ -361,9 +376,18 @@ namespace MPC.ViewModels
 
         private void EditItem()
         {
-            _editingItemCopy = SelectedItem;
-            SelectedItem = new PasswordItem(_editingItemCopy.Site, _editingItemCopy.Login, _editingItemCopy.Password);
+            editingItemCopy = SelectedItem;
+            SelectedItem = new PasswordItem(editingItemCopy.Site, editingItemCopy.Login, editingItemCopy.Password);
             EditMode = true;
+        }
+
+        private void FindNext()
+        {
+            if (PasswordSource != null && !string.IsNullOrEmpty(SearchString))
+            {
+                var index = searchHelper.FindNext();
+                SelectedItem = index >= 0 ? PasswordSource.Passwords[index] : null;
+            }
         }
 
         #endregion
