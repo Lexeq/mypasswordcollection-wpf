@@ -5,29 +5,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MPC"
         mc:Ignorable="d"
-        Title="{Binding Title, Mode=OneTime}" Height="150" MaxHeight="200" Width="300" MaxWidth="350" FontSize="15" x:Name="main" SizeToContent="Height"
+        Title="{Binding Title, Mode=OneTime}" 
+        Height="150"
+        MaxHeight="200"
+        Width="300"
+        MaxWidth="350"
+        FontSize="15"
+        x:Name="main"
+        SizeToContent="Height"
         FocusManager.FocusedElement="{Binding ElementName=passBox}">
 
     <Window.Resources>
-
-        <Style x:Key="BaseStyle" TargetType="FrameworkElement">
-            <Setter Property="Margin" Value="10,5"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-
-        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseStyle}">
-        </Style>
-
-        <Style TargetType="PasswordBox" BasedOn="{StaticResource BaseStyle}">
-        </Style>
-
-        <Style TargetType="Button" BasedOn="{StaticResource BaseStyle}"></Style>
-
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+        <Style x:Key="BaseStyle"
+               TargetType="FrameworkElement">
+
+            <Setter Property="Margin"
+                    Value="10,5"/>
+
+            <Setter Property="VerticalAlignment"
+                    Value="Center"/>
+        </Style>
+
+        <Style TargetType="TextBlock"
+               BasedOn="{StaticResource BaseStyle}"/>
+
+        <Style TargetType="PasswordBox" 
+               BasedOn="{StaticResource BaseStyle}"/>
+
+        <Style TargetType="Button" 
+               BasedOn="{StaticResource BaseStyle}"/>
     </Window.Resources>
 
-
-    
     <Grid >
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -44,17 +54,34 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock>Enter password</TextBlock>
-            <PasswordBox Grid.Column="1" VerticalAlignment="Center" x:Name="passBox" TabIndex="0"></PasswordBox>
+            <TextBlock Text="Enter password"/>
 
-            <TextBlock Grid.Row="1" Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}">Confirm password</TextBlock>
-            <PasswordBox Grid.Row="1"  Grid.Column="1" VerticalAlignment="Center" x:Name="confBox" TabIndex="1"
-                     Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}"></PasswordBox>
+            <PasswordBox Grid.Column="1" 
+                         VerticalAlignment="Center"
+                         x:Name="passBox" 
+                         TabIndex="0"/>
+
+            <TextBlock Grid.Row="1"
+                       Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}"
+                       Text="Confirm password"/>
+
+            <PasswordBox Grid.Row="1" 
+                         Grid.Column="1" 
+                         VerticalAlignment="Center"
+                         x:Name="confBox"
+                         TabIndex="1"
+                         Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}"/>
         </Grid>
-        
+
         <UniformGrid Grid.Row="1" Columns="2">
-            <Button IsDefault="True" Click="Button_Click" Content="OK" TabIndex="2"/>
-            <Button IsCancel="True" TabIndex="3">Cancel</Button>
+            <Button IsDefault="True"
+                    Click="Button_Click"
+                    Content="OK"
+                    TabIndex="2"/>
+
+            <Button IsCancel="True"                    
+                    Content="Cancel"
+                    TabIndex="3"/>
         </UniformGrid>
     </Grid>
 </Window>

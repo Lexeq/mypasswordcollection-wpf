@@ -27,7 +27,7 @@ namespace MPC
             var windowType = winByKey[key];
             var window = (Window)Activator.CreateInstance(windowType);
             window.DataContext = viewModel;
-
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             if (dialogMode)
                 window.ShowDialog();
             else

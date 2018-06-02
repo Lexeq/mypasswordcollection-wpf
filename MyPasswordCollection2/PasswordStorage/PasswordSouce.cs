@@ -35,13 +35,13 @@ namespace PasswordStorage
             else
             {
                 Passwords = new ObservableCollection<PasswordItem>();
-                SaveToFile();
+                Passwords_CollectionChanged(this, EventArgs.Empty);
             }
 
             Passwords.CollectionChanged += Passwords_CollectionChanged;
         }
 
-        private void Passwords_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Passwords_CollectionChanged(object sender, EventArgs e)
         {
             try
             {

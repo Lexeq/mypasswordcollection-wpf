@@ -94,7 +94,7 @@ namespace MPC.ViewModels
             get
             {
                 return _removeCommand ??
-                  (_removeCommand = new Command<PasswordItem>(RemovePassword, (o) => SelectedItem != null && SelectedItem is PasswordItem));
+                  (_removeCommand = new Command<PasswordItem>(RemovePassword, (o) => SelectedItem != null));
             }
             set { _removeCommand = value; }
         }

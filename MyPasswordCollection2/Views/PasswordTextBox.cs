@@ -6,6 +6,7 @@ namespace MPC
 {
     public class PasswordTextBox : TextBox
     {
+        #region DependencyProperties
         public static readonly DependencyProperty UsePasswordCharProperty =
             DependencyProperty.Register(
                 nameof(UsePasswordChar),
@@ -52,6 +53,8 @@ namespace MPC
             get { return (char)GetValue(PasswordCharProperty); }
             set { SetValue(PasswordCharProperty, value); }
         }
+
+        #endregion
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {

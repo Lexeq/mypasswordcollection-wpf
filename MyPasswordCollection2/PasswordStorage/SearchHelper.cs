@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace MPC
 {
-
     class SearchHelper
     {
         private IList<PasswordItem> _collection;
@@ -72,5 +71,4 @@ namespace MPC
             _firstPass = true;
         }
     }
-
 }

@@ -5,11 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MPC"
         mc:Ignorable="d"
-        Title="MyPasswordCollection" Height="350" Width="525" MinHeight="200" MinWidth="250">
+        Title="MyPasswordCollection"
+        Height="350"
+        Width="525"
+        MinHeight="200" 
+        MinWidth="250">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisible"/>
     </Window.Resources>
+    
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Ctrl"
+                    Key="O"
+                    Command="{Binding OpenFileCommand}"/>
+
+        <KeyBinding Modifiers="Ctrl"
+                    Key="N"
+                    Command="{Binding NewPasswordCollectionCommand}"/>
+    </Window.InputBindings>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -21,26 +35,49 @@
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
 
-        <Menu Grid.ColumnSpan="2" Margin="0" Padding="2.5" Name="mainMenu" HorizontalAlignment="Stretch"
-              Width="auto" Height="auto" IsMainMenu="True">
+        <Menu Grid.ColumnSpan="2"
+              Padding="2.5"
+              Name="mainMenu"
+              HorizontalAlignment="Stretch"
+              Width="auto"
+              Height="auto"
+              IsMainMenu="True">
+            
             <Menu.Background>
-                <LinearGradientBrush StartPoint="0.3,0" EndPoint="1,0">
-                    <GradientStop Color="#FFE0E8FF" Offset="0"></GradientStop>
-                    <GradientStop Color="#00E0E8FF" Offset="1"></GradientStop>
+                <LinearGradientBrush StartPoint="0.3,0"
+                                     EndPoint="1,0">
+                    <GradientStop Color="#FFE0E8FF" 
+                                  Offset="0"/>
+                    <GradientStop Color="#00E0E8FF"
+                                  Offset="1"/>
                 </LinearGradientBrush>
             </Menu.Background>
+            
             <MenuItem Header="_File">
-                <MenuItem Header="_New..." Command="{Binding NewPasswordCollectionCommand}"></MenuItem>
-                <MenuItem Header="_Open..." Command="{Binding OpenFileCommand}"></MenuItem>
-                <MenuItem Header="_Exit"></MenuItem>
+                <MenuItem Header="_New..."
+                          Command="{Binding NewPasswordCollectionCommand}"
+                          InputGestureText="Ctrl + N"/>
+                
+                <MenuItem Header="_Open..."
+                          Command="{Binding OpenFileCommand}"
+                          InputGestureText="Ctrl + O"/>
+                
+                <MenuItem Header="_Exit"/>
             </MenuItem>
+            
             <MenuItem Header="_Edit">
-                <MenuItem Header="Change master password..." Command="{Binding ChangePasswordCommand}"></MenuItem>
-                <MenuItem Header="Clear collection" Command="{Binding ClearCommand}"></MenuItem>
-                <MenuItem Header="Delete file" Command="{Binding DeleteCollectionCommand}"></MenuItem>
+                <MenuItem Header="Change master password..."
+                          Command="{Binding ChangePasswordCommand}"/>
+                
+                <MenuItem Header="Clear collection"
+                          Command="{Binding ClearCommand}"/>
+                
+                <MenuItem Header="Delete file"
+                          Command="{Binding DeleteCollectionCommand}"/>
             </MenuItem>
+            
             <MenuItem Header="_Help" >
-                <MenuItem Header="_About..."></MenuItem>
+                <MenuItem Header="_About..."/>
             </MenuItem>
         </Menu>
 
@@ -51,15 +88,29 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Padding="5">
+            <Border Grid.Row="0"
+                    Padding="5">
                 <Grid Name="grSearch">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBox Grid.Column="0" Margin="2,2,5,2" Width="auto" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Text="{Binding Path=SearchString, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    <Button  Grid.Column="1" Margin="2" Padding="5,2,5,2" MaxWidth="70" MinWidth="30" Width="auto" Command="{Binding FindCommand}">Find</Button>
+                    <TextBox Grid.Column="0"
+                             Margin="2,2,5,2"
+                             Width="auto"
+                             HorizontalAlignment="Stretch"
+                             VerticalContentAlignment="Center" 
+                             Text="{Binding Path=SearchString, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Button  Grid.Column="1"
+                             Margin="2"
+                             Padding="5,2,5,2"
+                             MaxWidth="70"
+                             MinWidth="30"
+                             Width="auto"
+                             Command="{Binding FindCommand}"
+                             Content="Find"/>
                 </Grid>
             </Border>
 
@@ -76,14 +127,26 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Button Command="{Binding AddCommand}" Padding="2" Grid.Column="0" Margin="10" Name="btnAdd">Add</Button>
-                <Button Command="{Binding RemoveCommand}" CommandParameter="{Binding SelectedItem}" Padding="2" Grid.Column="1" Margin="10" Name="btnRemove">Remove</Button>
+                <Button Command="{Binding AddCommand}"
+                        Padding="2"
+                        Grid.Column="0"
+                        Margin="10"
+                        Name="btnAdd"
+                        Content="Add"/>
+                <Button Command="{Binding RemoveCommand}"
+                        CommandParameter="{Binding SelectedItem}"
+                        Padding="2"
+                        Grid.Column="1" 
+                        Margin="10"
+                        Name="btnRemove"
+                        Content="Remove"/>
 
             </Grid>
 
 
         </Grid>
 
-        <local:PasswordView Grid.Row="1" Grid.Column="1"></local:PasswordView>
+        <local:PasswordView Grid.Row="1" 
+                            Grid.Column="1"/>
     </Grid>
 </Window>
