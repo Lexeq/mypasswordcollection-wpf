@@ -328,23 +328,28 @@ namespace MPC.ViewModels
             var result = dialogs.ShowOpenFileDialog(settings);
             if (result)
             {
-                InputWindowViewModel inputVM = new InputWindowViewModel(false);
-                windows.ShowDialog(inputVM);
-                if (inputVM.DialogReult)
+                bool retryFlag = false;
+                do
                 {
-                    try
+                    InputWindowViewModel inputVM = new InputWindowViewModel(false);
+                    windows.ShowDialog(inputVM);
+                    if (inputVM.DialogReult)
                     {
-                        PasswordSource = new PasswordSource(settings.FileName, inputVM.Password);
+                        try
+                        {
+                            retryFlag = false;
+                            PasswordSource = new PasswordSource(settings.FileName, inputVM.Password);
+                        }
+                        catch (CryptographicException)
+                        {
+                            retryFlag = dialogs.ShowDialog("Decryption failed. Please check the password. Try again?", "");
+                        }
+                        catch (Exception e)
+                        {
+                            dialogs.ShowMessage($"Failed to load password collection:\n{e.Message}", "Error");
+                        }
                     }
-                    catch (CryptographicException)
-                    {
-                        dialogs.ShowMessage("Decryption failed. Check password.", "");
-                    }
-                    catch (Exception e)
-                    {
-                        dialogs.ShowMessage($"Failed to load password collection:\n{e.Message}", "Error");
-                    }
-                }
+                } while (retryFlag);
             }
         }
 
