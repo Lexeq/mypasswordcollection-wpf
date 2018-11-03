@@ -15,8 +15,11 @@ namespace MPC
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
-            if (!string.IsNullOrEmpty(passBox.Password) && (confBox.Visibility != Visibility.Visible || passBox.Password == confBox.Password))
+            if (string.IsNullOrEmpty(passBox.Password))
+            {
+                MessageBox.Show("Password can't be empty.");
+            }
+            else if (confBox.Visibility != Visibility.Visible || passBox.Password == confBox.Password)
             {
                 if (DataContext != null)
                 {
