@@ -101,7 +101,7 @@ namespace MPC
         private void RemoveText(bool back)
         {
             if (PlainText == null || PlainText.Length == 0 ||
-                (back == false && CaretIndex == PlainText.Length) || (back && CaretIndex == 0))
+                (back == false && CaretIndex == PlainText.Length) || (back && CaretIndex == 0 && SelectionLength == 0))
                 return;
 
             var carretIndex = CaretIndex;
