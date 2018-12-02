@@ -70,7 +70,8 @@ namespace MPC.ViewModels
             set
             {
                 _passwordSrc = value;
-                searchHelper = new SearchHelper(_passwordSrc.Passwords) { AutoReset = true };
+                if (_passwordSrc != null)
+                    searchHelper = new SearchHelper(_passwordSrc.Passwords) { AutoReset = true };
                 OnPropertyChanged(nameof(PasswordSource));
             }
         }
@@ -253,7 +254,6 @@ namespace MPC.ViewModels
                 throw new NullReferenceException(nameof(PasswordSource));
 
             var path = PasswordSource.FilePath;
-            PasswordSource = null;
             try
             {
                 File.Delete(path);
@@ -262,6 +262,8 @@ namespace MPC.ViewModels
             {
                 dialogs.ShowMessage($"Failed to remove file.\n [{e.Message}", "Error");
             }
+            PasswordSource = null;
+            searchHelper = null;
         }
 
         private void ChangePassword()
