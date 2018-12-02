@@ -216,6 +216,14 @@ namespace MPC.ViewModels
             set { _findCommand = value; }
         }
 
+        private ICommand _closeCommand;
+        public ICommand CloseFileCommand
+        {
+            get
+            {
+                return _closeCommand ?? (_closeCommand = new Command(CloseFile, () => PasswordSource != null));
+            }
+        }
         #endregion
 
         #region Ctor
@@ -353,6 +361,11 @@ namespace MPC.ViewModels
                     }
                 } while (retryFlag);
             }
+        }
+
+        private void CloseFile()
+        {
+            PasswordSource = null;
         }
 
         private void CancelAdding()

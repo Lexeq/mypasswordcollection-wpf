@@ -61,7 +61,8 @@
                 <MenuItem Header="_Open..."
                           Command="{Binding OpenFileCommand}"
                           InputGestureText="Ctrl + O"/>
-                
+                <MenuItem Header="_Close"
+                          Command="{Binding CloseFileCommand}"/>
                 <MenuItem Header="_Exit"/>
             </MenuItem>
             
