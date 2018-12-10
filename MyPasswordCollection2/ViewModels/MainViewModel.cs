@@ -224,6 +224,15 @@ namespace MPC.ViewModels
                 return _closeCommand ?? (_closeCommand = new Command(CloseFile, () => PasswordSource != null));
             }
         }
+
+        private ICommand _showAboutCommand;
+        public ICommand ShowAboutCommand
+        {
+            get
+            {
+                return _showAboutCommand ?? (_showAboutCommand = new Command(() => windows.ShowDialog(new AboutViewModel())));
+            }
+        }
         #endregion
 
         #region Ctor

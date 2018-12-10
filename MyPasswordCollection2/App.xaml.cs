@@ -1,4 +1,5 @@
 ﻿using MPC.ViewModels;
+using MPC.Views;
 using System.Windows;
 
 namespace MPC
@@ -14,6 +15,7 @@ namespace MPC
             WindowsManager winManager = new WindowsManager();
 
             winManager.Register<InputWindowViewModel, InputWindow>();
+            winManager.Register<AboutViewModel, AboutWindow>();
 
             MainWindow mw = new MainWindow()
             {
