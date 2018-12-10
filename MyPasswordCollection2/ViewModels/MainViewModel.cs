@@ -71,7 +71,7 @@ namespace MPC.ViewModels
             {
                 _passwordSrc = value;
                 if (_passwordSrc != null)
-                    searchHelper = new SearchHelper(_passwordSrc.Passwords) { AutoReset = true };
+                    searchHelper = new SearchHelper(_passwordSrc.Passwords) { AutoReset = true, SearchString = SearchString };
                 OnPropertyChanged(nameof(PasswordSource));
             }
         }
