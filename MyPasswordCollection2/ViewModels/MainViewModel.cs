@@ -23,7 +23,7 @@ namespace MPC.ViewModels
         private string _searchString;
         public string SearchString
         {
-            get { return _searchString; }
+            get { return _searchString ?? ""; }
             set
             {
                 _searchString = value;
