@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Windows.Data;
 
-namespace MPC
+namespace MPC.Converters
 {
     [ValueConversion(typeof(bool), typeof(bool))]
     public class InverseBooleanConverter : IValueConverter
     {
-        public  object Convert(object value, Type targetType, object parameter,
+        public object Convert(object value, Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {
-            if(value is bool)
+            if (value is bool)
                 return !(bool)value;
             throw new ArgumentException("value must be bool", nameof(value));
         }

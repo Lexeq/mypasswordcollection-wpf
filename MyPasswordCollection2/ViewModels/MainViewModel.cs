@@ -1,9 +1,10 @@
-﻿using PasswordStorage;
+﻿using MPC.Model;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Security.Cryptography;
-using System.Windows;
 using System.Windows.Input;
+using System.Linq;
 
 namespace MPC.ViewModels
 {
@@ -16,7 +17,7 @@ namespace MPC.ViewModels
 
         private IWindowsManager windows;
 
-        private PasswordItem editingItemCopy;
+        private IRepositoryManager repoManager;
         #endregion
 
         #region Properties
@@ -48,31 +49,47 @@ namespace MPC.ViewModels
             }
         }
 
-        private PasswordItem _selectedItem;
-        public PasswordItem SelectedItem
+        private PasswordItemViewModel _selectedItem;
+        public PasswordItemViewModel SelectedItem
         {
             get { return _selectedItem; }
             set
             {
-                if (SelectedItem != value)
-                {
-                    _selectedItem = value;
-                    EditMode = false;
-                    OnPropertyChanged(nameof(SelectedItem));
-                }
+                if (EditMode)
+                    CancelEdit();
+                _selectedItem = value;
+                OnPropertyChanged();
             }
         }
 
-        private PasswordSource _passwordSrc;
-        public PasswordSource PasswordSource
+        private IPasswordRepository _passwordSrc;
+        public IPasswordRepository PasswordSource
         {
             get { return _passwordSrc; }
             set
             {
                 _passwordSrc = value;
                 if (_passwordSrc != null)
-                    searchHelper = new SearchHelper(_passwordSrc.Passwords) { AutoReset = true, SearchString = SearchString };
+                {
+                    searchHelper = new SearchHelper(_passwordSrc) { AutoReset = true, SearchString = SearchString };
+                    Items = new ObservableCollection<PasswordItemViewModel>(value?.Select(x => new PasswordItemViewModel(x)));
+                }
+                else
+                {
+                    searchHelper = null;
+                    Items = null;
+                }
                 OnPropertyChanged(nameof(PasswordSource));
+            }
+        }
+
+        public ObservableCollection<PasswordItemViewModel> items;
+        public ObservableCollection<PasswordItemViewModel> Items
+        {
+            get => items; set
+            {
+                items = value;
+                OnPropertyChanged();
             }
         }
         #endregion
@@ -95,7 +112,7 @@ namespace MPC.ViewModels
             get
             {
                 return _removeCommand ??
-                  (_removeCommand = new Command<PasswordItem>(RemovePassword, (o) => SelectedItem != null));
+                  (_removeCommand = new Command<PasswordItemViewModel>(RemovePassword, (o) => SelectedItem != null));
             }
             set { _removeCommand = value; }
         }
@@ -145,7 +162,7 @@ namespace MPC.ViewModels
             get
             {
                 return _cancelAddingCommand ??
-                  (_cancelAddingCommand = new Command(CancelAdding));
+                  (_cancelAddingCommand = new Command(CancelEdit));
             }
             set { _cancelAddingCommand = value; }
         }
@@ -156,7 +173,7 @@ namespace MPC.ViewModels
             get
             {
                 return _finishlAddingCommand ??
-                  (_finishlAddingCommand = new Command(FinishAdding));
+                  (_finishlAddingCommand = new Command(FinishEdit));
             }
             set { _finishlAddingCommand = value; }
         }
@@ -181,17 +198,6 @@ namespace MPC.ViewModels
                   (_changePasswordCommand = new Command(ChangePassword, () => PasswordSource != null));
             }
             set { _changePasswordCommand = value; }
-        }
-
-        private ICommand _copyCommand;
-        public ICommand CopyCommand
-        {
-            get
-            {
-                return _copyCommand ??
-                  (_copyCommand = new Command<string>(CopyToClipboard, (s) => SelectedItem != null));
-            }
-            set { _copyCommand = value; }
         }
 
         private ICommand _editCommand;
@@ -226,6 +232,7 @@ namespace MPC.ViewModels
         }
 
         private ICommand _showAboutCommand;
+
         public ICommand ShowAboutCommand
         {
             get
@@ -236,24 +243,29 @@ namespace MPC.ViewModels
         #endregion
 
         #region Ctor
-        public MainWindowViewModel(IDialogService dialogService, IWindowsManager winManager)
+        public MainWindowViewModel(IDialogService dialogService, IWindowsManager winManager, IRepositoryManager repoManager)
         {
             dialogs = dialogService;
             windows = winManager;
+            this.repoManager = repoManager;
             EditMode = false;
+            //  Pivm = new PasswordItemVewModel(null);
         }
         #endregion
 
         #region Methods
         private void AddPassword()
         {
-            SelectedItem = new PasswordItem();
+            SelectedItem = new PasswordItemViewModel(new PasswordItem());
             EditMode = true;
         }
 
-        private void RemovePassword(PasswordItem item)
+        private void RemovePassword(PasswordItemViewModel item)
         {
-            PasswordSource.Passwords.Remove(item);
+            if(PasswordSource.Remove(item.Item))
+            {
+                items.Remove(item);
+            }
         }
 
         private void ClearCollection()
@@ -262,7 +274,7 @@ namespace MPC.ViewModels
                 throw new NullReferenceException(nameof(PasswordSource));
 
             if (dialogs.ShowDialog("All passwords will be removed. Continue?", "Warning"))
-                PasswordSource.Passwords.Clear();
+                PasswordSource.Clear();
         }
 
         private void DeleteCollection()
@@ -270,15 +282,17 @@ namespace MPC.ViewModels
             if (PasswordSource == null)
                 throw new NullReferenceException(nameof(PasswordSource));
 
-            var path = PasswordSource.FilePath;
-            try
-            {
-                File.Delete(path);
-            }
-            catch (Exception e)
-            {
-                dialogs.ShowMessage($"Failed to remove file.\n [{e.Message}", "Error");
-            }
+            //TODO: Implement
+
+            //var path = PasswordSource.FilePath;
+            //try
+            //{
+            //    File.Delete(path);
+            //}
+            //catch (Exception e)
+            //{
+            //    dialogs.ShowMessage($"Failed to remove file.\n [{e.Message}", "Error");
+            //}
             PasswordSource = null;
             searchHelper = null;
         }
@@ -298,7 +312,8 @@ namespace MPC.ViewModels
                 return;
             try
             {
-                PasswordSource.ChangePassword(oldPassInputVM.Password, newPassInputVW.Password);
+                //TODO: IMPLEMENT
+                // PasswordSource.ChangePassword(oldPassInputVM.Password, newPassInputVW.Password);
             }
             catch (Exception e)
             {
@@ -326,7 +341,7 @@ namespace MPC.ViewModels
                         if (File.Exists(settings.FileName))
                             File.Delete(settings.FileName);
 
-                        PasswordSource = new PasswordSource(settings.FileName, inputVM.Password);
+                        PasswordSource = repoManager.GetRepository(settings.FileName, inputVM.Password);
                     }
                     catch (Exception e)
                     {
@@ -357,7 +372,7 @@ namespace MPC.ViewModels
                         try
                         {
                             retryFlag = false;
-                            PasswordSource = new PasswordSource(settings.FileName, inputVM.Password);
+                            PasswordSource = repoManager.GetRepository(settings.FileName, inputVM.Password);
                         }
                         catch (CryptographicException)
                         {
@@ -374,40 +389,28 @@ namespace MPC.ViewModels
 
         private void CloseFile()
         {
+            PasswordSource.Dispose();
             PasswordSource = null;
-        }
-
-        private void CancelAdding()
-        {
-            EditMode = false;
-            SelectedItem = null;
-            editingItemCopy = null;
-        }
-
-        private void FinishAdding()
-        {
-            EditMode = false;
-            if (editingItemCopy == null)
-                PasswordSource.Passwords.Add(SelectedItem);
-            else
-            {
-                editingItemCopy.Password = SelectedItem.Password;
-                editingItemCopy.Login = SelectedItem.Login;
-                editingItemCopy.Site = SelectedItem.Site;
-                PasswordSource.SaveToFile();
-            }
-        }
-
-        private void CopyToClipboard(string text)
-        {
-            Clipboard.SetText(text);
         }
 
         private void EditItem()
         {
-            editingItemCopy = SelectedItem;
-            SelectedItem = new PasswordItem(editingItemCopy.Site, editingItemCopy.Login, editingItemCopy.Password);
             EditMode = true;
+        }
+
+        private void CancelEdit()
+        {
+            SelectedItem.DeclineChanges();
+            EditMode = false;
+        }
+
+        private void FinishEdit()
+        {
+            SelectedItem.AcceptChanges();
+            PasswordSource.Save(SelectedItem.Item);
+            if (!Items.Contains(SelectedItem))
+                Items.Add(SelectedItem);
+            EditMode = false;
         }
 
         private void FindNext()
@@ -415,7 +418,7 @@ namespace MPC.ViewModels
             if (PasswordSource != null && !string.IsNullOrEmpty(SearchString))
             {
                 var index = searchHelper.FindNext();
-                SelectedItem = index >= 0 ? PasswordSource.Passwords[index] : null;
+                SelectedItem = index >= 0 ? Items[index] : null;
             }
         }
 

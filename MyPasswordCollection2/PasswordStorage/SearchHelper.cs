@@ -1,11 +1,11 @@
-﻿using PasswordStorage;
+﻿using MPC.Model;
 using System.Collections.Generic;
 
 namespace MPC
 {
     class SearchHelper
     {
-        private IList<PasswordItem> _collection;
+        private IPasswordRepository _collection;
 
         private string _searchString;
 
@@ -25,7 +25,7 @@ namespace MPC
             }
         }
 
-        public SearchHelper(IList<PasswordItem> collection)
+        public SearchHelper(IPasswordRepository collection)
         {
             _collection = collection;
             Reset();

@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace MPC
+namespace MPC.Views
 {
     public class PasswordTextBox : TextBox
     {
@@ -124,7 +124,8 @@ namespace MPC
 
         private void Update(int newCaretIndex = -1)
         {
-            Text = UsePasswordChar ? new string(PasswordChar, PlainText.Length) : PlainText;
+
+            Text = PlainText == null ? string.Empty : UsePasswordChar ? new string(PasswordChar, PlainText.Length) : PlainText;
             CaretIndex = newCaretIndex < 0 ? Text.Length : newCaretIndex;
         }
 

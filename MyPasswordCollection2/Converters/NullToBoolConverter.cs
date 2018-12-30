@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace MPC.Views
+namespace MPC.Converters
 {
-    class MultiConverter : List<IValueConverter>, IValueConverter
+    public class NullToBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return this.Aggregate(value, (current, converter) => converter.Convert(current, targetType, parameter, culture));
+            return value != null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

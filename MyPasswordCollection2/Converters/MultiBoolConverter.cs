@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace MPC
+namespace MPC.Converters
 {
-    class MultiBoolConverter : IMultiValueConverter
+    public class MultiBoolConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
@@ -21,4 +25,5 @@ namespace MPC
             throw new NotSupportedException();
         }
     }
+
 }

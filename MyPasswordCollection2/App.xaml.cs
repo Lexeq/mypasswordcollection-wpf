@@ -1,4 +1,5 @@
-﻿using MPC.ViewModels;
+﻿using MPC.Model.Repository;
+using MPC.ViewModels;
 using MPC.Views;
 using System.Windows;
 
@@ -13,13 +14,14 @@ namespace MPC
         {
             DialogService dService = new DialogService();
             WindowsManager winManager = new WindowsManager();
+            FileRepositoryManager fileManager = new FileRepositoryManager();
 
             winManager.Register<InputWindowViewModel, InputWindow>();
             winManager.Register<AboutViewModel, AboutWindow>();
 
             MainWindow mw = new MainWindow()
             {
-                DataContext = new MainWindowViewModel(dService, winManager)
+                DataContext = new MainWindowViewModel(dService, winManager, fileManager)
             };
 
             this.MainWindow = mw;

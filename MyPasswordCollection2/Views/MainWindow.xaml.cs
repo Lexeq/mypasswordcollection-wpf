@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MPC
+namespace MPC.Views
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
