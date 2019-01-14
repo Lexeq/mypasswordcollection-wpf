@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 
 namespace MPC.Model.Repository
 {
-    sealed class FileRepository : IPasswordRepository, INotifyCollectionChanged
+    sealed class FileRepository : IPasswordRepository
     {
         private const int Header = 547493281;
-
-        private const int CheckValue = 961749839;
 
         long dataBlockOffset;
 
@@ -20,8 +17,6 @@ namespace MPC.Model.Repository
         ICrypter crypter;
 
         private List<PasswordItem> items;
-
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         public FileRepository(Stream stream, string password)
         {
@@ -40,7 +35,7 @@ namespace MPC.Model.Repository
                     var testBlockSize = reader.ReadInt32();
                     var check = crypter.Decrypt(reader.ReadBytes(testBlockSize));
 
-                    if (CheckValue != BitConverter.ToInt32(check, 0))
+                    if (BitConverter.ToInt32(check, 0)!= Header)
                         throw new ArgumentException("Invalid password");
                 }
                 dataBlockOffset = stream.Position;
@@ -51,7 +46,7 @@ namespace MPC.Model.Repository
                 using (BinaryWriter writer = new BinaryWriter(stream, Encoding.Unicode, true))
                 {
                     writer.Write(Header);
-                    var check = crypter.Encrypt(BitConverter.GetBytes(CheckValue));
+                    var check = crypter.Encrypt(BitConverter.GetBytes(Header));
                     writer.Write(check.Length);
                     writer.Write(check);
                 }
@@ -79,7 +74,6 @@ namespace MPC.Model.Repository
             {
                 items.Remove(item);
                 WriteFile();
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, index));
                 return true;
             }
             return false;
@@ -87,12 +81,10 @@ namespace MPC.Model.Repository
 
         public void Save(PasswordItem item)
         {
-            NotifyCollectionChangedEventArgs args;
             int index = items.IndexOf(item);
             if(index < 0)
             { 
                 items.Add(item);
-                args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item);
             }     
             WriteFile();
         }
@@ -136,6 +128,8 @@ namespace MPC.Model.Repository
         void WriteFile()
         {
             stream.Position = dataBlockOffset;
+
+
             using (BinaryWriter writer = new BinaryWriter(stream, Encoding.Unicode, true))
             {
                 foreach (var item in items)
@@ -179,12 +173,6 @@ namespace MPC.Model.Repository
                 item.Password = reader.ReadString();
             }
             return item;
-        }
-
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            var handler = CollectionChanged;
-            handler?.Invoke(this, e);
         }
     }
 }
