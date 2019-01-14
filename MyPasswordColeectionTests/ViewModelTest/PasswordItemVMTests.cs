@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MPC.ViewModels;
 using MPC.Model;
+using System.Windows;
 
 namespace MyPasswordColeectionTests.ViewModelTest
 {
@@ -44,6 +45,17 @@ namespace MyPasswordColeectionTests.ViewModelTest
         public void ThrowIfNullArgumentTest()
         {
             Assert.Throws<ArgumentNullException>(() => new PasswordItemViewModel(null));
+        }
+
+        [Test, RequiresThread(System.Threading.ApartmentState.STA)]
+        public void CopyToClipboardTest()
+        {
+            string site = "";
+            PasswordItemViewModel vm = new PasswordItemViewModel(new PasswordItem { Site = site });
+
+            vm.CopyCommand.Execute(vm.Site);
+
+            Assert.AreEqual(site, Clipboard.GetText());
         }
     }
 }
