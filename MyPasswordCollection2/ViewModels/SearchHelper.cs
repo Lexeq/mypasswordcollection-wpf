@@ -1,7 +1,6 @@
 ﻿using MPC.Model;
-using System.Collections.Generic;
 
-namespace MPC
+namespace MPC.ViewModels
 {
     class SearchHelper
     {
