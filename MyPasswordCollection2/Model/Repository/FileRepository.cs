@@ -33,11 +33,19 @@ namespace MPC.Model.Repository
 
                     //check password
                     var testBlockSize = reader.ReadInt32();
-                    var check = crypter.Decrypt(reader.ReadBytes(testBlockSize));
-
-                    if (BitConverter.ToInt32(check, 0)!= Header)
-                        throw new ArgumentException("Invalid password");
+                    byte[] check;
+                    try
+                    {
+                        check = crypter.Decrypt(reader.ReadBytes(testBlockSize));
+                        if (BitConverter.ToInt32(check, 0) != Header)
+                            throw new RepositoryException("Incorrect check value");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ArgumentException("Invalid password", ex);
+                    }
                 }
+
                 dataBlockOffset = stream.Position;
                 items = ReadFile();
             }
@@ -82,10 +90,10 @@ namespace MPC.Model.Repository
         public void Save(PasswordItem item)
         {
             int index = items.IndexOf(item);
-            if(index < 0)
-            { 
+            if (index < 0)
+            {
                 items.Add(item);
-            }     
+            }
             WriteFile();
         }
 
@@ -127,21 +135,26 @@ namespace MPC.Model.Repository
 
         private void WriteFile()
         {
-            stream.Position = dataBlockOffset;
-
-
-            using (BinaryWriter writer = new BinaryWriter(stream, Encoding.Unicode, true))
+            try
             {
-                foreach (var item in items)
-                {
-                    var itemBytes = crypter.Encrypt(PasswordItemToBytes(item));
-                    writer.Write(BitConverter.GetBytes(itemBytes.Length));
-                    writer.Write(itemBytes);
-                }
-            }
-            stream.SetLength(stream.Position);
-            stream.Flush();
+                stream.Position = dataBlockOffset;
 
+                using (BinaryWriter writer = new BinaryWriter(stream, Encoding.Unicode, true))
+                {
+                    foreach (var item in items)
+                    {
+                        var itemBytes = crypter.Encrypt(PasswordItemToBytes(item));
+                        writer.Write(BitConverter.GetBytes(itemBytes.Length));
+                        writer.Write(itemBytes);
+                    }
+                }
+                stream.SetLength(stream.Position);
+                stream.Flush();
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("An exception has occurred while saving data.", ex);
+            }
         }
 
         private byte[] PasswordItemToBytes(PasswordItem item)
