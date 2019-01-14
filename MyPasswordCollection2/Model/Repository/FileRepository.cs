@@ -10,11 +10,11 @@ namespace MPC.Model.Repository
     {
         private const int Header = 547493281;
 
-        long dataBlockOffset;
+        private long dataBlockOffset;
 
-        Stream stream;
+        private Stream stream;
 
-        ICrypter crypter;
+        private ICrypter crypter;
 
         private List<PasswordItem> items;
 
@@ -106,7 +106,7 @@ namespace MPC.Model.Repository
 
         #endregion
 
-        List<PasswordItem> ReadFile()
+        private List<PasswordItem> ReadFile()
         {
             var items = new List<PasswordItem>();
 
@@ -125,7 +125,7 @@ namespace MPC.Model.Repository
             return items;
         }
 
-        void WriteFile()
+        private void WriteFile()
         {
             stream.Position = dataBlockOffset;
 
