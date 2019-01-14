@@ -1,49 +1,12 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-namespace MPC.Model
+﻿namespace MPC.Model
 {
-    public class PasswordItem : INotifyPropertyChanged
+    public class PasswordItem
     {
-        private string site;
-        private string login;
-        private string password;
+        public virtual string Site { get; set; }
 
-        public virtual string Site
-        {
-            get => site; set
-            {
-                site = value;
-          //      OnPropertyChanged();
-            }
-        }
+        public virtual string Login { get; set; }
 
-        public virtual string Login
-        {
-            get => login;
-            set
-            {
-                login = value;
-              //  OnPropertyChanged();
-            }
-        }
-
-        public virtual string Password
-        {
-            get => password; set
-            {
-                password = value;
-               // OnPropertyChanged();
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public virtual void OnPropertyChanged([CallerMemberName]string propName = "")
-        {
-            var handler = PropertyChanged;
-            handler?.Invoke(this, new PropertyChangedEventArgs(propName));
-        }
+        public virtual string Password { get; set; }
 
         public override string ToString()
         {
