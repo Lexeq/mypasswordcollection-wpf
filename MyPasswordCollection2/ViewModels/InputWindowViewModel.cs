@@ -30,7 +30,6 @@ namespace MPC.ViewModels
         public InputWindowViewModel(bool passwordConfirmationRequired)
         {
             PasswordConfirmationRequired = passwordConfirmationRequired;
-            Title = "Enter password"; 
         }
     }
 }

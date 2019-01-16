@@ -1,22 +1,49 @@
-﻿using System.IO;
-
+﻿using System;
+using System.IO;
+using System.Security.Cryptography;
 namespace MPC.Model.Repository
 {
     class FileRepositoryManager : IRepositoryManager
     {
-        public IPasswordRepository GetRepository(string path, string password)
+        public IPasswordRepository Create(string path, string password)
         {
-            FileStream stream;
+            try
+            {
+                return FileRepository.Create(path, password);
+            }
+            catch (CryptographicException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("Can't create repository.", ex);
+            }
+        }
 
-            if (File.Exists(path))
+        public IPasswordRepository Get(string path, string password)
+        {
+            try
             {
-                stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                return FileRepository.Open(path, password);
             }
-            else
+            catch (CryptographicException)
             {
-                stream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+                throw;
             }
-            return new FileRepository(stream, password);
+            catch (Exception ex)
+            {
+                throw new RepositoryException("Can't open repository.", ex);
+            }
+        }
+
+        public void DeleteRepository(IPasswordRepository repository)
+        {
+            if (!(repository is FileRepository fileRepo))
+                throw new ArgumentException($"{nameof(FileRepositoryManager)} can delete only {nameof(FileRepository)}");
+            string path = fileRepo.Path;
+            fileRepo.Dispose();
+            File.Delete(path);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using MPC.Model;
 using System;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Security.Cryptography;
 using System.Windows.Input;
 using System.Linq;
@@ -68,6 +67,7 @@ namespace MPC.ViewModels
             get { return _passwordSrc; }
             set
             {
+                _passwordSrc?.Dispose();
                 _passwordSrc = value;
                 if (_passwordSrc != null)
                 {
@@ -95,6 +95,8 @@ namespace MPC.ViewModels
         #endregion
 
         #region Commands
+
+        #region AddCommand
         private ICommand _addCommand;
         public ICommand AddCommand
         {
@@ -105,6 +107,9 @@ namespace MPC.ViewModels
             }
             set { _addCommand = value; }
         }
+
+
+        #endregion
 
         private ICommand _removeCommand;
         public ICommand RemoveCommand
@@ -282,19 +287,7 @@ namespace MPC.ViewModels
             if (PasswordSource == null)
                 throw new NullReferenceException(nameof(PasswordSource));
 
-            //TODO: Implement
-
-            //var path = PasswordSource.FilePath;
-            //try
-            //{
-            //    File.Delete(path);
-            //}
-            //catch (Exception e)
-            //{
-            //    dialogs.ShowMessage($"Failed to remove file.\n [{e.Message}", "Error");
-            //}
-            PasswordSource = null;
-            searchHelper = null;
+            repoManager.DeleteRepository(PasswordSource);
         }
 
         private void ChangePassword()
@@ -312,8 +305,7 @@ namespace MPC.ViewModels
                 return;
             try
             {
-                //TODO: IMPLEMENT
-                // PasswordSource.ChangePassword(oldPassInputVM.Password, newPassInputVW.Password);
+                PasswordSource.ChangePassword(oldPassInputVM.Password, newPassInputVW.Password);
             }
             catch (Exception e)
             {
@@ -338,10 +330,7 @@ namespace MPC.ViewModels
                 {
                     try
                     {
-                        if (File.Exists(settings.FileName))
-                            File.Delete(settings.FileName);
-
-                        PasswordSource = repoManager.GetRepository(settings.FileName, inputVM.Password);
+                        PasswordSource = repoManager.Create(settings.FileName, inputVM.Password);
                     }
                     catch (Exception e)
                     {
@@ -372,7 +361,7 @@ namespace MPC.ViewModels
                         try
                         {
                             retryFlag = false;
-                            PasswordSource = repoManager.GetRepository(settings.FileName, inputVM.Password);
+                            PasswordSource = repoManager.Get(settings.FileName, inputVM.Password);
                         }
                         catch (CryptographicException)
                         {

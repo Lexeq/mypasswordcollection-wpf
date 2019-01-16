@@ -11,7 +11,7 @@ namespace MPC.Converters
         {
             if (value is bool)
                 return !(bool)value;
-            throw new ArgumentException("value must be bool", nameof(value));
+            throw new ArgumentException("Value must be bool.", nameof(value));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter,

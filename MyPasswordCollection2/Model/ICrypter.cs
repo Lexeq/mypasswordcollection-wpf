@@ -1,6 +1,6 @@
 ﻿namespace MPC.Model
 {
-    interface ICrypter
+    public interface ICrypter
     {
         byte[] Encrypt(byte[] data);
 

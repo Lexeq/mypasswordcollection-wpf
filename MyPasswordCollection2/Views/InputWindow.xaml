@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MPC"
         mc:Ignorable="d"
-        Title="{Binding Title, Mode=OneTime}" 
+        Title="{Binding Title}"
         Height="150"
         MaxHeight="200"
         Width="300"

@@ -8,6 +8,10 @@ namespace MPC.Model
 {
     interface IRepositoryManager
     {
-        IPasswordRepository GetRepository(string path, string password);
+        IPasswordRepository Get(string path, string password);
+
+        IPasswordRepository Create(string path, string password);
+
+        void DeleteRepository(IPasswordRepository repository);
     }
 }

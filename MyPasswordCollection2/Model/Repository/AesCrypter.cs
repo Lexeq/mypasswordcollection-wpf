@@ -1,44 +1,27 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
 namespace MPC.Model.Repository
 {
-    class AesCrypter : ICrypter
+    internal sealed class AesCrypter : ICrypter
     {
-        private const int SaltLength = 8;
+        private readonly byte[] salt = new byte[16]
+        { 32, 8, 22, 58, 67, 150, 213, 230, 200, 56, 115, 136, 142, 18, 217, 63 };
 
-        private static readonly Random random = new Random();
-
-        private string password;
-
-        public AesCrypter(string password)
+        private byte[] key;
+        private byte[] iv;
+        
+        public AesCrypter(string password, byte[] salt = null)
         {
             if (password == null)
                 throw new ArgumentNullException(nameof(password));
             if (password.Length == 0)
-                throw new ArgumentException(nameof(password));
+                throw new ArgumentException("Password can't be empty.", nameof(password));
+            if (salt != null)
+                this.salt = salt;
 
-            this.password = password;
-        }
-
-        public byte[] Decrypt(byte[] data)
-        {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
-
-            var salt = new byte[SaltLength];
-            Array.Copy(data, salt, SaltLength);
-
-            GetKeyAndIVFromPassword(salt, out byte[] key, out byte[] iv);
-
-            var encrypted = new byte[data.Length - salt.Length];
-
-            Array.Copy(data, salt.Length, encrypted, 0, encrypted.Length);
-            var decrypted = DecryptBytes(encrypted, key, iv);
-
-            return decrypted;
+            GetKeyAndIVFromPassword(password, this.salt);
         }
 
         public byte[] Encrypt(byte[] data)
@@ -46,94 +29,56 @@ namespace MPC.Model.Repository
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
 
-            var salt = GetRandomSalt();
-            GetKeyAndIVFromPassword(salt, out byte[] key, out byte[] iv);
-            var encrypted = EncryptBytes(data, key, iv);
-
-            byte[] res = new byte[salt.Length + encrypted.Length];
-            salt.CopyTo(res, 0);
-            encrypted.CopyTo(res, salt.Length);
-
-            return res;
-        }
-
-        private byte[] EncryptBytes(byte[] data, byte[] key, byte[] IV)
-        {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-            if (IV == null)
-                throw new ArgumentNullException(nameof(IV));
-
-            byte[] encrypted;
-
             using (Aes aes = Aes.Create())
             {
                 aes.Key = key;
-                aes.IV = IV;
+                aes.IV = iv;
 
-                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+                ICryptoTransform encryptor = aes.CreateEncryptor();
 
-                using (var msEncrypt = new MemoryStream())
+                using (var ms = new MemoryStream())
                 {
-                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                     {
-                        csEncrypt.Write(data, 0, data.Length);
+                        cs.Write(data, 0, data.Length);
                     }
-                    encrypted = msEncrypt.ToArray();
+                    return ms.ToArray();
                 }
             }
-            return encrypted;
         }
 
-        private byte[] DecryptBytes(byte[] data, byte[] key, byte[] IV)
+        public byte[] Decrypt(byte[] data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-            if (IV == null)
-                throw new ArgumentNullException(nameof(IV));
-
-            byte[] decr;
 
             using (Aes aes = Aes.Create())
             {
                 aes.Key = key;
-                aes.IV = IV;
+                aes.IV = iv;
 
-                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+                ICryptoTransform decryptor = aes.CreateDecryptor();
 
-                using (var msDecrypt = new MemoryStream(data))
+                using (var dataStream = new MemoryStream(data))
                 {
-                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    using (var cs = new CryptoStream(dataStream, decryptor, CryptoStreamMode.Read))
                     {
-                        using (MemoryStream ms = new MemoryStream())
+                        using (MemoryStream resultStream = new MemoryStream())
                         {
-                            csDecrypt.CopyTo(ms);
-                            decr = ms.ToArray();
+                            cs.CopyTo(resultStream);
+                            return resultStream.ToArray();
                         }
                     }
                 }
             }
-
-            return decr;
         }
 
-        private void GetKeyAndIVFromPassword(byte[] salt, out byte[] key, out byte[] iv)
+        private void GetKeyAndIVFromPassword(string password, byte[] salt)
         {
             Rfc2898DeriveBytes rfc2898DeriveBytes =
                 new Rfc2898DeriveBytes(password, salt);
             key = rfc2898DeriveBytes.GetBytes(32);
             iv = rfc2898DeriveBytes.GetBytes(16);
-        }
-
-        private byte[] GetRandomSalt()
-        {
-            var salt = new byte[SaltLength];
-            random.NextBytes(salt);
-            return salt;
         }
     }
 }

@@ -20,42 +20,42 @@ namespace MyPasswordColeectionTests.ModelTests
         {
             aesCrypter = new AesCrypter("TestPassword");
 
-            testData = new byte[256];
-            new Random(1234).NextBytes(testData);
+            testData = new byte[2560];
+            new Random(12345).NextBytes(testData);
         }
 
         [Test]
-        public void ThrowIfPasswordIsNull()
+        public void Ctor_NullArg_Throw()
         {
             Assert.Throws<ArgumentNullException>(() => new AesCrypter(null));
         }
 
         [Test]
-        public void ThrowIfPasswordIsEmpty()
+        public void Ctor_EmptyPassword_Throw()
         {
             Assert.Throws<ArgumentException>(() => new AesCrypter(string.Empty));
         }
 
         [Test]
-        public void ThrowIfEncryptNull()
+        public void Encrypt_NullArg_Throw()
         {
             Assert.Throws<ArgumentNullException>(() => aesCrypter.Encrypt(null));
         }
 
         [Test]
-        public void ThrowIfDecryptNull()
+        public void Decrypt_NullArg_Throw()
         {
             Assert.Throws<ArgumentNullException>(() => aesCrypter.Decrypt(null));
         }
 
         [Test]
-        public void EncryptTest()
+        public void Encrypt_Success()
         {
             Assert.DoesNotThrow(() => aesCrypter.Encrypt(testData));
         }
 
         [Test]
-        public void EncryptDecryptTest()
+        public void Decrypt_EncryptedData_SameData()
         {
             var encData = aesCrypter.Encrypt(testData);
             var decData = aesCrypter.Decrypt(encData);
@@ -64,10 +64,23 @@ namespace MyPasswordColeectionTests.ModelTests
         }
 
         [Test]
-        public void EncryptDecryptEmptyDataTest()
+        public void Decrypt_EncryptedEmptyData_SameData()
+        {
+            var data = Array.Empty<byte>();
+
+            var encData = aesCrypter.Encrypt(data);
+            var decData = aesCrypter.Decrypt(encData);
+
+            CollectionAssert.AreEqual(data, decData);
+        }
+
+        [Test]
+        public void Decrypt_NewCrypter_Sucssess()
         {
             var encData = aesCrypter.Encrypt(testData);
-            var decData = aesCrypter.Decrypt(encData);
+
+            var cr2 = new AesCrypter("TestPassword");
+            var decData = cr2.Decrypt(encData);
 
             CollectionAssert.AreEqual(testData, decData);
         }

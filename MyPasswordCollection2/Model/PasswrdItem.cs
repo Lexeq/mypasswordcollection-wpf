@@ -8,6 +8,13 @@
 
         public virtual string Password { get; set; }
 
+        public PasswordItem()
+        {
+            Site = "";
+            Login = "";
+            Password = "";
+        }
+
         public override string ToString()
         {
             return Site;

@@ -1,4 +1,5 @@
 ﻿using MPC.Model;
+using System;
 using System.Windows;
 using System.Windows.Input;
 
@@ -16,7 +17,7 @@ namespace MPC.ViewModels
 
         public PasswordItemViewModel(PasswordItem item)
         {
-            this.Item = item;
+            this.Item = item ?? throw new ArgumentNullException(nameof(item));
             SetProperties();
         }
 

@@ -14,7 +14,7 @@ namespace MyPasswordColeectionTests.ViewModelTest
     class PasswordItemVMTests
     {
         [Test]
-        public void AcceptChangesTest()
+        public void Accept_NewLogin_LoginChangrs()
         {
             string oldLogin = "login";
             string newLogin = "edited_login";
@@ -28,7 +28,7 @@ namespace MyPasswordColeectionTests.ViewModelTest
         }
 
         [Test]
-        public void DeclineChangesTest()
+        public void Decline_NewLogin_LoginNotChanged()
         {
             string oldLogin = "login";
             string newLogin = "edited_login";
@@ -42,13 +42,13 @@ namespace MyPasswordColeectionTests.ViewModelTest
         }
 
         [Test]
-        public void ThrowIfNullArgumentTest()
+        public void Ctor_NullArg_Throw()
         {
             Assert.Throws<ArgumentNullException>(() => new PasswordItemViewModel(null));
         }
 
         [Test, RequiresThread(System.Threading.ApartmentState.STA)]
-        public void CopyToClipboardTest()
+        public void CopyCommand_Text_TextInClipboard()
         {
             string site = "";
             PasswordItemViewModel vm = new PasswordItemViewModel(new PasswordItem { Site = site });
