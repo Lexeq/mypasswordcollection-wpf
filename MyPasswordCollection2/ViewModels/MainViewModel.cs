@@ -129,7 +129,7 @@ namespace MPC.ViewModels
             get
             {
                 return _clearCommand ??
-                   (_clearCommand = new Command(ClearCollection, () => PasswordSource != null));
+                   (_clearCommand = new Command(ClearRepository, () => PasswordSource != null));
             }
             set
             {
@@ -137,29 +137,29 @@ namespace MPC.ViewModels
             }
         }
 
-        private ICommand _deleteCollectionCommand;
-        public ICommand DeleteCollectionCommand
+        private ICommand _deleteRepositoryCommand;
+        public ICommand DeleteRepositoryCommand
         {
             get
             {
-                return _deleteCollectionCommand ??
-                    (_deleteCollectionCommand = new Command(DeleteCollection, () => PasswordSource != null));
+                return _deleteRepositoryCommand ??
+                    (_deleteRepositoryCommand = new Command(DeleteRepository, () => PasswordSource != null));
             }
             set
             {
-                _deleteCollectionCommand = value;
+                _deleteRepositoryCommand = value;
             }
         }
 
-        private ICommand _openFileCommand;
-        public ICommand OpenFileCommand
+        private ICommand _openRepositoryCommand;
+        public ICommand OpenRepositoryCommand
         {
             get
             {
-                return _openFileCommand ??
-                    (_openFileCommand = new Command(OpenFile));
+                return _openRepositoryCommand ??
+                    (_openRepositoryCommand = new Command(OpenRepository));
             }
-            set { _openFileCommand = value; }
+            set { _openRepositoryCommand = value; }
         }
 
         private ICommand _cancelAddingCommand;
@@ -184,15 +184,15 @@ namespace MPC.ViewModels
             set { _finishlAddingCommand = value; }
         }
 
-        private ICommand _newPasswordCollectionCommand;
-        public ICommand NewPasswordCollectionCommand
+        private ICommand _newRepositoryCommand;
+        public ICommand NewRepositoryCommand
         {
             get
             {
-                return _newPasswordCollectionCommand ??
-                    (_newPasswordCollectionCommand = new Command(NewFile));
+                return _newRepositoryCommand ??
+                    (_newRepositoryCommand = new Command(NewRepository));
             }
-            set { _newPasswordCollectionCommand = value; }
+            set { _newRepositoryCommand = value; }
         }
 
         private ICommand _changePasswordCommand;
@@ -229,11 +229,11 @@ namespace MPC.ViewModels
         }
 
         private ICommand _closeCommand;
-        public ICommand CloseFileCommand
+        public ICommand CloseRepositoryCommand
         {
             get
             {
-                return _closeCommand ?? (_closeCommand = new Command(CloseFile, () => PasswordSource != null));
+                return _closeCommand ?? (_closeCommand = new Command(CloseRepository, () => PasswordSource != null));
             }
         }
 
@@ -280,7 +280,7 @@ namespace MPC.ViewModels
             }
         }
 
-        private void ClearCollection()
+        private void ClearRepository()
         {
             try
             {
@@ -296,7 +296,7 @@ namespace MPC.ViewModels
             }
         }
 
-        private void DeleteCollection()
+        private void DeleteRepository()
         {
             try
             {      
@@ -329,7 +329,7 @@ namespace MPC.ViewModels
             }
         }
 
-        private void NewFile()
+        private void NewRepository()
         {
             var settings = new FileDialogSettings
             {
@@ -356,7 +356,7 @@ namespace MPC.ViewModels
             }
         }
 
-        private void OpenFile()
+        private void OpenRepository()
         {
             var settings = new FileDialogSettings
             {
@@ -392,7 +392,7 @@ namespace MPC.ViewModels
             }
         }
 
-        private void CloseFile()
+        private void CloseRepository()
         {
             PasswordSource.Dispose();
             PasswordSource = null;
