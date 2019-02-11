@@ -299,8 +299,9 @@ namespace MPC.ViewModels
         private void DeleteCollection()
         {
             try
-            {
+            {      
                 repoManager.DeleteRepository(PasswordSource);
+                PasswordSource = null;
             }
             catch (Exception ex)
             {
