@@ -19,21 +19,10 @@ namespace MPC.Model.Repository
                 throw new ArgumentNullException("PasswordItem is null");
 
             using (MemoryStream ms = new MemoryStream())
-            using (BinaryWriter writer = new BinaryWriter(ms, Encoding.Unicode))
             {
-                var siteBytes = crypter.Encrypt(Encoding.Unicode.GetBytes(item.Site));
-                var loginBytes = crypter.Encrypt(Encoding.Unicode.GetBytes(item.Login));
-                var passwordBytes = crypter.Encrypt(Encoding.Unicode.GetBytes(item.Password));
-
-                writer.Write(siteBytes.Length);
-                writer.Write(siteBytes);
-
-                writer.Write(loginBytes.Length);
-                writer.Write(loginBytes);
-
-                writer.Write(passwordBytes.Length);
-                writer.Write(passwordBytes);
-
+                WriteCryptedString(ms, item.Site);
+                WriteCryptedString(ms, item.Login);
+                WriteCryptedString(ms, item.Password);
                 return ms.ToArray();
             }
         }
@@ -49,19 +38,31 @@ namespace MPC.Model.Repository
             using (BinaryReader reader = new BinaryReader(ms, Encoding.Unicode))
             {
                 var siteLength = reader.ReadInt32();
-                item.Site = Encoding.Unicode.GetString(crypter.Decrypt(reader.ReadBytes(siteLength)));
+                item.Site = DecryptString(reader.ReadBytes(siteLength));
 
                 var loginLength = reader.ReadInt32();
-                item.Login = Encoding.Unicode.GetString(crypter.Decrypt(reader.ReadBytes(loginLength)));
+                item.Login = DecryptString(reader.ReadBytes(loginLength));
 
                 var passwordLength = reader.ReadInt32();
-                item.Password = Encoding.Unicode.GetString(crypter.Decrypt(reader.ReadBytes(passwordLength)));
+                item.Password = DecryptString(reader.ReadBytes(passwordLength));
 
                 if (ms.Position != bytes.Length)
                     throw new ArgumentException("Invalid data. Array is to big.");
             }
 
             return item;
+        }
+
+        private void WriteCryptedString(Stream stream, string str)
+        {
+            var bytes = crypter.Encrypt(Encoding.Unicode.GetBytes(str));
+            stream.Write(BitConverter.GetBytes(bytes.Length), 0, 4);
+            stream.Write(bytes,0,bytes.Length);
+        }
+
+        private string DecryptString(byte[] data)
+        {
+            return Encoding.Unicode.GetString(crypter.Decrypt(data));
         }
     }
 }
