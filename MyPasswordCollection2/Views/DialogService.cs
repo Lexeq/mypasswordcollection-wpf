@@ -1,8 +1,9 @@
 ﻿using Microsoft.Win32;
 using MPC.ViewModels;
+using System;
 using System.Windows;
 
-namespace MPC
+namespace MPC.Views
 {
     class DialogService : IDialogService
     {

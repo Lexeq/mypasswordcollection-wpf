@@ -21,6 +21,6 @@ namespace MPC.Model
 
         void Clear();
 
-        bool ChangePassword(string oldPassword, string newPassword);
+        void ChangePassword(string oldPassword, string newPassword);
     }
 }

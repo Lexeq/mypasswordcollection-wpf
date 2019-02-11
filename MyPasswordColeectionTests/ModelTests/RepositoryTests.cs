@@ -1,14 +1,7 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using MPC.Model.Repository;
 using System.Linq;
 using System.IO;
 using MPC.Model;
-using System.Collections;
-using System.Security.Cryptography;
 using MyPasswordColeectionTests.ModelTests.Utils;
 
 namespace MyPasswordColeectionTests.ModelTests
@@ -26,7 +19,7 @@ namespace MyPasswordColeectionTests.ModelTests
         }
 
         [Test]
-        public void Create_CountIsZero()
+        public void CreateNewRepositoryTest()
         {
             var repo = builder.Build();
 
@@ -83,7 +76,7 @@ namespace MyPasswordColeectionTests.ModelTests
         }
 
         [Test]
-        public void Ctor_Open_Test()
+        public void OpenExsistingRepositoryTest()
         {
             var origin = builder.WithItemsCount(5).WithPassword("test").Build();
 
@@ -125,7 +118,7 @@ namespace MyPasswordColeectionTests.ModelTests
             var repo = builder.WithPassword("correct").Build();
             var data = builder.Stream.ToArray();
 
-            Assert.Throws<CryptographicException>(() =>
+            Assert.Throws<PasswordException>(() =>
                 {
                     repo = new RepositorBaseBuilder().WithPassword("wrong")
                     .FromStream(new MemoryStream(data))
@@ -138,9 +131,7 @@ namespace MyPasswordColeectionTests.ModelTests
         {
             var repo = builder.WithPassword("old").WithItemsCount(1).Build();
 
-            var changed = repo.ChangePassword("old", "new");
-
-            Assert.True(changed);
+            Assert.DoesNotThrow(() => repo.ChangePassword("old", "new"));
 
             //re-open with new password
             Assert.DoesNotThrow(() =>
@@ -157,12 +148,10 @@ namespace MyPasswordColeectionTests.ModelTests
         {
             var repo = builder.WithPassword("old").WithItemsCount(1).Build();
 
-            var changed = repo.ChangePassword("wrong", "new");
-
-            Assert.False(changed);
+            Assert.Throws<PasswordException>(() => repo.ChangePassword("wrong", "new"));
 
             //re-open with wrong new password
-            Assert.Throws<CryptographicException>(() =>
+            Assert.Throws<PasswordException>(() =>
             {
                 new RepositorBaseBuilder()
                 .WithPassword("new")

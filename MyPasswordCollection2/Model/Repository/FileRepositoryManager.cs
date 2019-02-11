@@ -11,10 +11,6 @@ namespace MPC.Model.Repository
             {
                 return FileRepository.Create(path, password);
             }
-            catch (CryptographicException)
-            {
-                throw;
-            }
             catch (Exception ex)
             {
                 throw new RepositoryException("Can't create repository.", ex);
@@ -27,7 +23,7 @@ namespace MPC.Model.Repository
             {
                 return FileRepository.Open(path, password);
             }
-            catch (CryptographicException)
+            catch (PasswordException)
             {
                 throw;
             }

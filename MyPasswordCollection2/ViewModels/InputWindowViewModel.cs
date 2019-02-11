@@ -4,7 +4,7 @@ namespace MPC.ViewModels
 {
     class InputWindowViewModel : BaseViewModel
     {
-        public string Title { get; set; }
+        public string Text { get; set; }
 
         public bool DialogReult { get; private set; }
 

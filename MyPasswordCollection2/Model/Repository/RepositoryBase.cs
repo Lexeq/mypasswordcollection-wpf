@@ -36,7 +36,8 @@ namespace MPC.Model.Repository
             {
                 try
                 {
-                    CheckCrypter(crypter);
+                    if (!CheckCrypter(crypter))
+                        throw new PasswordException("Crypter checking is failed.");
                 }
                 catch
                 {
@@ -66,7 +67,14 @@ namespace MPC.Model.Repository
             {
                 var testBlockSize = reader.ReadInt32();
                 var testBlock = reader.ReadBytes(testBlockSize);
-                return crypter.Decrypt(testBlock).Length == 0;
+                try
+                {
+                    return crypter.Decrypt(testBlock).Length == 0;
+                }
+                catch (CryptographicException)
+                {
+                    return false;
+                }
             }
         }
 
@@ -107,27 +115,17 @@ namespace MPC.Model.Repository
             }
         }
 
-        public bool ChangePassword(string oldPassword, string newPassword)
+        public void ChangePassword(string oldPassword, string newPassword)
         {
             var oldCrypter = CreateCrypter(oldPassword);
 
-            try
-            {
-                if (CheckCrypter(oldCrypter))
-                {
-                    var crypter = new AesCrypter(newPassword);
-                    InitializeNewRepository(crypter);
-                    storage = new PasswordItemsStorage(stream, new CryptoConverter(new AesCrypter(newPassword)));
-                    storage.WriteAll(items);
-                    return true;
-                }
-            }
-            catch (CryptographicException)
-            {
-                return false;
-            }
+            if (!CheckCrypter(oldCrypter))
+                throw new PasswordException("Crypter checking is failed.");
 
-            return false;
+            var crypter = new AesCrypter(newPassword);
+            InitializeNewRepository(crypter);
+            storage = new PasswordItemsStorage(stream, new CryptoConverter(new AesCrypter(newPassword)));
+            storage.WriteAll(items);
         }
 
         public IEnumerator<PasswordItem> GetEnumerator()

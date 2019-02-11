@@ -1,4 +1,6 @@
-﻿namespace MPC.ViewModels
+﻿using System;
+
+namespace MPC.ViewModels
 {
     public interface IDialogService
     {

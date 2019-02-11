@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using System.Windows.Input;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace MPC.ViewModels
 {
@@ -254,7 +255,6 @@ namespace MPC.ViewModels
             windows = winManager;
             this.repoManager = repoManager;
             EditMode = false;
-            //  Pivm = new PasswordItemVewModel(null);
         }
         #endregion
 
@@ -267,39 +267,54 @@ namespace MPC.ViewModels
 
         private void RemovePassword(PasswordItemViewModel item)
         {
-            if(PasswordSource.Remove(item.Item))
+            try
             {
-                items.Remove(item);
+                if (PasswordSource.Remove(item.Item))
+                {
+                    items.Remove(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
             }
         }
 
         private void ClearCollection()
         {
-            if (PasswordSource == null)
-                throw new NullReferenceException(nameof(PasswordSource));
-
-            if (dialogs.ShowDialog("All passwords will be removed. Continue?", "Warning"))
-                PasswordSource.Clear();
+            try
+            {
+                if (dialogs.ShowDialog("All passwords will be removed. Continue?", "Warning"))
+                {
+                    PasswordSource.Clear();
+                    items.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
         }
 
         private void DeleteCollection()
         {
-            if (PasswordSource == null)
-                throw new NullReferenceException(nameof(PasswordSource));
-
-            repoManager.DeleteRepository(PasswordSource);
+            try
+            {
+                repoManager.DeleteRepository(PasswordSource);
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
         }
 
         private void ChangePassword()
         {
-            if (PasswordSource == null)
-                throw new NullReferenceException(nameof(PasswordSource));
-
-            var oldPassInputVM = new InputWindowViewModel(false) { Title = "Enter old password" };
+            var oldPassInputVM = new InputWindowViewModel(false) { Text = "Enter old password" };
             windows.ShowDialog(oldPassInputVM);
             if (oldPassInputVM.DialogReult == false)
                 return;
-            var newPassInputVW = new InputWindowViewModel(true) { Title = "Enter new password" };
+            var newPassInputVW = new InputWindowViewModel(true) { Text = "Enter new password" };
             windows.ShowDialog(newPassInputVW);
             if (newPassInputVW.DialogReult == false)
                 return;
@@ -307,9 +322,9 @@ namespace MPC.ViewModels
             {
                 PasswordSource.ChangePassword(oldPassInputVM.Password, newPassInputVW.Password);
             }
-            catch (Exception e)
+            catch (PasswordException)
             {
-                dialogs.ShowMessage($"Can't change password\n{e.Message}", "Failed");
+                dialogs.ShowMessage($"Can't change password.", "Failed");
             }
         }
 
@@ -334,7 +349,7 @@ namespace MPC.ViewModels
                     }
                     catch (Exception e)
                     {
-                        dialogs.ShowMessage($"Failed to initialize password collection:\n{e.Message}", "Error");
+                       HandleException(e);
                     }
                 }
             }
@@ -363,13 +378,13 @@ namespace MPC.ViewModels
                             retryFlag = false;
                             PasswordSource = repoManager.Get(settings.FileName, inputVM.Password);
                         }
-                        catch (CryptographicException)
+                        catch (PasswordException)
                         {
-                            retryFlag = dialogs.ShowDialog("Decryption failed. Please check the password. Try again?", "");
+                            retryFlag = dialogs.ShowDialog("Please check the password. Try again?", "Decryption failed");
                         }
                         catch (Exception e)
                         {
-                            dialogs.ShowMessage($"Failed to load password collection:\n{e.Message}", "Error");
+                            HandleException(e);
                         }
                     }
                 } while (retryFlag);
@@ -409,6 +424,11 @@ namespace MPC.ViewModels
                 var index = searchHelper.FindNext();
                 SelectedItem = index >= 0 ? Items[index] : null;
             }
+        }
+
+        private void HandleException(Exception ex)
+        {
+            windows.ShowDialog(new ExceptionViewModel(ex));
         }
 
         #endregion
