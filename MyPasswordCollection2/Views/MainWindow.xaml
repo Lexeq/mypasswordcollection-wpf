@@ -71,7 +71,7 @@
                     Header="_Open..."
                     InputGestureText="Ctrl + O" />
                 <MenuItem Command="{Binding CloseRepositoryCommand}" Header="_Close" />
-                <MenuItem Header="_Exit" />
+                <MenuItem Header="_Exit" Click="MenuItem_Click" />
             </MenuItem>
 
             <MenuItem Header="_Edit">
