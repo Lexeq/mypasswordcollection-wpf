@@ -2,6 +2,7 @@
 
 namespace MPC.Model
 {
+    [Serializable]
     public class RepositoryException: Exception
     {
         public RepositoryException() { }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPC.Model
 {
-    interface IRepositoryManager
+    public interface IRepositoryManager
     {
         IPasswordRepository Get(string path, string password);
 

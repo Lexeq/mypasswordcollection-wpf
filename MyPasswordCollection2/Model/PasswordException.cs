@@ -3,7 +3,7 @@
 namespace MPC.Model
 {
     [Serializable]
-    class PasswordException : Exception
+    public class PasswordException : Exception
     {
         public PasswordException() { }
 

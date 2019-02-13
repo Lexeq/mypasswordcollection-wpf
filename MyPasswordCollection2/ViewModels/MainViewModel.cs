@@ -1,10 +1,8 @@
 ﻿using MPC.Model;
 using System;
 using System.Collections.ObjectModel;
-using System.Security.Cryptography;
 using System.Windows.Input;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace MPC.ViewModels
 {
