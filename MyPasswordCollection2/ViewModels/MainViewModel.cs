@@ -367,8 +367,7 @@ namespace MPC.ViewModels
             var result = dialogs.ShowOpenFileDialog(settings);
             if (result)
             {
-                bool retryFlag = false;
-                do
+                while(true)
                 {
                     InputWindowViewModel inputVM = new InputWindowViewModel(false);
                     windows.ShowDialog(inputVM);
@@ -376,19 +375,22 @@ namespace MPC.ViewModels
                     {
                         try
                         {
-                            retryFlag = false;
                             PasswordSource = repoManager.Get(settings.FileName, inputVM.Password);
+                            return;
                         }
                         catch (PasswordException)
                         {
-                            retryFlag = dialogs.ShowDialog("Please check the password. Try again?", "Decryption failed");
+                            if (!dialogs.ShowDialog("Please check the password. Try again?", "Decryption failed"))
+                                return;
                         }
                         catch (Exception e)
                         {
                             HandleException(e);
                         }
                     }
-                } while (retryFlag);
+                    else
+                        return;
+                }
             }
         }
 
