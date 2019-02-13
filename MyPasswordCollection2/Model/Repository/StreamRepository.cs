@@ -8,7 +8,7 @@ using System.Text;
 
 namespace MPC.Model.Repository
 {
-    internal class RepositoryBase : IPasswordRepository
+    internal class StreamRepository : IPasswordRepository
     {
         private static ICrypter CreateCrypter(string password)
         {
@@ -22,7 +22,7 @@ namespace MPC.Model.Repository
         private bool disposed;
         private PasswordItemsStorage storage;
 
-        internal RepositoryBase(Stream stream, string password)
+        internal StreamRepository(Stream stream, string password)
         {
             this.stream = stream;
             origin = stream.Position;

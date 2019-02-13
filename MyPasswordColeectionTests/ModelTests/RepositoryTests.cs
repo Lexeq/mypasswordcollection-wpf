@@ -10,12 +10,12 @@ namespace MyPasswordColeectionTests.ModelTests
     [TestFixture]
     class RepositoryTests
     {
-        RepositorBaseBuilder builder;
+        StreamRepositoryBuilder builder;
 
         [SetUp]
         public void Init()
         {
-            builder = new RepositorBaseBuilder();
+            builder = new StreamRepositoryBuilder();
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace MyPasswordColeectionTests.ModelTests
         {
             var origin = builder.WithItemsCount(5).WithPassword("test").Build();
 
-            var opened = new RepositorBaseBuilder()
+            var opened = new StreamRepositoryBuilder()
                 .WithPassword("test")
                 .FromStream(new MemoryStream(builder.Stream.ToArray()))
                 .Build();
@@ -120,7 +120,7 @@ namespace MyPasswordColeectionTests.ModelTests
 
             Assert.Throws<PasswordException>(() =>
                 {
-                    repo = new RepositorBaseBuilder().WithPassword("wrong")
+                    repo = new StreamRepositoryBuilder().WithPassword("wrong")
                     .FromStream(new MemoryStream(data))
                     .Build();
                 });
@@ -136,7 +136,7 @@ namespace MyPasswordColeectionTests.ModelTests
             //re-open with new password
             Assert.DoesNotThrow(() =>
             {
-                new RepositorBaseBuilder()
+                new StreamRepositoryBuilder()
                 .WithPassword("new")
                 .FromStream(new MemoryStream(builder.Stream.ToArray()))
                 .Build();
@@ -153,7 +153,7 @@ namespace MyPasswordColeectionTests.ModelTests
             //re-open with wrong new password
             Assert.Throws<PasswordException>(() =>
             {
-                new RepositorBaseBuilder()
+                new StreamRepositoryBuilder()
                 .WithPassword("new")
                 .FromStream(new MemoryStream(builder.Stream.ToArray()))
                 .Build();

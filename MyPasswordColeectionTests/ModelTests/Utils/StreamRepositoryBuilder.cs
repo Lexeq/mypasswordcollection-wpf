@@ -4,46 +4,46 @@ using System.IO;
 
 namespace MyPasswordColeectionTests.ModelTests.Utils
 {
-    class RepositorBaseBuilder
+    class StreamRepositoryBuilder
     {
         private string password;
         private int itemsCount;
 
         public MemoryStream Stream { get; private set; }
 
-        public RepositorBaseBuilder()
+        public StreamRepositoryBuilder()
         {
             password = "test";
             itemsCount = 0;
             Stream = new MemoryStream();
         }
 
-        public RepositorBaseBuilder WithPassword(string password)
+        public StreamRepositoryBuilder WithPassword(string password)
         {
             this.password = password;
             return this;
         }
 
-        public RepositorBaseBuilder WithItemsCount(int count)
+        public StreamRepositoryBuilder WithItemsCount(int count)
         {
             itemsCount = count;
             return this;
         }
 
-        public RepositorBaseBuilder FromStream(MemoryStream stream)
+        public StreamRepositoryBuilder FromStream(MemoryStream stream)
         {
             Stream = stream;
             return this;
         }
 
-        public RepositoryBase Build()
+        public StreamRepository Build()
         {
-            var repo = new RepositoryBase(Stream, password);
+            var repo = new StreamRepository(Stream, password);
             FillRepository(repo);
             return repo;
         }
 
-        private void FillRepository(RepositoryBase repo)
+        private void FillRepository(StreamRepository repo)
         {
             for (int i = 1; i <= itemsCount; i++)
             {

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MPC.Model.Repository
 {
-    internal sealed class FileRepository : RepositoryBase
+    internal sealed class FileRepository : StreamRepository
     {
         private const int Header = 547493281;
 
