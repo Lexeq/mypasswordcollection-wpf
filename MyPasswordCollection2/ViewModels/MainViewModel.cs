@@ -367,7 +367,7 @@ namespace MPC.ViewModels
             var result = dialogs.ShowOpenFileDialog(settings);
             if (result)
             {
-                while(true)
+                while (true)
                 {
                     InputWindowViewModel inputVM = new InputWindowViewModel(false);
                     windows.ShowDialog(inputVM);
@@ -386,6 +386,7 @@ namespace MPC.ViewModels
                         catch (Exception e)
                         {
                             HandleException(e);
+                            return;
                         }
                     }
                     else
