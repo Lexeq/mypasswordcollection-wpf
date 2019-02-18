@@ -3,36 +3,47 @@ using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Linq;
+using System.Windows.Data;
+using System.Globalization;
 
 namespace MPC.ViewModels
 {
     class MainWindowViewModel : BaseViewModel
     {
         #region Fields
-        private SearchHelper searchHelper;
-
         private IDialogService dialogs;
 
         private IWindowsManager windows;
 
         private IRepositoryManager repoManager;
+
         #endregion
 
         #region Properties
-        private string _searchString;
-        public string SearchString
+        private string _filterString;
+        public string FilterString
         {
-            get { return _searchString ?? ""; }
+            get { return _filterString ?? ""; }
             set
             {
-                _searchString = value;
-                if (searchHelper != null)
+                _filterString = value;
+                if (CollectionView != null)
                 {
-                    searchHelper.SearchString = value;
-                    FindNext();
+                    CollectionView.CustomSort = new FilterSort(value);
+                    CollectionView.MoveCurrentToFirst();
                 }
+                OnPropertyChanged(nameof(FilterString));
+            }
+        }
 
-                OnPropertyChanged(nameof(SearchString));
+        private ListCollectionView lcv;
+        public ListCollectionView CollectionView
+        {
+            get => lcv;
+            set
+            {
+                lcv = value;
+                OnPropertyChanged();
             }
         }
 
@@ -68,15 +79,19 @@ namespace MPC.ViewModels
             {
                 _passwordSrc?.Dispose();
                 _passwordSrc = value;
+                FilterString = string.Empty;
                 if (_passwordSrc != null)
                 {
-                    searchHelper = new SearchHelper(_passwordSrc) { AutoReset = true, SearchString = SearchString };
                     Items = new ObservableCollection<PasswordItemViewModel>(value?.Select(x => new PasswordItemViewModel(x)));
+                    CollectionView = new ListCollectionView(Items)
+                    {
+                        Filter = Filter
+                    };
                 }
                 else
                 {
-                    searchHelper = null;
                     Items = null;
+                    CollectionView = null;
                 }
                 OnPropertyChanged(nameof(PasswordSource));
             }
@@ -215,17 +230,6 @@ namespace MPC.ViewModels
             set { _editCommand = value; }
         }
 
-        private ICommand _findCommand;
-        public ICommand FindCommand
-        {
-            get
-            {
-                return _findCommand ??
-                    (_findCommand = new Command(FindNext, () => PasswordSource != null));
-            }
-            set { _findCommand = value; }
-        }
-
         private ICommand _closeCommand;
         public ICommand CloseRepositoryCommand
         {
@@ -236,12 +240,20 @@ namespace MPC.ViewModels
         }
 
         private ICommand _showAboutCommand;
-
         public ICommand ShowAboutCommand
         {
             get
             {
                 return _showAboutCommand ?? (_showAboutCommand = new Command(() => windows.ShowDialog(new AboutViewModel())));
+            }
+        }
+
+        private ICommand _clearFilterCommand;
+        public ICommand ClearFilterCommand
+        {
+            get
+            {
+                return _clearFilterCommand ?? (_clearFilterCommand = new Command(() => FilterString = "", () => CollectionView != null));
             }
         }
         #endregion
@@ -297,7 +309,7 @@ namespace MPC.ViewModels
         private void DeleteRepository()
         {
             try
-            {      
+            {
                 repoManager.DeleteRepository(PasswordSource);
                 PasswordSource = null;
             }
@@ -348,7 +360,7 @@ namespace MPC.ViewModels
                     }
                     catch (Exception e)
                     {
-                       HandleException(e);
+                        HandleException(e);
                     }
                 }
             }
@@ -383,6 +395,7 @@ namespace MPC.ViewModels
                         }
                         catch (Exception e)
                         {
+                            PasswordSource = null;
                             HandleException(e);
                             return;
                         }
@@ -419,20 +432,16 @@ namespace MPC.ViewModels
             EditMode = false;
         }
 
-        private void FindNext()
-        {
-            if (PasswordSource != null && !string.IsNullOrEmpty(SearchString))
-            {
-                var index = searchHelper.FindNext();
-                SelectedItem = index >= 0 ? Items[index] : null;
-            }
-        }
-
         private void HandleException(Exception ex)
         {
             windows.ShowDialog(new ExceptionViewModel(ex));
         }
 
         #endregion
+
+        private bool Filter(object obj)
+        {
+            return CultureInfo.CurrentCulture.CompareInfo.IndexOf((obj as PasswordItemViewModel).Site, FilterString, CompareOptions.IgnoreCase) >= 0;
+        }
     }
 }

@@ -20,6 +20,7 @@
             <convs:InverseBooleanConverter />
             <BooleanToVisibilityConverter />
         </convs:MultiConverter>
+        <convs:NullToBoolConverter x:Key="NullToBoolConv"/>
     </Window.Resources>
 
     <Window.InputBindings>
@@ -87,11 +88,12 @@
             </MenuItem>
         </Menu>
 
-        <Grid Name="gridPasswordCollection" Grid.Row="1">
+        <Grid Name="gridPasswordCollection" Grid.Row="1" IsEnabled="{Binding CollectionView, Converter={StaticResource NullToBoolConv}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition />
-                <RowDefinition Height="auto" />
+                <RowDefinition Height="22" />
+                <RowDefinition Height="20"/>
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" Padding="5">
@@ -107,7 +109,7 @@
                         Margin="2,2,5,2"
                         HorizontalAlignment="Stretch"
                         VerticalContentAlignment="Center"
-                        Text="{Binding Path=SearchString, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{Binding Path=FilterString, UpdateSourceTrigger=PropertyChanged}" />
 
                     <Button
                         Grid.Column="1"
@@ -116,8 +118,8 @@
                         MaxWidth="70"
                         Margin="2"
                         Padding="5,2,5,2"
-                        Command="{Binding FindCommand}"
-                        Content="Find" />
+                        Command="{Binding ClearFilterCommand}"
+                        Content="Clear" />
                 </Grid>
             </Border>
 
@@ -126,10 +128,10 @@
                 Grid.Row="1"
                 Margin="7"
                 DisplayMemberPath="Site"
-                ItemsSource="{Binding Items}"
+                ItemsSource="{Binding CollectionView}"
                 SelectedItem="{Binding SelectedItem}" />
 
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="2" Grid.RowSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
