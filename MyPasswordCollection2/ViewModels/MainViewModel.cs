@@ -29,8 +29,14 @@ namespace MPC.ViewModels
                 _filterString = value;
                 if (CollectionView != null)
                 {
-                    CollectionView.CustomSort = new FilterSort(value);
+                    using (CollectionView.DeferRefresh())
+                    {
+                        var filter = new FilterHelper(value);
+                        CollectionView.CustomSort = filter;
+                        CollectionView.Filter = filter.Filter;
+                    }
                     CollectionView.MoveCurrentToFirst();
+
                 }
                 OnPropertyChanged(nameof(FilterString));
             }
@@ -83,10 +89,7 @@ namespace MPC.ViewModels
                 if (_passwordSrc != null)
                 {
                     Items = new ObservableCollection<PasswordItemViewModel>(value?.Select(x => new PasswordItemViewModel(x)));
-                    CollectionView = new ListCollectionView(Items)
-                    {
-                        Filter = Filter
-                    };
+                    CollectionView = new ListCollectionView(Items);
                 }
                 else
                 {
@@ -438,10 +441,5 @@ namespace MPC.ViewModels
         }
 
         #endregion
-
-        private bool Filter(object obj)
-        {
-            return CultureInfo.CurrentCulture.CompareInfo.IndexOf((obj as PasswordItemViewModel).Site, FilterString, CompareOptions.IgnoreCase) >= 0;
-        }
     }
 }

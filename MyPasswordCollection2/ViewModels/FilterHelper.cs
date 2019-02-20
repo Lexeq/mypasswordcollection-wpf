@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections;
+using System.Globalization;
 
 namespace MPC.ViewModels
 {
-    internal class FilterSort : IComparer
+    internal class FilterHelper : IComparer
     {
         private readonly string key;
 
-        public FilterSort(string key)
+        public bool Filter(object obj)
+        {
+            return CultureInfo.CurrentCulture.CompareInfo.IndexOf((obj as PasswordItemViewModel).Site, key, CompareOptions.IgnoreCase) >= 0;
+        }
+
+        public FilterHelper(string key)
         {
             this.key = key;
         }
