@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Linq;
 using System.Windows.Data;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace MPC.ViewModels
 {
@@ -16,6 +17,8 @@ namespace MPC.ViewModels
         private IWindowsManager windows;
 
         private IRepositoryManager repoManager;
+
+        private readonly List<PasswordItem> items;
 
         #endregion
 
@@ -85,31 +88,29 @@ namespace MPC.ViewModels
             {
                 _passwordSrc?.Dispose();
                 _passwordSrc = value;
-                FilterString = string.Empty;
                 if (_passwordSrc != null)
                 {
-                    Items = new ObservableCollection<PasswordItemViewModel>(value?.Select(x => new PasswordItemViewModel(x)));
-                    CollectionView = new ListCollectionView(Items);
+                    RefreshCollectionView();
+                    CollectionView = new ListCollectionView(items);
                 }
                 else
                 {
-                    Items = null;
+                    items.Clear();
                     CollectionView = null;
                 }
                 OnPropertyChanged(nameof(PasswordSource));
+                FilterString = string.Empty;
             }
         }
 
-        public ObservableCollection<PasswordItemViewModel> items;
-        public ObservableCollection<PasswordItemViewModel> Items
-        {
-            get => items; set
-            {
-                items = value;
-                OnPropertyChanged();
-            }
-        }
         #endregion
+
+        private void RefreshCollectionView()
+        {
+            items.Clear();
+            items.AddRange(PasswordSource);
+            CollectionView?.Refresh();
+        }
 
         #region Commands
 
@@ -268,6 +269,7 @@ namespace MPC.ViewModels
             windows = winManager;
             this.repoManager = repoManager;
             EditMode = false;
+            items = new List<PasswordItem>();
         }
         #endregion
 
@@ -284,7 +286,7 @@ namespace MPC.ViewModels
             {
                 if (PasswordSource.Remove(item.Item))
                 {
-                    items.Remove(item);
+                    RefreshCollectionView();
                 }
             }
             catch (Exception ex)
@@ -430,8 +432,7 @@ namespace MPC.ViewModels
         {
             SelectedItem.AcceptChanges();
             PasswordSource.Save(SelectedItem.Item);
-            if (!Items.Contains(SelectedItem))
-                Items.Add(SelectedItem);
+            RefreshCollectionView();
             EditMode = false;
         }
 

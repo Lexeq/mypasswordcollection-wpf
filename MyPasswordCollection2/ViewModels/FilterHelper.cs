@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MPC.Model;
+using System;
 using System.Collections;
 using System.Globalization;
 
@@ -10,7 +11,7 @@ namespace MPC.ViewModels
 
         public bool Filter(object obj)
         {
-            return CultureInfo.CurrentCulture.CompareInfo.IndexOf((obj as PasswordItemViewModel).Site, key, CompareOptions.IgnoreCase) >= 0;
+            return CultureInfo.CurrentCulture.CompareInfo.IndexOf((obj as PasswordItem).Site, key, CompareOptions.IgnoreCase) >= 0;
         }
 
         public FilterHelper(string key)
@@ -20,8 +21,8 @@ namespace MPC.ViewModels
 
         public int Compare(object x, object y)
         {
-            var xs = ((PasswordItemViewModel)x).Site.StartsWith(key, StringComparison.CurrentCultureIgnoreCase);
-            var ys = ((PasswordItemViewModel)y).Site.StartsWith(key, StringComparison.CurrentCultureIgnoreCase);
+            var xs = ((PasswordItem)x).Site.StartsWith(key, StringComparison.CurrentCultureIgnoreCase);
+            var ys = ((PasswordItem)y).Site.StartsWith(key, StringComparison.CurrentCultureIgnoreCase);
 
             if (xs == ys)
                 return 0;

@@ -21,6 +21,7 @@
             <BooleanToVisibilityConverter />
         </convs:MultiConverter>
         <convs:NullToBoolConverter x:Key="NullToBoolConv"/>
+        <convs:PasswordItemToViewModelConverter x:Key="PasswordToVMConv"/>
     </Window.Resources>
 
     <Window.InputBindings>
@@ -129,7 +130,7 @@
                 Margin="7"
                 DisplayMemberPath="Site"
                 ItemsSource="{Binding CollectionView}"
-                SelectedItem="{Binding SelectedItem}"
+                SelectedItem="{Binding SelectedItem, Converter={StaticResource PasswordToVMConv}}"
                 SelectionChanged="ListBox_SelectionChanged"/>
 
             <Grid Grid.Row="2" Grid.RowSpan="2">
