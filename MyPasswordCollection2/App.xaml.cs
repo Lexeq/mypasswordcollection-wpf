@@ -3,7 +3,9 @@ using MPC.ViewModels;
 using MPC.Views;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Windows;
+using System.Linq;
 
 namespace MPC
 {
@@ -15,7 +17,7 @@ namespace MPC
         protected override void OnStartup(StartupEventArgs e)
         {
             Current.Dispatcher.UnhandledException += LogException;
-            DialogService dService = new DialogService();
+            FileDialogService dService = new FileDialogService();
             WindowsManager winManager = new WindowsManager();
             FileRepositoryManager fileManager = new FileRepositoryManager();
 
@@ -23,13 +25,21 @@ namespace MPC
             winManager.Register<AboutViewModel, AboutWindow>();
             winManager.Register<ExceptionViewModel, ExceptionWindow>();
 
+            var mainVM = new MainWindowViewModel(dService, winManager, fileManager);
             MainWindow mw = new MainWindow()
             {
-                DataContext = new MainWindowViewModel(dService, winManager, fileManager)
+                DataContext = mainVM
             };
 
             this.MainWindow = mw;
             mw.Show();
+
+            var defPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "passwords.pw");
+            if (File.Exists(defPath))
+            {
+                var met = mainVM.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).First(mi => mi.Name == "OpenRepository" && mi.GetParameters().Length == 1);
+                met.Invoke(mainVM, new[] { defPath });
+            }
         }
 
         private void LogException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

@@ -1,12 +1,16 @@
 ﻿using Microsoft.Win32;
 using MPC.ViewModels;
-using System;
+using System.IO;
 using System.Windows;
 
 namespace MPC.Views
 {
-    class DialogService : IDialogService
+    class FileDialogService : IDialogService
     {
+        private readonly string Filter = "Password file(*.pw) | *.pw";
+
+        private readonly string InitialDirectory = Directory.GetCurrentDirectory();
+
         public void ShowMessage(string message, string caption)
         {
             MessageBox.Show(message, caption);
@@ -18,34 +22,36 @@ namespace MPC.Views
             return result == MessageBoxResult.Yes;
         }
 
-        public bool ShowOpenFileDialog(FileDialogSettings settings)
+        public bool ShowOpenDialog(out string path)
         {
+            path = string.Empty;
             OpenFileDialog ofd = new OpenFileDialog
             {
-                InitialDirectory = settings.InitialDirectory,
-                Filter = settings.Filter
+                InitialDirectory = InitialDirectory,
+                Filter = Filter
             };
             var dialogResult = ofd.ShowDialog();
             if (dialogResult == true)
             {
-                settings.FileName = ofd.FileName;
+                path = ofd.FileName;
                 return true;
             }
             else
                 return false;
         }
 
-        public bool ShowSaveFileDialog(FileDialogSettings settings)
+        public bool ShowSaveDialog(out string path)
         {
+            path = string.Empty;
             SaveFileDialog sfd = new SaveFileDialog
             {
-                InitialDirectory = settings.InitialDirectory,
-                Filter = settings.Filter
+                InitialDirectory = InitialDirectory,
+                Filter = Filter
             };
             var dialogResult = sfd.ShowDialog();
             if (dialogResult == true)
             {
-                settings.FileName = sfd.FileName;
+                path = sfd.FileName;
                 return true;
             }
             else

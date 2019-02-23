@@ -331,22 +331,16 @@ namespace MPC.ViewModels
 
         private void NewRepository()
         {
-            var settings = new FileDialogSettings
-            {
-                InitialDirectory = System.IO.Directory.GetCurrentDirectory(),
-                Filter = "Password file(*.pw) | *.pw"
-            };
-
-            var result = dialogs.ShowSaveFileDialog(settings);
+            var result = dialogs.ShowSaveDialog(out string path);
             if (result)
             {
-                InputWindowViewModel inputVM = new InputWindowViewModel(true);
-                windows.ShowDialog(inputVM);
-                if (inputVM.DialogReult)
+                InputWindowViewModel passwordInput = new InputWindowViewModel(true);
+                windows.ShowDialog(passwordInput);
+                if (passwordInput.DialogReult)
                 {
                     try
                     {
-                        PasswordSource = repoManager.Create(settings.FileName, inputVM.Password);
+                        PasswordSource = repoManager.Create(path, passwordInput.Password);
                     }
                     catch (Exception e)
                     {
@@ -358,24 +352,24 @@ namespace MPC.ViewModels
 
         private void OpenRepository()
         {
-            var settings = new FileDialogSettings
-            {
-                InitialDirectory = System.IO.Directory.GetCurrentDirectory(),
-                Filter = "Password file(*.pw) | *.pw"
-            };
-
-            var result = dialogs.ShowOpenFileDialog(settings);
+            var result = dialogs.ShowOpenDialog(out string path);
             if (result)
             {
+                OpenRepository(path);
+            }
+        }
+
+        private void OpenRepository(string path)
+        {
                 while (true)
                 {
-                    InputWindowViewModel inputVM = new InputWindowViewModel(false);
-                    windows.ShowDialog(inputVM);
-                    if (inputVM.DialogReult)
+                    InputWindowViewModel passwordInput = new InputWindowViewModel(false);
+                    windows.ShowDialog(passwordInput);
+                    if (passwordInput.DialogReult)
                     {
                         try
                         {
-                            PasswordSource = repoManager.Get(settings.FileName, inputVM.Password);
+                            PasswordSource = repoManager.Get(path, passwordInput.Password);
                             return;
                         }
                         catch (PasswordException)
@@ -393,7 +387,6 @@ namespace MPC.ViewModels
                     else
                         return;
                 }
-            }
         }
 
         private void CloseRepository()

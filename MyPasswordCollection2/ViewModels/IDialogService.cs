@@ -4,9 +4,9 @@ namespace MPC.ViewModels
 {
     public interface IDialogService
     {
-        bool ShowOpenFileDialog(FileDialogSettings settings);
+        bool ShowOpenDialog(out string path);
 
-        bool ShowSaveFileDialog(FileDialogSettings settings);
+        bool ShowSaveDialog(out string path);
 
         void ShowMessage(string message, string caption);
 
