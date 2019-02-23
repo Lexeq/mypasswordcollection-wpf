@@ -7,22 +7,22 @@ namespace MPC.ViewModels
 {
     internal class FilterHelper : IComparer
     {
-        private readonly string key;
+        public string Key { get; set; }
 
         public bool Filter(object obj)
         {
-            return CultureInfo.CurrentCulture.CompareInfo.IndexOf((obj as PasswordItem).Site, key, CompareOptions.IgnoreCase) >= 0;
+            return CultureInfo.CurrentCulture.CompareInfo.IndexOf((obj as PasswordItem).Site, Key, CompareOptions.IgnoreCase) >= 0;
         }
 
         public FilterHelper(string key)
         {
-            this.key = key;
+            this.Key = key;
         }
 
         public int Compare(object x, object y)
         {
-            var xs = ((PasswordItem)x).Site.StartsWith(key, StringComparison.CurrentCultureIgnoreCase);
-            var ys = ((PasswordItem)y).Site.StartsWith(key, StringComparison.CurrentCultureIgnoreCase);
+            var xs = ((PasswordItem)x).Site.StartsWith(Key, StringComparison.CurrentCultureIgnoreCase);
+            var ys = ((PasswordItem)y).Site.StartsWith(Key, StringComparison.CurrentCultureIgnoreCase);
 
             if (xs == ys)
                 return 0;

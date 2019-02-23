@@ -1,10 +1,8 @@
 ﻿using MPC.Model;
 using System;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Linq;
 using System.Windows.Data;
-using System.Globalization;
 using System.Collections.Generic;
 
 namespace MPC.ViewModels
@@ -18,8 +16,6 @@ namespace MPC.ViewModels
 
         private IRepositoryManager repoManager;
 
-        private readonly List<PasswordItem> items;
-
         #endregion
 
         #region Properties
@@ -29,17 +25,14 @@ namespace MPC.ViewModels
             get { return _filterString ?? ""; }
             set
             {
+                if (_filterString == value)
+                    return;
                 _filterString = value;
                 if (CollectionView != null)
                 {
-                    using (CollectionView.DeferRefresh())
-                    {
-                        var filter = new FilterHelper(value);
-                        CollectionView.CustomSort = filter;
-                        CollectionView.Filter = filter.Filter;
-                    }
+                    (CollectionView.CustomSort as FilterHelper).Key = value; ;
+                    CollectionView.Refresh();
                     CollectionView.MoveCurrentToFirst();
-
                 }
                 OnPropertyChanged(nameof(FilterString));
             }
@@ -90,12 +83,12 @@ namespace MPC.ViewModels
                 _passwordSrc = value;
                 if (_passwordSrc != null)
                 {
+                    var fh = new FilterHelper(FilterString);
+                    CollectionView = new ListCollectionView(_passwordSrc.ToList()) { CustomSort = fh, Filter = fh.Filter };
                     RefreshCollectionView();
-                    CollectionView = new ListCollectionView(items);
                 }
                 else
                 {
-                    items.Clear();
                     CollectionView = null;
                 }
                 OnPropertyChanged(nameof(PasswordSource));
@@ -104,13 +97,6 @@ namespace MPC.ViewModels
         }
 
         #endregion
-
-        private void RefreshCollectionView()
-        {
-            items.Clear();
-            items.AddRange(PasswordSource);
-            CollectionView?.Refresh();
-        }
 
         #region Commands
 
@@ -269,7 +255,6 @@ namespace MPC.ViewModels
             windows = winManager;
             this.repoManager = repoManager;
             EditMode = false;
-            items = new List<PasswordItem>();
         }
         #endregion
 
@@ -302,7 +287,7 @@ namespace MPC.ViewModels
                 if (dialogs.ShowDialog("All passwords will be removed. Continue?", "Warning"))
                 {
                     PasswordSource.Clear();
-                    items.Clear();
+                    RefreshCollectionView();
                 }
             }
             catch (Exception ex)
@@ -413,7 +398,6 @@ namespace MPC.ViewModels
 
         private void CloseRepository()
         {
-            PasswordSource.Dispose();
             PasswordSource = null;
         }
 
@@ -434,6 +418,14 @@ namespace MPC.ViewModels
             PasswordSource.Save(SelectedItem.Item);
             RefreshCollectionView();
             EditMode = false;
+        }
+
+        private void RefreshCollectionView()
+        {
+            var source = CollectionView.SourceCollection as List<PasswordItem>;
+            source.Clear();
+            source.AddRange(PasswordSource);
+            CollectionView.Refresh();
         }
 
         private void HandleException(Exception ex)
