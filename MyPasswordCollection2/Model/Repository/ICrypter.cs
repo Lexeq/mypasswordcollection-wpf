@@ -1,4 +1,4 @@
-﻿namespace MPC.Model
+﻿namespace MPC.Model.Repository
 {
     public interface ICrypter
     {
