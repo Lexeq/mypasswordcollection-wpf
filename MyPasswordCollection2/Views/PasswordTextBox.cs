@@ -59,9 +59,7 @@ namespace MPC.Views
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             e.Handled = true;
-            if (IsReadOnly)
-            { }
-            else if (e.Key == Key.Back)
+            if (e.Key == Key.Back)
                 RemoveText(true);
             else if (e.Key == Key.Delete)
                 RemoveText(false);
