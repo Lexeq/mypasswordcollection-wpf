@@ -105,6 +105,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBox
+                        x:Name="tbFilter"
                         Grid.Column="0"
                         Width="auto"
                         Margin="2,2,5,2"
@@ -113,6 +114,7 @@
                         Text="{Binding Path=FilterString, UpdateSourceTrigger=PropertyChanged}" />
 
                     <Button
+                        FocusManager.FocusedElement="{Binding ElementName=tbFilter}"
                         Grid.Column="1"
                         Width="auto"
                         MinWidth="30"
