@@ -111,7 +111,17 @@
                         Margin="2,2,5,2"
                         HorizontalAlignment="Stretch"
                         VerticalContentAlignment="Center"
-                        Text="{Binding Path=FilterString, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{Binding Path=FilterString, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.Resources>
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=tbFilter}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
 
                     <Button
                         FocusManager.FocusedElement="{Binding ElementName=tbFilter}"
