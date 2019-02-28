@@ -124,6 +124,7 @@
                     </TextBox>
 
                     <Button
+                        IsTabStop="False"
                         FocusManager.FocusedElement="{Binding ElementName=tbFilter}"
                         Grid.Column="1"
                         Width="auto"
