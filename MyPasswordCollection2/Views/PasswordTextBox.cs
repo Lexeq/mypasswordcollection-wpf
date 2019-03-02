@@ -1,11 +1,16 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace MPC.Views
 {
     public class PasswordTextBox : TextBox
     {
+        Popup capsWarningPopup;
+
         #region DependencyProperties
         public static readonly DependencyProperty UsePasswordCharProperty =
             DependencyProperty.Register(
@@ -28,6 +33,19 @@ namespace MPC.Views
                 typeof(char),
                 typeof(PasswordTextBox),
                 new PropertyMetadata('*', OnPropertyChanged));
+
+        public static readonly DependencyProperty ShowCapsLockWarningProperty =
+            DependencyProperty.Register(
+                nameof(ShowCapsLockWarning),
+                typeof(bool),
+                typeof(PasswordTextBox),
+                new PropertyMetadata(true));
+
+        public bool ShowCapsLockWarning
+        {
+            get { return (bool)GetValue(ShowCapsLockWarningProperty); }
+            set { SetValue(ShowCapsLockWarningProperty, value); }
+        }
 
         private static void OnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -56,6 +74,30 @@ namespace MPC.Views
 
         #endregion
 
+        #region Ctor
+        public PasswordTextBox()
+        {
+            Loaded += (ol, el) =>
+            {
+                capsWarningPopup = new Popup()
+                {
+                    Child = new Viewbox() { Child = new Label() { Content = "CapsLock is ON", Background = Brushes.Yellow } },
+                    PlacementTarget = this,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalOffset = ActualHeight,
+                    Placement = PlacementMode.Relative
+                };
+
+                var owner = Window.GetWindow(this);
+                if (owner != null)
+                    owner.LocationChanged += (o, e) => { capsWarningPopup.HorizontalOffset++; capsWarningPopup.HorizontalOffset--; }; //force to redraw popup
+                LostFocus += (o, e) => UpdateCapsWarning();
+                GotFocus += (o, e) => UpdateCapsWarning();
+            };
+        }
+        #endregion
+
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             e.Handled = true;
@@ -65,6 +107,8 @@ namespace MPC.Views
                 RemoveText(false);
             else if (e.Key == Key.V && e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control))
                 AddText(Clipboard.GetText());
+            else if (e.Key == Key.CapsLock)
+                UpdateCapsWarning();
             //disable new line, space and cut/copy
             else if (e.Key == Key.Return || e.Key == Key.Space ||
                 ((e.Key == Key.X || e.Key == Key.C) && e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control)))
@@ -136,6 +180,12 @@ namespace MPC.Views
         private string RemoveRange(string str, int start, int length)
         {
             return str.Remove(start) + str.Substring(start + length);
+        }
+
+        private void UpdateCapsWarning()
+        {
+            var KS = Keyboard.GetKeyStates(Key.CapsLock);
+            capsWarningPopup.IsOpen = ShowCapsLockWarning && IsFocused && IsEnabled && !IsReadOnly && UsePasswordChar && Keyboard.GetKeyStates(Key.CapsLock).HasFlag(KeyStates.Toggled);
         }
     }
 }
