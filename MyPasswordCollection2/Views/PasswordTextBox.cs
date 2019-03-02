@@ -113,7 +113,7 @@ namespace MPC.Views
             else if (e.Key == Key.Return || e.Key == Key.Space ||
                 ((e.Key == Key.X || e.Key == Key.C) && e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control)))
             { }
-            else
+            else if(!IsReadOnly)
                 e.Handled = false;
 
             base.OnPreviewKeyDown(e);
