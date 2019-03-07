@@ -109,11 +109,13 @@ namespace MPC.Views
                 AddText(Clipboard.GetText());
             else if (e.Key == Key.CapsLock)
                 UpdateCapsWarning();
-            //disable new line, space and cut/copy
-            else if (e.Key == Key.Return || e.Key == Key.Space ||
+            else if (e.Key == Key.Space)
+                AddText(" ");
+            //disable new line, and cut/copy
+            else if (e.Key == Key.Return ||
                 ((e.Key == Key.X || e.Key == Key.C) && e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control)))
             { }
-            else if(!IsReadOnly)
+            else if (!IsReadOnly)
                 e.Handled = false;
 
             base.OnPreviewKeyDown(e);
