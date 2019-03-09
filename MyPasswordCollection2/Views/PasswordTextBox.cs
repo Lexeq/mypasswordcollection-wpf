@@ -81,19 +81,12 @@ namespace MPC.Views
             {
                 capsWarningPopup = new Popup()
                 {
-                    Child = new Viewbox() { Child = new Label() { Content = "CapsLock is ON", Background = Brushes.Yellow } },
+                    Child = new HintView() { Text = "Caps Lock is on!" },
                     PlacementTarget = this,
-                    VerticalAlignment = VerticalAlignment.Bottom,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    VerticalOffset = ActualHeight,
-                    Placement = PlacementMode.Relative
+                    Placement = PlacementMode.Bottom,
+                    AllowsTransparency = true,
+                    StaysOpen = false
                 };
-
-                var owner = Window.GetWindow(this);
-                if (owner != null)
-                    owner.LocationChanged += (o, e) => { capsWarningPopup.HorizontalOffset++; capsWarningPopup.HorizontalOffset--; }; //force to redraw popup
-                LostFocus += (o, e) => UpdateCapsWarning();
-                GotFocus += (o, e) => UpdateCapsWarning();
             };
         }
         #endregion
@@ -176,6 +169,7 @@ namespace MPC.Views
         protected override void OnTextChanged(TextChangedEventArgs e)
         {
             e.Handled = true;
+            UpdateCapsWarning();
             base.OnTextChanged(e);
         }
 
@@ -184,10 +178,21 @@ namespace MPC.Views
             return str.Remove(start) + str.Substring(start + length);
         }
 
+        protected override void OnGotFocus(RoutedEventArgs e)
+        {
+            base.OnGotFocus(e);
+            UpdateCapsWarning();
+        }
+
+        protected override void OnLostFocus(RoutedEventArgs e)
+        {
+            base.OnLostFocus(e);
+            UpdateCapsWarning();
+        }
+
         private void UpdateCapsWarning()
         {
-            var KS = Keyboard.GetKeyStates(Key.CapsLock);
-            capsWarningPopup.IsOpen = ShowCapsLockWarning && IsFocused && IsEnabled && !IsReadOnly && UsePasswordChar && Keyboard.GetKeyStates(Key.CapsLock).HasFlag(KeyStates.Toggled);
+            capsWarningPopup.IsOpen = PlainText.Length == 0 && ShowCapsLockWarning && IsFocused && IsEnabled && !IsReadOnly && UsePasswordChar && Keyboard.GetKeyStates(Key.CapsLock).HasFlag(KeyStates.Toggled);
         }
     }
 }
