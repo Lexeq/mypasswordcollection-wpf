@@ -15,11 +15,11 @@ namespace MPC.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(passBox.Password))
+            if (string.IsNullOrEmpty(passBox.PlainText))
             {
                 MessageBox.Show("Password can't be empty.");
             }
-            else if (confBox.Visibility != Visibility.Visible || passBox.Password == confBox.Password)
+            else if (confBox.Visibility != Visibility.Visible || passBox.PlainText == confBox.PlainText)
             {
                 if (DataContext != null)
                 {
@@ -30,7 +30,7 @@ namespace MPC.Views
 
                     if (cmd != null && cmd.CanExecute(null))
                     {
-                        cmd.Execute(passBox.Password);
+                        cmd.Execute(passBox.PlainText);
                     }
                 }
 

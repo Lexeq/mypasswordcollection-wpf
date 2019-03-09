@@ -31,7 +31,7 @@
         <Style TargetType="TextBlock"
                BasedOn="{StaticResource BaseStyle}"/>
 
-        <Style TargetType="PasswordBox" 
+        <Style TargetType="local:PasswordTextBox" 
                BasedOn="{StaticResource BaseStyle}"/>
 
         <Style TargetType="Button" 
@@ -56,20 +56,22 @@
 
             <TextBlock Text="Enter password"/>
 
-            <PasswordBox Grid.Column="1" 
+            <local:PasswordTextBox Grid.Column="1" 
                          VerticalAlignment="Center"
                          x:Name="passBox" 
-                         TabIndex="0"/>
+                         TabIndex="0"
+                         UsePasswordChar="True"/>
 
             <TextBlock Grid.Row="1"
                        Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}"
                        Text="Confirm password"/>
 
-            <PasswordBox Grid.Row="1" 
+            <local:PasswordTextBox Grid.Row="1" 
                          Grid.Column="1" 
                          VerticalAlignment="Center"
                          x:Name="confBox"
                          TabIndex="1"
+                         UsePasswordChar="True"
                          Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}"/>
         </Grid>
 
