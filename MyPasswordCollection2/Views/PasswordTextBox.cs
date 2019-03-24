@@ -77,6 +77,7 @@ namespace MPC.Views
         #region Ctor
         public PasswordTextBox()
         {
+            CommandManager.AddPreviewCanExecuteHandler(this, new CanExecuteRoutedEventHandler(CanExecutePreview));
             Loaded += (ol, el) =>
             {
                 capsWarningPopup = new Popup()
@@ -88,8 +89,18 @@ namespace MPC.Views
                     StaysOpen = false
                 };
             };
+
         }
+
         #endregion
+
+        private void CanExecutePreview(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (e.Command == ApplicationCommands.Copy || e.Command == ApplicationCommands.Cut)
+            {
+                e.Handled = UsePasswordChar;
+            }
+        }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
@@ -104,10 +115,6 @@ namespace MPC.Views
                 UpdateCapsWarning();
             else if (e.Key == Key.Space)
                 AddText(" ");
-            //disable new line, and cut/copy
-            else if (e.Key == Key.Return ||
-                ((e.Key == Key.X || e.Key == Key.C) && e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control)))
-            { }
             else if (!IsReadOnly)
                 e.Handled = false;
 
@@ -127,12 +134,6 @@ namespace MPC.Views
             var carretIndex = CaretIndex;
             PlainText = PlainText != null ? PlainText.Insert(CaretIndex, text) : text;
             Update(carretIndex + text.Length);
-        }
-
-        protected override void OnContextMenuOpening(ContextMenuEventArgs e)
-        {
-            e.Handled = true;
-            base.OnContextMenuOpening(e);
         }
 
         private void RemoveText(bool back)
