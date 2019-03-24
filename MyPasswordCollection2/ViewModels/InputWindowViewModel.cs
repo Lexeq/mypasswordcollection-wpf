@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 
 namespace MPC.ViewModels
 {
@@ -10,19 +11,53 @@ namespace MPC.ViewModels
 
         public bool PasswordConfirmationRequired { get; }
 
-        public string Password { get; private set; }
+        public string Password
+        {
+            get => _password;
+            set
+            {
+                _password = value;
+                OnPropertyChanged();
+              //  Validate();
+            }
+        }
+
+        public string PasswordConfirmation
+        {
+            get => _passwordConfirmation;
+            set
+            {
+                _passwordConfirmation = value;
+                OnPropertyChanged();
+                Validate();
+            }
+        }
+
+        private bool Validate()
+        {
+            if (string.IsNullOrEmpty(Password))
+                throw new ApplicationException();
+            if (PasswordConfirmationRequired)
+            {
+                if (PasswordConfirmation != Password)
+                    throw new NotImplementedException();
+            }
+            return true;
+        }
 
         private ICommand _okCommand;
+        private string _passwordConfirmation;
+        private string _password;
+
         public ICommand OkCommand
         {
             get
             {
                 return _okCommand ??
-                  (_okCommand = new Command<string>((x) =>
+                  (_okCommand = new Command(() =>
                   {
                       DialogReult = true;
-                      Password = x;
-                  }));
+                  }, ()=> !string.IsNullOrEmpty(Password)));
             }
             set { _okCommand = value; }
         }
@@ -30,6 +65,7 @@ namespace MPC.ViewModels
         public InputWindowViewModel(bool passwordConfirmationRequired)
         {
             PasswordConfirmationRequired = passwordConfirmationRequired;
+            DialogReult = false;
         }
     }
 }

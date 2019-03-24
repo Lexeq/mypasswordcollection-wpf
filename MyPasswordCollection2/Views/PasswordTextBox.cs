@@ -51,7 +51,7 @@ namespace MPC.Views
         {
             var obj = d as PasswordTextBox;
             obj?.Update();
-
+            
         }
 
         public string PlainText
@@ -192,7 +192,8 @@ namespace MPC.Views
 
         private void UpdateCapsWarning()
         {
-            capsWarningPopup.IsOpen = PlainText.Length == 0 && ShowCapsLockWarning && IsFocused && IsEnabled && !IsReadOnly && UsePasswordChar && Keyboard.GetKeyStates(Key.CapsLock).HasFlag(KeyStates.Toggled);
+            if (capsWarningPopup != null)
+                capsWarningPopup.IsOpen = string.IsNullOrEmpty(PlainText) && ShowCapsLockWarning && IsFocused && IsEnabled && !IsReadOnly && UsePasswordChar && Keyboard.GetKeyStates(Key.CapsLock).HasFlag(KeyStates.Toggled);
         }
     }
 }
