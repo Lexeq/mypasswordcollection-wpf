@@ -311,11 +311,11 @@ namespace MPC.ViewModels
 
         private void ChangePassword()
         {
-            var oldPassInputVM = new InputWindowViewModel(false) { Text = "Enter old password" };
+            var oldPassInputVM = new InputWindowViewModel(false) { Caption = "Enter old password" };
             windows.ShowDialog(oldPassInputVM);
             if (oldPassInputVM.DialogReult == false)
                 return;
-            var newPassInputVW = new InputWindowViewModel(true) { Text = "Enter new password" };
+            var newPassInputVW = new InputWindowViewModel(true) { Caption = "Enter new password" };
             windows.ShowDialog(newPassInputVW);
             if (newPassInputVW.DialogReult == false)
                 return;

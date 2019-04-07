@@ -1,11 +1,13 @@
-﻿<Window x:Class="MPC.Views.InputWindow"
+﻿<Window
+    x:Class="MPC.Views.InputWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MPC.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:s="clr-namespace:System;assembly=mscorlib"
     x:Name="main"
-    Title="{Binding Text}"
+    Title="{Binding Caption}"
     Width="300"
     Height="150"
     MaxWidth="350"
@@ -27,18 +29,25 @@
 
         <Style BasedOn="{StaticResource BaseStyle}" TargetType="TextBlock" />
 
-        <Style BasedOn="{StaticResource BaseStyle}" TargetType="local:PasswordTextBox" />
+        <Style BasedOn="{StaticResource BaseStyle}" TargetType="local:PasswordTextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].Exception.Message}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
         <Style BasedOn="{StaticResource BaseStyle}" TargetType="Button" />
+
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition />
             <RowDefinition Height="auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Grid MaxHeight="100">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -59,7 +68,7 @@
                 <local:PasswordTextBox.PlainText>
                     <Binding Path="Password" UpdateSourceTrigger="PropertyChanged">
                         <Binding.ValidationRules>
-                            <ExceptionValidationRule/>
+                            <ExceptionValidationRule />
                         </Binding.ValidationRules>
                     </Binding>
                 </local:PasswordTextBox.PlainText>
@@ -77,11 +86,11 @@
                 VerticalAlignment="Center"
                 TabIndex="1"
                 UsePasswordChar="True"
-                Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}" >
+                Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}">
                 <local:PasswordTextBox.PlainText>
                     <Binding Path="PasswordConfirmation">
                         <Binding.ValidationRules>
-                            <ExceptionValidationRule/>
+                            <ExceptionValidationRule />
                         </Binding.ValidationRules>
                     </Binding>
                 </local:PasswordTextBox.PlainText>
@@ -94,8 +103,7 @@
                 Command="{Binding OkCommand}"
                 Content="OK"
                 IsDefault="True"
-                TabIndex="2">
-            </Button>
+                TabIndex="2" />
 
             <Button
                 Content="Cancel"

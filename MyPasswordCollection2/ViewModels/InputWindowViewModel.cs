@@ -5,7 +5,19 @@ namespace MPC.ViewModels
 {
     class InputWindowViewModel : BaseViewModel
     {
-        public string Text { get; set; }
+        private bool isCorrect;
+        private string _password;
+        private string _passwordConfirmation;
+        private ICommand _okCommand;
+
+        private bool IsInputCorrect
+        {
+            get => isCorrect; set
+            {
+                isCorrect = value;
+                OnPropertyChanged();
+            }
+        }
 
         public bool DialogReult { get; private set; }
 
@@ -17,8 +29,11 @@ namespace MPC.ViewModels
             set
             {
                 _password = value;
+                var isValid = ValidatePassword();
+                SetIsInputCorrect();
+                if (!isValid)
+                    throw new ArgumentException("Password can't be empty.");
                 OnPropertyChanged();
-              //  Validate();
             }
         }
 
@@ -28,26 +43,13 @@ namespace MPC.ViewModels
             set
             {
                 _passwordConfirmation = value;
+                var isValid = ValidateConfirmation();
+                SetIsInputCorrect();
+                if (!isValid)
+                    throw new ArgumentException("Passwords are not same.");
                 OnPropertyChanged();
-                Validate();
             }
         }
-
-        private bool Validate()
-        {
-            if (string.IsNullOrEmpty(Password))
-                throw new ApplicationException();
-            if (PasswordConfirmationRequired)
-            {
-                if (PasswordConfirmation != Password)
-                    throw new NotImplementedException();
-            }
-            return true;
-        }
-
-        private ICommand _okCommand;
-        private string _passwordConfirmation;
-        private string _password;
 
         public ICommand OkCommand
         {
@@ -57,9 +59,26 @@ namespace MPC.ViewModels
                   (_okCommand = new Command(() =>
                   {
                       DialogReult = true;
-                  }, ()=> !string.IsNullOrEmpty(Password)));
+                  }, () => IsInputCorrect));
             }
             set { _okCommand = value; }
+        }
+
+        public string Caption { get; set; }
+
+        private bool ValidatePassword()
+        {
+            return !string.IsNullOrEmpty(Password);
+        }
+
+        private bool ValidateConfirmation()
+        {
+            return Password == PasswordConfirmation;
+        }
+
+        private void SetIsInputCorrect()
+        {
+            IsInputCorrect = ValidatePassword() && (!PasswordConfirmationRequired || ValidateConfirmation());
         }
 
         public InputWindowViewModel(bool passwordConfirmationRequired)

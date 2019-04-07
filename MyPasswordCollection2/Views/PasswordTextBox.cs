@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -7,6 +8,7 @@ using System.Windows.Media;
 
 namespace MPC.Views
 {
+    [TemplatePart(Name = "PART_InfoPopup", Type = typeof(Popup))]
     public class PasswordTextBox : TextBox
     {
         Popup capsWarningPopup;
@@ -51,7 +53,7 @@ namespace MPC.Views
         {
             var obj = d as PasswordTextBox;
             obj?.Update();
-            
+
         }
 
         public string PlainText
@@ -75,21 +77,15 @@ namespace MPC.Views
         #endregion
 
         #region Ctor
+
+        static PasswordTextBox()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(PasswordTextBox),
+                new FrameworkPropertyMetadata(typeof(PasswordTextBox)));
+        }
         public PasswordTextBox()
         {
             CommandManager.AddPreviewCanExecuteHandler(this, new CanExecuteRoutedEventHandler(CanExecutePreview));
-            Loaded += (ol, el) =>
-            {
-                capsWarningPopup = new Popup()
-                {
-                    Child = new HintView() { Text = "Caps Lock is on!" },
-                    PlacementTarget = this,
-                    Placement = PlacementMode.Bottom,
-                    AllowsTransparency = true,
-                    StaysOpen = false
-                };
-            };
-
         }
 
         #endregion
@@ -123,6 +119,8 @@ namespace MPC.Views
 
         protected override void OnPreviewTextInput(TextCompositionEventArgs e)
         {
+            if (e.Text == "\r")
+                return;
             AddText(e.Text);
             e.Handled = true;
         }
@@ -189,6 +187,12 @@ namespace MPC.Views
         {
             base.OnLostFocus(e);
             UpdateCapsWarning();
+        }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            capsWarningPopup = GetTemplateChild("Part_InfoPopup") as Popup;
         }
 
         private void UpdateCapsWarning()
