@@ -1,4 +1,5 @@
 ﻿using MPC.Model;
+using MPC.Model.Repository;
 using System;
 
 namespace MyPasswordColeectionTests.ModelTests
