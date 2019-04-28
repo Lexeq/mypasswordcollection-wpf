@@ -30,11 +30,6 @@
         <Style BasedOn="{StaticResource BaseStyle}" TargetType="TextBlock" />
 
         <Style BasedOn="{StaticResource BaseStyle}" TargetType="local:PasswordTextBox">
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="true">
-                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].Exception.Message}" />
-                </Trigger>
-            </Style.Triggers>
         </Style>
 
         <Style BasedOn="{StaticResource BaseStyle}" TargetType="Button" />
@@ -68,7 +63,7 @@
                 <local:PasswordTextBox.PlainText>
                     <Binding Path="Password" UpdateSourceTrigger="PropertyChanged">
                         <Binding.ValidationRules>
-                            <ExceptionValidationRule />
+                            <NotifyDataErrorValidationRule />
                         </Binding.ValidationRules>
                     </Binding>
                 </local:PasswordTextBox.PlainText>
@@ -90,7 +85,7 @@
                 <local:PasswordTextBox.PlainText>
                     <Binding Path="PasswordConfirmation">
                         <Binding.ValidationRules>
-                            <ExceptionValidationRule />
+                            <NotifyDataErrorValidationRule />
                         </Binding.ValidationRules>
                     </Binding>
                 </local:PasswordTextBox.PlainText>

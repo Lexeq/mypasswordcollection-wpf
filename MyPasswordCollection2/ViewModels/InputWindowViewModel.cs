@@ -1,22 +1,32 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace MPC.ViewModels
 {
-    class InputWindowViewModel : BaseViewModel
+    class InputWindowViewModel : BaseViewModel, INotifyDataErrorInfo
     {
-        private bool isCorrect;
         private string _password;
         private string _passwordConfirmation;
         private ICommand _okCommand;
+        private bool justShown;
+        private readonly Dictionary<string, List<string>> errors;
 
-        private bool IsInputCorrect
+        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+
+        public bool HasErrors
         {
-            get => isCorrect; set
-            {
-                isCorrect = value;
-                OnPropertyChanged();
-            }
+            get => errors.Values.FirstOrDefault(l => l.Count > 0) != null;
+        }
+
+        public IEnumerable GetErrors(string propertyName)
+        {
+            errors.TryGetValue(propertyName, out List<string> errorsForProperty);
+            return errorsForProperty.ToArray();
         }
 
         public bool DialogReult { get; private set; }
@@ -29,10 +39,7 @@ namespace MPC.ViewModels
             set
             {
                 _password = value;
-                var isValid = ValidatePassword();
-                SetIsInputCorrect();
-                if (!isValid)
-                    throw new ArgumentException("Password can't be empty.");
+                ValidateInput();
                 OnPropertyChanged();
             }
         }
@@ -43,10 +50,7 @@ namespace MPC.ViewModels
             set
             {
                 _passwordConfirmation = value;
-                var isValid = ValidateConfirmation();
-                SetIsInputCorrect();
-                if (!isValid)
-                    throw new ArgumentException("Passwords are not same.");
+                ValidateInput();
                 OnPropertyChanged();
             }
         }
@@ -59,32 +63,52 @@ namespace MPC.ViewModels
                   (_okCommand = new Command(() =>
                   {
                       DialogReult = true;
-                  }, () => IsInputCorrect));
+                  }, ()=> !justShown && !HasErrors));
             }
             set { _okCommand = value; }
         }
 
         public string Caption { get; set; }
 
-        private bool ValidatePassword()
+        private void ValidateInput()
         {
-            return !string.IsNullOrEmpty(Password);
+            justShown = false;
+            //check password
+            var passwordErrors = errors[nameof(Password)];
+            passwordErrors.Clear();
+            if (string.IsNullOrEmpty(Password))
+                passwordErrors.Add("Password can't be empty.");
+            OnErrorsChanged(nameof(Password));
+
+            //check password confirmation
+            if (PasswordConfirmationRequired)
+            {
+                var confirmationErrors = errors[nameof(PasswordConfirmation)];
+                confirmationErrors.Clear();
+                if (PasswordConfirmation != Password)
+                    confirmationErrors.Add("Passwords are not same.");
+                OnErrorsChanged(nameof(PasswordConfirmation));
+            }
+         //   OnPropertyChanged(nameof(HasErrors));
         }
 
-        private bool ValidateConfirmation()
+        private void OnErrorsChanged(string propName)
         {
-            return Password == PasswordConfirmation;
+            var handler = ErrorsChanged;
+            handler?.Invoke(this, new DataErrorsChangedEventArgs(propName));
         }
-
-        private void SetIsInputCorrect()
-        {
-            IsInputCorrect = ValidatePassword() && (!PasswordConfirmationRequired || ValidateConfirmation());
-        }
-
         public InputWindowViewModel(bool passwordConfirmationRequired)
         {
             PasswordConfirmationRequired = passwordConfirmationRequired;
-            DialogReult = false;
+            _password = _passwordConfirmation = string.Empty; //fields shouldn't be null (in validation null == "" causes error for PasswordConfirmation)
+            errors = new Dictionary<string, List<string>>()
+            {
+                {nameof(Password), new List<string>() },
+                {nameof(PasswordConfirmation), new List<string>() }
+            };
+            justShown = true;
+
+            OnPropertyChanged(nameof(HasErrors));
         }
     }
 }

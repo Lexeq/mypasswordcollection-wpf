@@ -8,10 +8,10 @@ using System.Windows.Media;
 
 namespace MPC.Views
 {
-    [TemplatePart(Name = "PART_InfoPopup", Type = typeof(Popup))]
+    [TemplatePart(Name = "PART_CapsWarning", Type = typeof(UIElement))]
     public class PasswordTextBox : TextBox
     {
-        Popup capsWarningPopup;
+        private UIElement capsWarning;
 
         #region DependencyProperties
         public static readonly DependencyProperty UsePasswordCharProperty =
@@ -86,6 +86,8 @@ namespace MPC.Views
         public PasswordTextBox()
         {
             CommandManager.AddPreviewCanExecuteHandler(this, new CanExecuteRoutedEventHandler(CanExecutePreview));
+            Loaded += (o, e) => UpdateCapsWarning();
+            IsKeyboardFocusedChanged += (o, e) => UpdateCapsWarning();
         }
 
         #endregion
@@ -177,28 +179,23 @@ namespace MPC.Views
             return str.Remove(start) + str.Substring(start + length);
         }
 
-        protected override void OnGotFocus(RoutedEventArgs e)
-        {
-            base.OnGotFocus(e);
-            UpdateCapsWarning();
-        }
-
-        protected override void OnLostFocus(RoutedEventArgs e)
-        {
-            base.OnLostFocus(e);
-            UpdateCapsWarning();
-        }
-
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            capsWarningPopup = GetTemplateChild("Part_InfoPopup") as Popup;
+            capsWarning = GetTemplateChild("PART_CapsWarning") as UIElement;
         }
 
         private void UpdateCapsWarning()
         {
-            if (capsWarningPopup != null)
-                capsWarningPopup.IsOpen = string.IsNullOrEmpty(PlainText) && ShowCapsLockWarning && IsFocused && IsEnabled && !IsReadOnly && UsePasswordChar && Keyboard.GetKeyStates(Key.CapsLock).HasFlag(KeyStates.Toggled);
+            if (capsWarning != null)
+                capsWarning.Visibility =
+                    ShowCapsLockWarning
+                    && IsKeyboardFocused
+                    && IsEnabled
+                    && !IsReadOnly
+                    && UsePasswordChar
+                    && Keyboard.GetKeyStates(Key.CapsLock).HasFlag(KeyStates.Toggled)
+                    ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }
