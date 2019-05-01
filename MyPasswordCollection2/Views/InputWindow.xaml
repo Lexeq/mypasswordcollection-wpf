@@ -8,38 +8,22 @@
     xmlns:s="clr-namespace:System;assembly=mscorlib"
     x:Name="main"
     Title="{Binding Caption}"
-    Width="300"
-    Height="150"
-    MaxWidth="350"
-    MaxHeight="200"
+    Width="270"
+    Height="130"
     FocusManager.FocusedElement="{Binding ElementName=passBox}"
-    FontSize="15"
+    FontSize="14"
     SizeToContent="Height"
+    ResizeMode="NoResize"
     mc:Ignorable="d">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-
-        <Style x:Key="BaseStyle" TargetType="FrameworkElement">
-
-            <Setter Property="Margin" Value="10,5" />
-
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-
-        <Style BasedOn="{StaticResource BaseStyle}" TargetType="TextBlock" />
-
-        <Style BasedOn="{StaticResource BaseStyle}" TargetType="local:PasswordTextBox">
-        </Style>
-
-        <Style BasedOn="{StaticResource BaseStyle}" TargetType="Button" />
-
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
-            <RowDefinition />
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <Grid>
