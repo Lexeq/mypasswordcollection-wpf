@@ -100,6 +100,7 @@ namespace MPC.ViewModels
         public InputWindowViewModel(bool passwordConfirmationRequired)
         {
             PasswordConfirmationRequired = passwordConfirmationRequired;
+            Caption = string.Empty;
             _password = _passwordConfirmation = string.Empty; //fields shouldn't be null (in validation null == "" causes error for PasswordConfirmation)
             errors = new Dictionary<string, List<string>>()
             {

@@ -22,9 +22,9 @@ namespace MPC.Views
                 new FrameworkPropertyMetadata(false, OnPropertyChanged)
         );
 
-        public static readonly DependencyProperty PlainTextProperty =
+        public static readonly DependencyProperty PasswordProperty =
             DependencyProperty.Register(
-                nameof(PlainText),
+                nameof(Password),
                 typeof(string),
                 typeof(PasswordTextBox),
                 new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnPropertyChanged));
@@ -56,10 +56,10 @@ namespace MPC.Views
 
         }
 
-        public string PlainText
+        public string Password
         {
-            get { return (string)GetValue(PlainTextProperty); }
-            set { SetValue(PlainTextProperty, value); }
+            get { return (string)GetValue(PasswordProperty); }
+            set { SetValue(PasswordProperty, value); }
         }
 
         public bool UsePasswordChar
@@ -132,30 +132,30 @@ namespace MPC.Views
             if (SelectionLength != 0)
                 RemoveText(true);
             var carretIndex = CaretIndex;
-            PlainText = PlainText != null ? PlainText.Insert(CaretIndex, text) : text;
+            Password = Password != null ? Password.Insert(CaretIndex, text) : text;
             Update(carretIndex + text.Length);
         }
 
         private void RemoveText(bool back)
         {
-            if (PlainText == null || PlainText.Length == 0 ||
-                (back == false && CaretIndex == PlainText.Length) || (back && CaretIndex == 0 && SelectionLength == 0))
+            if (Password == null || Password.Length == 0 ||
+                (back == false && CaretIndex == Password.Length) || (back && CaretIndex == 0 && SelectionLength == 0))
                 return;
 
             var carretIndex = CaretIndex;
             if (SelectionLength != 0)
             {
-                PlainText = RemoveRange(PlainText, SelectionStart, SelectionLength);
+                Password = RemoveRange(Password, SelectionStart, SelectionLength);
                 Update(carretIndex);
             }
             else if (back)
             {
-                PlainText = RemoveRange(PlainText, CaretIndex - 1, 1);
+                Password = RemoveRange(Password, CaretIndex - 1, 1);
                 Update(carretIndex - 1);
             }
             else
             {
-                PlainText = RemoveRange(PlainText, CaretIndex, 1);
+                Password = RemoveRange(Password, CaretIndex, 1);
                 Update(carretIndex);
             }
         }
@@ -163,7 +163,7 @@ namespace MPC.Views
         private void Update(int newCaretIndex = -1)
         {
 
-            Text = PlainText == null ? string.Empty : UsePasswordChar ? new string(PasswordChar, PlainText.Length) : PlainText;
+            Text = Password == null ? string.Empty : UsePasswordChar ? new string(PasswordChar, Password.Length) : Password;
             CaretIndex = newCaretIndex < 0 ? Text.Length : newCaretIndex;
         }
 

@@ -8,7 +8,7 @@
     xmlns:s="clr-namespace:System;assembly=mscorlib"
     x:Name="main"
     Title="{Binding Caption}"
-    Width="270"
+    Width="250"
     Height="130"
     FocusManager.FocusedElement="{Binding ElementName=passBox}"
     FontSize="14"
@@ -36,7 +36,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Enter password" />
+            <TextBlock Text="Password" />
 
             <local:PasswordTextBox
                 x:Name="passBox"
@@ -44,18 +44,18 @@
                 VerticalAlignment="Center"
                 TabIndex="0"
                 UsePasswordChar="True">
-                <local:PasswordTextBox.PlainText>
+                <local:PasswordTextBox.Password>
                     <Binding Path="Password" UpdateSourceTrigger="PropertyChanged">
                         <Binding.ValidationRules>
                             <NotifyDataErrorValidationRule />
                         </Binding.ValidationRules>
                     </Binding>
-                </local:PasswordTextBox.PlainText>
+                </local:PasswordTextBox.Password>
             </local:PasswordTextBox>
 
             <TextBlock
                 Grid.Row="1"
-                Text="Confirm password"
+                Text="Confirmation"
                 Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}" />
 
             <local:PasswordTextBox
@@ -66,13 +66,13 @@
                 TabIndex="1"
                 UsePasswordChar="True"
                 Visibility="{Binding Path=PasswordConfirmationRequired, Converter={StaticResource BoolToVis}}">
-                <local:PasswordTextBox.PlainText>
+                <local:PasswordTextBox.Password>
                     <Binding Path="PasswordConfirmation">
                         <Binding.ValidationRules>
                             <NotifyDataErrorValidationRule />
                         </Binding.ValidationRules>
                     </Binding>
-                </local:PasswordTextBox.PlainText>
+                </local:PasswordTextBox.Password>
             </local:PasswordTextBox>
         </Grid>
 
