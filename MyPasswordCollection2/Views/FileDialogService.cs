@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using MPC.ViewModels;
 using System.IO;
-using System.Windows;
 
 namespace MPC.Views
 {
@@ -13,13 +12,12 @@ namespace MPC.Views
 
         public void ShowMessage(string message, string caption)
         {
-            MessageBox.Show(message, caption);
+            DialogWindow.Show(message, caption, DialogButtons.OK);
         }
 
         public bool ShowDialog(string message, string caption)
         {
-            var result = MessageBox.Show(message, caption, MessageBoxButton.YesNo);
-            return result == MessageBoxResult.Yes;
+            return DialogWindow.Show(message, caption, DialogButtons.YesNo);
         }
 
         public bool ShowOpenDialog(out string path)
