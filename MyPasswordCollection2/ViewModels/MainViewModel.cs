@@ -246,6 +246,12 @@ namespace MPC.ViewModels
                 return _clearFilterCommand ?? (_clearFilterCommand = new Command(() => FilterString = "", () => CollectionView != null));
             }
         }
+
+        private ICommand passwordGenerationCommand;
+        public ICommand PasswordGenerationCommand
+        {
+            get => passwordGenerationCommand ?? (passwordGenerationCommand = new Command(()=> windows.ShowDialog<PasswordGenerationViewModel>(new PasswordGenerationViewModel())));
+        }
         #endregion
 
         #region Ctor

@@ -24,6 +24,7 @@ namespace MPC
             winManager.Register<InputWindowViewModel, InputWindow>();
             winManager.Register<AboutViewModel, AboutWindow>();
             winManager.Register<ExceptionViewModel, ExceptionWindow>();
+            winManager.Register<PasswordGenerationViewModel, PasswordGenerationWindows>();
 
             var mainVM = new MainWindowViewModel(dService, winManager, fileManager);
             MainWindow mw = new MainWindow()

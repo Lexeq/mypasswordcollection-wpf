@@ -20,8 +20,8 @@
             <convs:InverseBooleanConverter />
             <BooleanToVisibilityConverter />
         </convs:MultiConverter>
-        <convs:NullToBoolConverter x:Key="NullToBoolConv"/>
-        <convs:PasswordItemToViewModelConverter x:Key="PasswordToVMConv"/>
+        <convs:NullToBoolConverter x:Key="NullToBoolConv" />
+        <convs:PasswordItemToViewModelConverter x:Key="PasswordToVMConv" />
     </Window.Resources>
 
     <Window.InputBindings>
@@ -73,10 +73,12 @@
                     Header="_Open..."
                     InputGestureText="Ctrl + O" />
                 <MenuItem Command="{Binding CloseRepositoryCommand}" Header="_Close" />
-                <MenuItem Header="_Exit" Click="MenuItem_Click" />
+                <MenuItem Click="MenuItem_Click" Header="_Exit" />
             </MenuItem>
 
             <MenuItem Header="_Edit">
+                <MenuItem Command="{Binding PasswordGenerationCommand}" Header="Password generation..." />
+
                 <MenuItem Command="{Binding ChangePasswordCommand}" Header="Change master password..." />
 
                 <MenuItem Command="{Binding ClearCommand}" Header="Clear collection" />
@@ -89,12 +91,15 @@
             </MenuItem>
         </Menu>
 
-        <Grid Name="gridPasswordCollection" Grid.Row="1" IsEnabled="{Binding CollectionView, Converter={StaticResource NullToBoolConv}}">
+        <Grid
+            Name="gridPasswordCollection"
+            Grid.Row="1"
+            IsEnabled="{Binding CollectionView, Converter={StaticResource NullToBoolConv}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition />
                 <RowDefinition Height="22" />
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="20" />
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" Padding="5">
@@ -116,7 +121,7 @@
                             <Style TargetType="TextBox">
                                 <Style.Triggers>
                                     <Trigger Property="IsEnabled" Value="True">
-                                        <Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=tbFilter}"/>
+                                        <Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=tbFilter}" />
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -124,8 +129,6 @@
                     </TextBox>
 
                     <Button
-                        IsTabStop="False"
-                        FocusManager.FocusedElement="{Binding ElementName=tbFilter}"
                         Grid.Column="1"
                         Width="auto"
                         MinWidth="30"
@@ -133,7 +136,9 @@
                         Margin="2"
                         Padding="5,2,5,2"
                         Command="{Binding ClearFilterCommand}"
-                        Content="Clear" />
+                        Content="Clear"
+                        FocusManager.FocusedElement="{Binding ElementName=tbFilter}"
+                        IsTabStop="False" />
                 </Grid>
             </Border>
 
@@ -144,7 +149,7 @@
                 DisplayMemberPath="Site"
                 ItemsSource="{Binding CollectionView}"
                 SelectedItem="{Binding SelectedItem, Converter={StaticResource PasswordToVMConv}}"
-                SelectionChanged="ListBox_SelectionChanged"/>
+                SelectionChanged="ListBox_SelectionChanged" />
 
             <Grid Grid.Row="2" Grid.RowSpan="2">
                 <Grid.ColumnDefinitions>
