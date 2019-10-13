@@ -10,44 +10,47 @@ namespace MPC.ViewModels
 {
     class PasswordGenerationViewModel : BaseViewModel
     {
-        private bool error;
+        private readonly PasswordGenerator generator = new PasswordGenerator();
+        private CharSet sets = 0;
+
+        private bool hasError;
 
         public bool HasError
         {
-            get { return error; }
+            get => hasError;
             set
             {
-                error = value;
+                hasError = value;
                 OnPropertyChanged();
             }
         }
 
         public bool UseDigits
         {
-            get => useDigits;
+            get => sets.HasFlag(CharSet.Digits);
             set
             {
-                useDigits = value;
+                SetFlag(CharSet.Digits, value);
                 OnPropertyChanged();
             }
         }
 
         public bool UseSymbols
         {
-            get => useSymbols;
+            get => sets.HasFlag(CharSet.Symbols);
             set
             {
-                useSymbols = value;
+                SetFlag(CharSet.Symbols, value);
                 OnPropertyChanged();
             }
         }
 
         public bool UseLetters
         {
-            get => useLetters;
+            get => sets.HasFlag(CharSet.AllLetters);
             set
             {
-                useLetters = value;
+                SetFlag(CharSet.AllLetters, value);
                 OnPropertyChanged();
             }
         }
@@ -77,9 +80,6 @@ namespace MPC.ViewModels
         }
 
         private ICommand generateCommand;
-        private bool useDigits;
-        private bool useSymbols;
-        private bool useLetters;
 
         public ICommand GenerateCommand
         {
@@ -94,23 +94,16 @@ namespace MPC.ViewModels
             PasswordLength = 8;
         }
 
+        private void SetFlag(CharSet set, bool isDefined)
+        {
+            sets = isDefined ? sets | set : sets & ~set;
+        }
+
         private void GenerateNew()
         {
-            CharSet set = 0;
-            HasError = false;
-            if (UseDigits)
-                set |= CharSet.Digits;
-            if (UseLetters)
-                set |= CharSet.AllLetters;
-            if (UseSymbols)
-                set |= CharSet.Symbols;
-            if (set == 0)
-            {
-                HasError = true;
+            if (HasError = (sets == 0))
                 return;
-            }
-            var gen = new PasswordGenerator();
-            GeneratedPassword = gen.Generate(set, PasswordLength);
+            GeneratedPassword = generator.Generate(sets, PasswordLength);
         }
     }
 }
