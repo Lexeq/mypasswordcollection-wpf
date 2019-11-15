@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace MPC.ViewModels
@@ -83,7 +84,15 @@ namespace MPC.ViewModels
 
         public ICommand GenerateCommand
         {
-            get { return generateCommand ?? (generateCommand = new Command(GenerateNew)); }
+            get { return generateCommand ?? (generateCommand = new Command(GenerateNew, () => !HasError)); }
+        }
+
+
+        private ICommand copyCommand;
+
+        public ICommand CopyCommand
+        {
+            get { return copyCommand ?? (copyCommand = new Command(CopyToClipBoard, () => !string.IsNullOrEmpty(GeneratedPassword))); }
         }
 
         public PasswordGenerationViewModel()
@@ -97,13 +106,17 @@ namespace MPC.ViewModels
         private void SetFlag(CharSet set, bool isDefined)
         {
             sets = isDefined ? sets | set : sets & ~set;
+            HasError = sets == 0;
         }
 
         private void GenerateNew()
         {
-            if (HasError = (sets == 0))
-                return;
             GeneratedPassword = generator.Generate(sets, PasswordLength);
+        }
+
+        public void CopyToClipBoard()
+        {
+            Clipboard.SetText(GeneratedPassword);
         }
     }
 }
