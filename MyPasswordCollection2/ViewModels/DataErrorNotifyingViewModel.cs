@@ -22,6 +22,8 @@ namespace MPC.ViewModels
 
         public IEnumerable GetErrors(string propertyName)
         {
+            propertyName = propertyName ?? string.Empty;
+
             if (!errors.TryGetValue(propertyName, out var errorsForProperty))
             {
                 yield break;
