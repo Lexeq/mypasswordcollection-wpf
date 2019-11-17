@@ -14,7 +14,20 @@ namespace MPC.ViewModels
         private readonly PasswordGenerator generator = new PasswordGenerator();
         private CharSet sets = 0;
 
-        string errorText;
+        private string errorText;
+        private int passwordLength;
+        private string generatedPassword;
+        private ICommand generateCommand;
+        private ICommand copyCommand;
+
+        public PasswordGenerationViewModel()
+        {
+            UseDigits = true;
+            UseLetters = true;
+            UseSymbols = true;
+            PasswordLength = 8;
+        }
+
         public string ErrorText
         {
             get => errorText;
@@ -55,8 +68,6 @@ namespace MPC.ViewModels
             }
         }
 
-        private string generatedPassword;
-
         public string GeneratedPassword
         {
             get => generatedPassword;
@@ -67,8 +78,6 @@ namespace MPC.ViewModels
                 Validate();
             }
         }
-
-        private int passwordLength;
 
         public int PasswordLength
         {
@@ -90,27 +99,19 @@ namespace MPC.ViewModels
             }
         }
 
-        private ICommand generateCommand;
-
         public ICommand GenerateCommand
         {
             get { return generateCommand ?? (generateCommand = new Command(GenerateNew, () => !HasErrors)); }
         }
-
-
-        private ICommand copyCommand;
 
         public ICommand CopyCommand
         {
             get { return copyCommand ?? (copyCommand = new Command(CopyToClipBoard, () => !string.IsNullOrEmpty(GeneratedPassword))); }
         }
 
-        public PasswordGenerationViewModel()
+        public void CopyToClipBoard()
         {
-            UseDigits = true;
-            UseLetters = true;
-            UseSymbols = true;
-            PasswordLength = 8;
+            Clipboard.SetText(GeneratedPassword);
         }
 
         private void SetFlag(CharSet set, bool isDefined)
@@ -124,11 +125,6 @@ namespace MPC.ViewModels
             GeneratedPassword = generator.Generate(sets, PasswordLength);
         }
 
-        public void CopyToClipBoard()
-        {
-            Clipboard.SetText(GeneratedPassword);
-        }
-
         private void Validate()
         {
             ClearAllErrors();
@@ -138,6 +134,7 @@ namespace MPC.ViewModels
                 AddPropertyError("Password length to small", nameof(PasswordLength));
             UpdateErrorText();
         }
+
         private void UpdateErrorText()
         {
             ErrorText = GetErrors(GetPropertiesWithErrors().FirstOrDefault()).Cast<string>().FirstOrDefault();
