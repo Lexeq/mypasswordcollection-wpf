@@ -9,19 +9,18 @@ using System.Windows.Input;
 
 namespace MPC.ViewModels
 {
-    class PasswordGenerationViewModel : BaseViewModel
+    class PasswordGenerationViewModel : DataErrorNotifyingViewModel
     {
         private readonly PasswordGenerator generator = new PasswordGenerator();
         private CharSet sets = 0;
 
-        private bool hasError;
-
-        public bool HasError
+        string errorText;
+        public string ErrorText
         {
-            get => hasError;
+            get => errorText;
             set
             {
-                hasError = value;
+                errorText = value;
                 OnPropertyChanged();
             }
         }
@@ -65,6 +64,7 @@ namespace MPC.ViewModels
             {
                 generatedPassword = value;
                 OnPropertyChanged();
+                Validate();
             }
         }
 
@@ -76,6 +76,16 @@ namespace MPC.ViewModels
             set
             {
                 passwordLength = value;
+                if (value < 1)
+                {
+                    AddPropertyError("To small");
+                    OnPropertyChanged(nameof(ErrorText));
+                }
+
+                else
+                {
+                    ClearPropertyErrors();
+                }
                 OnPropertyChanged();
             }
         }
@@ -84,7 +94,7 @@ namespace MPC.ViewModels
 
         public ICommand GenerateCommand
         {
-            get { return generateCommand ?? (generateCommand = new Command(GenerateNew, () => !HasError)); }
+            get { return generateCommand ?? (generateCommand = new Command(GenerateNew, () => !HasErrors)); }
         }
 
 
@@ -106,7 +116,7 @@ namespace MPC.ViewModels
         private void SetFlag(CharSet set, bool isDefined)
         {
             sets = isDefined ? sets | set : sets & ~set;
-            HasError = sets == 0;
+            Validate();
         }
 
         private void GenerateNew()
@@ -117,6 +127,20 @@ namespace MPC.ViewModels
         public void CopyToClipBoard()
         {
             Clipboard.SetText(GeneratedPassword);
+        }
+
+        private void Validate()
+        {
+            ClearAllErrors();
+            if (sets == 0)
+                AddPropertyError("No char set selected", nameof(sets));
+            if (passwordLength < 1)
+                AddPropertyError("Password length to small", nameof(PasswordLength));
+            UpdateErrorText();
+        }
+        private void UpdateErrorText()
+        {
+            ErrorText = GetErrors(GetPropertiesWithErrors().FirstOrDefault()).Cast<string>().FirstOrDefault();
         }
     }
 }
