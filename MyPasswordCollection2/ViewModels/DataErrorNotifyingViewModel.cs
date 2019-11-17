@@ -82,5 +82,13 @@ namespace MPC.ViewModels
             OnPropertyChanged(nameof(HasErrors));
             OnErrorsChanged(new DataErrorsChangedEventArgs(propName));
         }
+
+        protected IEnumerable<string> GetPropertiesWithErrors()
+        {
+            foreach (var propName in errors.Keys)
+            {
+                yield return propName;
+            }
+        }
     }
 }
