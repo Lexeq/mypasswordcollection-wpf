@@ -187,15 +187,15 @@ namespace MPC.ViewModels
             set { _finishlAddingCommand = value; }
         }
 
-        private ICommand _newRepositoryCommand;
-        public ICommand NewRepositoryCommand
+        private ICommand _createRepositoryCommand;
+        public ICommand CreateRepositoryCommand
         {
             get
             {
-                return _newRepositoryCommand ??
-                    (_newRepositoryCommand = new Command(NewRepository));
+                return _createRepositoryCommand ??
+                    (_createRepositoryCommand = new Command(CreateRepository));
             }
-            set { _newRepositoryCommand = value; }
+            set { _createRepositoryCommand = value; }
         }
 
         private ICommand _changePasswordCommand;
@@ -335,7 +335,7 @@ namespace MPC.ViewModels
             }
         }
 
-        private void NewRepository()
+        private void CreateRepository()
         {
             var result = dialogs.ShowSaveDialog(out string path);
             if (result)

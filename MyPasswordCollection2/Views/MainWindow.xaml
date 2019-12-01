@@ -32,7 +32,7 @@
 
         <KeyBinding
             Key="N"
-            Command="{Binding NewRepositoryCommand}"
+            Command="{Binding CreateRepositoryCommand}"
             Modifiers="Ctrl" />
     </Window.InputBindings>
 
@@ -64,7 +64,7 @@
 
             <MenuItem Header="_File">
                 <MenuItem
-                    Command="{Binding NewRepositoryCommand}"
+                    Command="{Binding CreateRepositoryCommand}"
                     Header="_New..."
                     InputGestureText="Ctrl + N" />
 
