@@ -337,13 +337,14 @@ namespace MPC.ViewModels
 
         private void CreateRepository()
         {
-            var result = dialogs.ShowSaveDialog(out string path);
-            if (result)
+            InputWindowViewModel passwordInput = new InputWindowViewModel(true);
+            windows.ShowDialog(passwordInput);
+            if (passwordInput.DialogReult)
             {
-                InputWindowViewModel passwordInput = new InputWindowViewModel(true);
-                windows.ShowDialog(passwordInput);
-                if (passwordInput.DialogReult)
+                var result = dialogs.ShowSaveDialog(out string path);
+                if (result)
                 {
+
                     try
                     {
                         PasswordSource = repoManager.Create(path, passwordInput.Password);
