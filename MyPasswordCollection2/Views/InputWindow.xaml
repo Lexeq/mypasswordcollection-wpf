@@ -6,7 +6,8 @@
     xmlns:local="clr-namespace:MPC.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:s="clr-namespace:System;assembly=mscorlib"
-    x:Name="main"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=system.windows.interactivity"
+    x:Name="window"
     Title="{Binding Caption}"
     Width="250"
     Height="130"
@@ -15,10 +16,16 @@
     SizeToContent="Height"
     ResizeMode="NoResize"
     mc:Ignorable="d">
-
+    <i:Interaction.Triggers>
+        <i:EventTrigger SourceObject="{Binding ElementName=window, Path=DataContext}" EventName="ValidationPassed">
+            <local:CloseWindowTriggerAction/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </Window.Resources>
+
 
     <Grid>
         <Grid.RowDefinitions>
@@ -78,7 +85,6 @@
 
         <UniformGrid Grid.Row="1" Columns="2">
             <Button
-                Click="Button_Click"
                 Command="{Binding OkCommand}"
                 Content="OK"
                 IsDefault="True"
