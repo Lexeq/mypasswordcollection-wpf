@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -86,8 +87,24 @@ namespace MPC.Views
         public PasswordTextBox()
         {
             CommandManager.AddPreviewCanExecuteHandler(this, new CanExecuteRoutedEventHandler(CanExecutePreview));
+            CommandManager.AddPreviewExecutedHandler(this, new ExecutedRoutedEventHandler(ExecutePreview));
             Loaded += (o, e) => UpdateCapsWarning();
             IsKeyboardFocusedChanged += (o, e) => UpdateCapsWarning();
+        }
+
+        private void ExecutePreview(object sender, ExecutedRoutedEventArgs e)
+        {
+            if(e.Command == ApplicationCommands.Cut)
+            {
+                Clipboard.SetText(SelectedText);
+                RemoveText(true);
+                e.Handled = true;
+            }
+            if(e.Command == ApplicationCommands.Paste)
+            {
+                AddText(Clipboard.GetText());
+                e.Handled = true;
+            }
         }
 
         #endregion
@@ -107,13 +124,11 @@ namespace MPC.Views
                 RemoveText(true);
             else if (e.Key == Key.Delete)
                 RemoveText(false);
-            else if (e.Key == Key.V && e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control))
-                AddText(Clipboard.GetText());
             else if (e.Key == Key.CapsLock)
                 UpdateCapsWarning();
             else if (e.Key == Key.Space)
                 AddText(" ");
-            else if (!IsReadOnly)
+            else 
                 e.Handled = false;
 
             base.OnPreviewKeyDown(e);
@@ -129,15 +144,27 @@ namespace MPC.Views
 
         private void AddText(string text)
         {
+            if (IsReadOnly || string.IsNullOrEmpty(text))
+                return;
+
             if (SelectionLength != 0)
                 RemoveText(true);
             var carretIndex = CaretIndex;
-            Password = Password != null ? Password.Insert(CaretIndex, text) : text;
+            Password = Password != null ? Password.Insert(CaretIndex, TakeSingleLine(text)) : text;
             Update(carretIndex + text.Length);
+        }
+
+        private string TakeSingleLine(string text)
+        {
+            int i = text.IndexOfAny(new[] { '\r', '\n' });
+            return i < 0 ? text : text.Substring(0, i);
         }
 
         private void RemoveText(bool back)
         {
+            if (IsReadOnly)
+                return;
+
             if (Password == null || Password.Length == 0 ||
                 (back == false && CaretIndex == Password.Length) || (back && CaretIndex == 0 && SelectionLength == 0))
                 return;
@@ -162,7 +189,6 @@ namespace MPC.Views
 
         private void Update(int newCaretIndex = -1)
         {
-
             Text = Password == null ? string.Empty : UsePasswordChar ? new string(PasswordChar, Password.Length) : Password;
             CaretIndex = newCaretIndex < 0 ? Text.Length : newCaretIndex;
         }
