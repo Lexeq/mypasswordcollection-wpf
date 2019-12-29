@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MPC.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=system.windows.interactivity"
     Title="MyPasswordCollection"
     Width="550"
     Height="300"
@@ -135,10 +136,9 @@
                         MaxWidth="70"
                         Margin="2"
                         Padding="5,2,5,2"
+                        local:EventFocusAttachment.ElementToFocus="{Binding ElementName=tbFilter}"
                         Command="{Binding ClearFilterCommand}"
-                        Content="Clear"
-                        FocusManager.FocusedElement="{Binding ElementName=tbFilter}"
-                        IsTabStop="False" />
+                        Content="Clear" />
                 </Grid>
             </Border>
 
@@ -162,6 +162,7 @@
                     Grid.Column="0"
                     Margin="10"
                     Padding="2"
+                    local:EventFocusAttachment.ElementToFocus="{Binding ElementName=passwordView}"
                     Command="{Binding AddCommand}"
                     Content="Add" />
                 <Button
@@ -183,7 +184,15 @@
             Grid.Row="1"
             Grid.Column="1"
             Grid.IsSharedSizeScope="True">
-            <local:PasswordView DataContext="{Binding Path=SelectedItem}" />
+            <local:PasswordView
+                x:Name="passwordView"
+                DataContext="{Binding Path=SelectedItem}"
+                IsEnabled="{Binding RelativeSource={RelativeSource Mode=Self}, Path=DataContext, Converter={StaticResource ResourceKey=NullToBoolConv}}"
+                Focusable="True">
+                <i:Interaction.Behaviors>
+                    <local:FocusBehavior/>
+                </i:Interaction.Behaviors>
+            </local:PasswordView>
             <Border Padding="15,3">
                 <Grid>
                     <Grid.ColumnDefinitions>
