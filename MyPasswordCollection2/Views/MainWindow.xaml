@@ -190,7 +190,7 @@
                 IsEnabled="{Binding RelativeSource={RelativeSource Mode=Self}, Path=DataContext, Converter={StaticResource ResourceKey=NullToBoolConv}}"
                 Focusable="True">
                 <i:Interaction.Behaviors>
-                    <local:FocusBehavior/>
+                    <local:PasswordViewFocusBehavior/>
                 </i:Interaction.Behaviors>
             </local:PasswordView>
             <Border Padding="15,3">
