@@ -273,6 +273,8 @@ namespace MPC.ViewModels
 
         private void RemovePassword(PasswordItemViewModel item)
         {
+            if (!dialogs.ShowDialog($"Delete password for \"{item.Site}\"?", "Confirmation"))
+                return;
             try
             {
                 if (PasswordSource.Remove(item.Item))
