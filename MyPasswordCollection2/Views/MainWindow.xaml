@@ -214,12 +214,16 @@
                         <Button
                             Command="{Binding FinishEditCommand}"
                             Content="Save"
-                            DockPanel.Dock="Right" />
+                            DockPanel.Dock="Right"
+                            IsDefault="True"
+                            local:EventFocusAttachment.ElementToFocus="{Binding ElementName=tbFilter}"/>
 
                         <Button
                             Command="{Binding CancelEditCommand}"
                             Content="Cancel"
-                            DockPanel.Dock="Right" />
+                            DockPanel.Dock="Right"
+                            IsCancel="True"
+                            local:EventFocusAttachment.ElementToFocus="{Binding ElementName=tbFilter}"/>
                     </UniformGrid>
 
 
