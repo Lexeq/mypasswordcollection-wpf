@@ -3,19 +3,19 @@ using System;
 using System.Windows.Input;
 using System.Linq;
 using System.Windows.Data;
-using System.Collections.Generic;
 
 namespace MPC.ViewModels
 {
-    class MainWindowViewModel : BaseViewModel
+    public class MainWindowViewModel : BaseViewModel
     {
         #region Fields
-        private IDialogService dialogs;
+        private readonly IDialogService dialogs;
 
-        private IWindowsManager windows;
+        private readonly IWindowsManager windows;
 
-        private IRepositoryManager repoManager;
+        private readonly IRepositoryManager repoManager;
 
+        private FilterHelper filterHelper;
         #endregion
 
         #region Properties
@@ -25,26 +25,25 @@ namespace MPC.ViewModels
             get { return _filterString ?? ""; }
             set
             {
-                if (_filterString == value)
-                    return;
                 _filterString = value;
-                if (CollectionView != null)
+                filterHelper.FilterString = value;
+                if (EditMode)
                 {
-                    (CollectionView.CustomSort as FilterHelper).Key = value; ;
-                    CollectionView.Refresh();
-                    CollectionView.MoveCurrentToFirst();
+                    CancelEdit();
                 }
+                CollectionView?.Refresh();
+                CollectionView?.MoveCurrentToFirst();
                 OnPropertyChanged(nameof(FilterString));
             }
         }
 
-        private ListCollectionView lcv;
+        private ListCollectionView _collectionView;
         public ListCollectionView CollectionView
         {
-            get => lcv;
+            get => _collectionView;
             set
             {
-                lcv = value;
+                _collectionView = value;
                 OnPropertyChanged();
             }
         }
@@ -60,14 +59,14 @@ namespace MPC.ViewModels
             }
         }
 
-        private PasswordItemViewModel _selectedItem;
-        public PasswordItemViewModel SelectedItem
+        private PasswordItem _selectedItem;
+        public PasswordItem SelectedItem
         {
             get { return _selectedItem; }
             set
             {
                 if (EditMode)
-                    CancelEdit();
+                    EditMode = false;
                 _selectedItem = value;
                 OnPropertyChanged();
             }
@@ -80,19 +79,25 @@ namespace MPC.ViewModels
             set
             {
                 _passwordSrc?.Dispose();
-                _passwordSrc = value;
-                if (_passwordSrc != null)
+                if (value != null)
                 {
-                    var fh = new FilterHelper(FilterString);
-                    CollectionView = new ListCollectionView(_passwordSrc.ToList()) { CustomSort = fh, Filter = fh.Filter };
-                    RefreshCollectionView();
+                    var repoProxy = new PasswordRepositoryProxy(value);
+                    filterHelper = new FilterHelper(repoProxy);
+                    CollectionView = new ListCollectionView(repoProxy)
+                    {
+                        CustomSort = filterHelper,
+                        Filter = filterHelper.PassesFilter
+                    };
+                    _passwordSrc = repoProxy;
                 }
                 else
                 {
+                    _passwordSrc = null;
+                    filterHelper = null;
                     CollectionView = null;
                 }
+
                 OnPropertyChanged(nameof(PasswordSource));
-                FilterString = string.Empty;
             }
         }
 
@@ -100,7 +105,6 @@ namespace MPC.ViewModels
 
         #region Commands
 
-        #region AddCommand
         private ICommand _addCommand;
         public ICommand AddCommand
         {
@@ -112,16 +116,13 @@ namespace MPC.ViewModels
             set { _addCommand = value; }
         }
 
-
-        #endregion
-
         private ICommand _removeCommand;
         public ICommand RemoveCommand
         {
             get
             {
                 return _removeCommand ??
-                  (_removeCommand = new Command<PasswordItemViewModel>(RemovePassword, (o) => SelectedItem != null));
+                  (_removeCommand = new Command(() => RemovePassword(SelectedItem), () => SelectedItem != null && !EditMode));
             }
             set { _removeCommand = value; }
         }
@@ -250,7 +251,7 @@ namespace MPC.ViewModels
         private ICommand passwordGenerationCommand;
         public ICommand PasswordGenerationCommand
         {
-            get => passwordGenerationCommand ?? (passwordGenerationCommand = new Command(()=> windows.ShowDialog<PasswordGenerationViewModel>(new PasswordGenerationViewModel())));
+            get => passwordGenerationCommand ?? (passwordGenerationCommand = new Command(() => windows.ShowDialog<PasswordGenerationViewModel>(new PasswordGenerationViewModel())));
         }
         #endregion
 
@@ -267,20 +268,17 @@ namespace MPC.ViewModels
         #region Methods
         private void AddPassword()
         {
-            SelectedItem = new PasswordItemViewModel(new PasswordItem());
+            SelectedItem = new PasswordItem();
             EditMode = true;
         }
 
-        private void RemovePassword(PasswordItemViewModel item)
+        private void RemovePassword(PasswordItem item)
         {
             if (!dialogs.ShowDialog($"Delete password for \"{item.Site}\"?", "Confirmation"))
                 return;
             try
             {
-                if (PasswordSource.Remove(item.Item))
-                {
-                    RefreshCollectionView();
-                }
+                PasswordSource.Remove(item);
             }
             catch (Exception ex)
             {
@@ -295,7 +293,6 @@ namespace MPC.ViewModels
                 if (dialogs.ShowDialog("All passwords will be removed. Continue?", "Warning"))
                 {
                     PasswordSource.Clear();
-                    RefreshCollectionView();
                 }
             }
             catch (Exception ex)
@@ -370,32 +367,32 @@ namespace MPC.ViewModels
 
         private void OpenRepository(string path)
         {
-                while (true)
+            while (true)
+            {
+                InputWindowViewModel passwordInput = new InputWindowViewModel(false);
+                windows.ShowDialog(passwordInput);
+                if (passwordInput.DialogReult)
                 {
-                    InputWindowViewModel passwordInput = new InputWindowViewModel(false);
-                    windows.ShowDialog(passwordInput);
-                    if (passwordInput.DialogReult)
+                    try
                     {
-                        try
-                        {
-                            PasswordSource = repoManager.Get(path, passwordInput.Password);
-                            return;
-                        }
-                        catch (PasswordException)
-                        {
-                            if (!dialogs.ShowDialog("Please check the password. Try again?", "Decryption failed"))
-                                return;
-                        }
-                        catch (Exception e)
-                        {
-                            PasswordSource = null;
-                            HandleException(e);
-                            return;
-                        }
-                    }
-                    else
+                        PasswordSource = repoManager.Get(path, passwordInput.Password);
                         return;
+                    }
+                    catch (PasswordException)
+                    {
+                        if (!dialogs.ShowDialog("Please check the password. Try again?", "Decryption failed"))
+                            return;
+                    }
+                    catch (Exception e)
+                    {
+                        PasswordSource = null;
+                        HandleException(e);
+                        return;
+                    }
                 }
+                else
+                    return;
+            }
         }
 
         private void CloseRepository()
@@ -410,24 +407,15 @@ namespace MPC.ViewModels
 
         private void CancelEdit()
         {
-            SelectedItem.DeclineChanges();
             EditMode = false;
+            SelectedItem = (PasswordItem)CollectionView.CurrentItem;
         }
 
         private void FinishEdit()
         {
-            SelectedItem.AcceptChanges();
-            PasswordSource.Save(SelectedItem.Item);
-            RefreshCollectionView();
             EditMode = false;
-        }
-
-        private void RefreshCollectionView()
-        {
-            var source = CollectionView.SourceCollection as List<PasswordItem>;
-            source.Clear();
-            source.AddRange(PasswordSource);
-            CollectionView.Refresh();
+            PasswordSource.Save(SelectedItem);
+            SelectedItem = (PasswordItem)CollectionView.CurrentItem;
         }
 
         private void HandleException(Exception ex)

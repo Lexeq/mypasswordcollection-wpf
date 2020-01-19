@@ -18,7 +18,7 @@ namespace MyPasswordColeectionTests.ModelTests
             var password = gen.Generate(CharSet.Digits, passwordLength);
 
             Assert.AreEqual(passwordLength, password.Length);
-            Assert.IsTrue(password.All(c => char.IsDigit(c)));        
+            Assert.IsTrue(password.All(c => char.IsDigit(c)));
         }
         [Test]
         public void GenerateOnlyLetters()
@@ -29,6 +29,14 @@ namespace MyPasswordColeectionTests.ModelTests
 
             Assert.AreEqual(passwordLength, password.Length);
             Assert.IsTrue(password.All(c => char.IsLetter(c)));
+        }
+
+        [Test]
+        public void ExceptionIfNonPositiveLength([Values(-2, 0)]int length)
+        {
+            PasswordGenerator gen = new PasswordGenerator();
+
+            Assert.Throws<ArgumentException>(() => gen.Generate(CharSet.AllLetters, length));
         }
     }
 }

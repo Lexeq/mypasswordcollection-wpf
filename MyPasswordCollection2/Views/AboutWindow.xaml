@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MPC.Views"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=system.windows.interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="About"
     Height="180"
@@ -12,6 +13,11 @@
     SizeToContent="Height"
     WindowStyle="ToolWindow"
     mc:Ignorable="d">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Click" SourceObject="{Binding ElementName=okButton}">
+            <local:CloseWindowTriggerAction DialogResult="True"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <DockPanel>
         <TextBlock
             VerticalAlignment="Stretch"
@@ -20,13 +26,14 @@
             TextAlignment="Center"
             TextWrapping="Wrap" />
         <Button
+            x:Name="okButton"
             Margin="10"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
-            Click="Button_Click"
             Content="OK"
             DockPanel.Dock="Bottom"
             IsCancel="True"
-            IsDefault="True" />
+            IsDefault="True" >
+        </Button>
     </DockPanel>
 </Window>

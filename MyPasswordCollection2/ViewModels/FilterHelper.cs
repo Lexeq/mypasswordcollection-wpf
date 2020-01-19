@@ -7,29 +7,47 @@ namespace MPC.ViewModels
 {
     internal class FilterHelper : IComparer
     {
-        public string Key { get; set; }
+        public string FilterString { get; set; }
 
-        public bool Filter(object obj)
+        public IList Source { get; }
+
+        public bool PassesFilter(object obj)
         {
-            return CultureInfo.CurrentCulture.CompareInfo.IndexOf((obj as PasswordItem).Site, Key, CompareOptions.IgnoreCase) >= 0;
+            return CultureInfo.CurrentCulture.CompareInfo.IndexOf((obj as PasswordItem).Site, FilterString, CompareOptions.IgnoreCase) >= 0;
         }
 
-        public FilterHelper(string key)
+        public FilterHelper(IList source)
         {
-            this.Key = key;
+            Source = source;
+            FilterString = string.Empty;
         }
 
         public int Compare(object x, object y)
         {
-            var xs = ((PasswordItem)x).Site.StartsWith(Key, StringComparison.CurrentCultureIgnoreCase);
-            var ys = ((PasswordItem)y).Site.StartsWith(Key, StringComparison.CurrentCultureIgnoreCase);
+            if (string.IsNullOrEmpty(FilterString))
+                return ComparePositions(x, y);
 
-            if (xs == ys)
-                return 0;
-            if (xs)
-                return -1;
+            var xStartsWithFilterString = ((PasswordItem)x).Site.StartsWith(FilterString, StringComparison.CurrentCultureIgnoreCase);
+            var yStartsWithFilterString = ((PasswordItem)y).Site.StartsWith(FilterString, StringComparison.CurrentCultureIgnoreCase);
+
+            if(xStartsWithFilterString && yStartsWithFilterString)
+            {
+                var comparisonOfLength = ((PasswordItem)x).Site.Length.CompareTo(((PasswordItem)y).Site.Length);
+                return comparisonOfLength != 0 ? comparisonOfLength : ComparePositions(x, y);
+            }
+            else if(!xStartsWithFilterString && !yStartsWithFilterString)
+            {
+                return ComparePositions(x, y);
+            }
             else
-                return 1;
+            {
+                return xStartsWithFilterString ? -1 : 1;
+            }
+        }
+
+        private int ComparePositions(object x, object y)
+        {
+            return Source.IndexOf((PasswordItem)x).CompareTo(Source.IndexOf((PasswordItem)y));
         }
     }
 }

@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MPC.Model
 {
@@ -114,7 +110,6 @@ namespace MPC.Model
                     array[i] = alphabet[random.Next(alphabet.Length)];
                 }
             }
-            Debug.WriteLine(new string(array));
         }
 
         

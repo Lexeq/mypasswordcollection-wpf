@@ -26,6 +26,7 @@ namespace MPC.ViewModels
             UseLetters = true;
             UseSymbols = true;
             PasswordLength = 8;
+            GenerateNew();
         }
 
         public string ErrorText

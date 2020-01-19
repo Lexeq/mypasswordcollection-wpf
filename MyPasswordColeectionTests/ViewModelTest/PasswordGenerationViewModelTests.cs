@@ -29,11 +29,5 @@ namespace MyPasswordColeectionTests.ViewModelTest
 
             Assert.AreEqual(lenght, vm.GeneratedPassword.Length);
         }
-
-        [Test]
-        public void SomeTest()
-        {
-
-        }
     }
 }

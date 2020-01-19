@@ -4,14 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:convs="clr-namespace:MPC.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=system.windows.interactivity"
     xmlns:local="clr-namespace:MPC.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=system.windows.interactivity"
+    xmlns:vm="clr-namespace:MPC.ViewModels"
     Title="MyPasswordCollection"
     Width="550"
     Height="300"
     MinWidth="250"
     MinHeight="200"
+    d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
     mc:Ignorable="d">
 
     <Window.Resources>
@@ -22,7 +24,7 @@
             <BooleanToVisibilityConverter />
         </convs:MultiConverter>
         <convs:NullToBoolConverter x:Key="NullToBoolConv" />
-        <convs:PasswordItemToViewModelConverter x:Key="PasswordToVMConv" />
+
     </Window.Resources>
 
     <Window.InputBindings>
@@ -35,7 +37,14 @@
             Key="N"
             Command="{Binding CreateRepositoryCommand}"
             Modifiers="Ctrl" />
+        <KeyBinding Key="Delete" Command="{Binding RemoveCommand}" />
     </Window.InputBindings>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Click" SourceObject="{Binding ElementName=exitMenuItem}">
+            <local:CloseWindowTriggerAction />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -74,7 +83,7 @@
                     Header="_Open..."
                     InputGestureText="Ctrl + O" />
                 <MenuItem Command="{Binding CloseRepositoryCommand}" Header="_Close" />
-                <MenuItem Click="MenuItem_Click" Header="_Exit" />
+                <MenuItem x:Name="exitMenuItem" Header="_Exit" />
             </MenuItem>
 
             <MenuItem Header="_Edit">
@@ -136,9 +145,14 @@
                         MaxWidth="70"
                         Margin="2"
                         Padding="5,2,5,2"
-                        local:EventFocusAttachment.ElementToFocus="{Binding ElementName=tbFilter}"
                         Command="{Binding ClearFilterCommand}"
-                        Content="Clear" />
+                        Content="Clear">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <local:SetFocusAction FocusElement="{Binding ElementName=tbFilter}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
                 </Grid>
             </Border>
 
@@ -148,8 +162,7 @@
                 Margin="7"
                 DisplayMemberPath="Site"
                 ItemsSource="{Binding CollectionView}"
-                SelectedItem="{Binding SelectedItem, Converter={StaticResource PasswordToVMConv}}"
-                SelectionChanged="ListBox_SelectionChanged" />
+                SelectedItem="{Binding SelectedItem}" />
 
             <Grid Grid.Row="2" Grid.RowSpan="2">
                 <Grid.ColumnDefinitions>
@@ -162,23 +175,32 @@
                     Grid.Column="0"
                     Margin="10"
                     Padding="2"
-                    local:EventFocusAttachment.ElementToFocus="{Binding ElementName=passwordView}"
-                    Command="{Binding AddCommand}"
-                    Content="Add" />
+                    Content="Add">
+                    <i:Interaction.Behaviors>
+                        <local:CanExecuteToIsEnabledBehavior Command="{Binding AddCommand}" />
+                    </i:Interaction.Behaviors>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <i:InvokeCommandAction Command="{Binding AddCommand}" />
+                            <local:SetFocusAction FocusElement="{Binding ElementName=passwordView}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
                 <Button
                     Name="btnRemove"
                     Grid.Column="1"
                     Margin="10"
                     Padding="2"
                     Command="{Binding RemoveCommand}"
-                    CommandParameter="{Binding SelectedItem}"
-                    Content="Remove" />
-
+                    Content="Delete">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <local:SetFocusAction FocusElement="{Binding ElementName=tbFilter}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
             </Grid>
-
-
         </Grid>
-
 
         <StackPanel
             Grid.Row="1"
@@ -186,11 +208,11 @@
             Grid.IsSharedSizeScope="True">
             <local:PasswordView
                 x:Name="passwordView"
-                DataContext="{Binding Path=SelectedItem}"
-                IsEnabled="{Binding RelativeSource={RelativeSource Mode=Self}, Path=DataContext, Converter={StaticResource ResourceKey=NullToBoolConv}}"
-                Focusable="True">
+                DataContext="{Binding Path=SelectedItem, Mode=OneWay}"
+                Focusable="True"
+                IsEnabled="{Binding RelativeSource={RelativeSource Mode=Self}, Path=DataContext, Converter={StaticResource ResourceKey=NullToBoolConv}}">
                 <i:Interaction.Behaviors>
-                    <local:PasswordViewFocusBehavior/>
+                    <local:PasswordViewFocusBehavior />
                 </i:Interaction.Behaviors>
             </local:PasswordView>
             <Border Padding="15,3">
@@ -203,9 +225,18 @@
                         Grid.Row="4"
                         Grid.Column="2"
                         Margin="10,3,0,3"
-                        Command="{Binding EditCommand}"
                         Content="Edit"
-                        Visibility="{Binding EditMode, Converter={StaticResource InversedBoolToVisConv}}" />
+                        Visibility="{Binding EditMode, Converter={StaticResource InversedBoolToVisConv}}">
+                        <i:Interaction.Behaviors>
+                            <local:CanExecuteToIsEnabledBehavior Command="{Binding EditCommand}" />
+                        </i:Interaction.Behaviors>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding EditCommand}" />
+                                <local:SetFocusAction FocusElement="{Binding ElementName=passwordView}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
 
                     <UniformGrid
                         HorizontalAlignment="Right"
@@ -215,15 +246,27 @@
                             Command="{Binding FinishEditCommand}"
                             Content="Save"
                             DockPanel.Dock="Right"
-                            IsDefault="True"
-                            local:EventFocusAttachment.ElementToFocus="{Binding ElementName=tbFilter}"/>
+                            IsDefault="True">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <local:UpdateBindingSourceAction View="{Binding ElementName=passwordView}" />
+                                    <local:SetFocusAction FocusElement="{Binding ElementName=tbFilter}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Button>
 
                         <Button
                             Command="{Binding CancelEditCommand}"
                             Content="Cancel"
                             DockPanel.Dock="Right"
-                            IsCancel="True"
-                            local:EventFocusAttachment.ElementToFocus="{Binding ElementName=tbFilter}"/>
+                            IsCancel="True">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <local:UpdateBindingTargetAction View="{Binding ElementName=passwordView}" />
+                                    <local:SetFocusAction FocusElement="{Binding ElementName=tbFilter}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Button>
                     </UniformGrid>
 
 
