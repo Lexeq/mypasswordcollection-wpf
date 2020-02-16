@@ -22,12 +22,6 @@ namespace MPC.Views
         public ExceptionWindow()
         {
             InitializeComponent();
-            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        }
-
-        private void OK_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
     }
 }
