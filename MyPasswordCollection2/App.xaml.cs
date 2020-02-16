@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Linq;
+using System.Globalization;
 
 namespace MPC
 {
@@ -16,17 +17,20 @@ namespace MPC
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            InitializeResourceDictionary();
+
             Current.Dispatcher.UnhandledException += LogException;
             FileDialogService dService = new FileDialogService();
             WindowsManager winManager = new WindowsManager();
             FileRepositoryManager fileManager = new FileRepositoryManager();
+            IStringsSource ss = new TextService(Resources);
 
             winManager.Register<InputWindowViewModel, InputWindow>();
             winManager.Register<AboutViewModel, AboutWindow>();
             winManager.Register<ExceptionViewModel, ExceptionWindow>();
             winManager.Register<PasswordGenerationViewModel, PasswordGenerationWindows>();
 
-            var mainVM = new MainWindowViewModel(dService, winManager, fileManager);
+            var mainVM = new MainWindowViewModel(dService, winManager, fileManager, ss);
             MainWindow mw = new MainWindow()
             {
                 DataContext = mainVM
@@ -41,6 +45,18 @@ namespace MPC
                 var met = mainVM.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).First(mi => mi.Name == "OpenRepository" && mi.GetParameters().Length == 1);
                 met.Invoke(mainVM, new[] { defPath });
             }
+        }
+
+        private void InitializeResourceDictionary()
+        {
+            ResourceDictionary localizatedStrings = new ResourceDictionary();
+            switch (CultureInfo.CurrentCulture.Name)
+            {
+                case "ru-RU":
+                    localizatedStrings.Source = new Uri("..\\Resources\\lang.ru-ru.xaml", UriKind.Relative);
+                    break;
+            }
+            Resources.MergedDictionaries.Add(localizatedStrings);
         }
 
         private void LogException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

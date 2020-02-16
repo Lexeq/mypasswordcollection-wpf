@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace MPC.ViewModels
 {
     class InputWindowViewModel : DataErrorNotifyingViewModel
     {
+        IStringsSource uiStrings;
         private string _password;
         private string _passwordConfirmation;
         private ICommand _okCommand;
@@ -31,7 +27,7 @@ namespace MPC.ViewModels
 
         public string Password
         {
-            get => _password;
+            get => _password ?? string.Empty;
             set
             {
                 _password = value;
@@ -41,7 +37,7 @@ namespace MPC.ViewModels
 
         public string PasswordConfirmation
         {
-            get => _passwordConfirmation;
+            get => _passwordConfirmation ?? string.Empty;
             set
             {
                 _passwordConfirmation = value;
@@ -74,21 +70,21 @@ namespace MPC.ViewModels
             ClearAllErrors();
             //check password
             if (string.IsNullOrEmpty(Password))
-                AddPropertyError("Password can't be empty.", nameof(Password));
+                AddPropertyError(uiStrings.GetString(UIStrings.EmptyPasswordError), nameof(Password));
 
             //check password confirmation
             if (PasswordConfirmationRequired)
             {
                 if (PasswordConfirmation != Password)
-                    AddPropertyError("Passwords are not same.", nameof(PasswordConfirmation));
+                    AddPropertyError(uiStrings.GetString(UIStrings.PasswordsAreNotSameError), nameof(PasswordConfirmation));
             }
         }
 
-        public InputWindowViewModel(bool passwordConfirmationRequired)
+        public InputWindowViewModel(bool passwordConfirmationRequired, IStringsSource stringsSource)
         {
+            uiStrings = stringsSource ?? throw new ArgumentNullException(nameof(stringsSource));
             PasswordConfirmationRequired = passwordConfirmationRequired;
             Caption = string.Empty;
-            _password = _passwordConfirmation = string.Empty; //fields shouldn't be null (in validation null == "" causes error for PasswordConfirmation)
             OnPropertyChanged(nameof(HasErrors));
         }
     }

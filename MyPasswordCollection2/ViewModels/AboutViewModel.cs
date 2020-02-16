@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace MPC.ViewModels
 {
     class AboutViewModel : BaseViewModel
     {
-        public string AboutText { get; set; }
+        public string AboutText { get; }
 
-        public AboutViewModel()
+        public AboutViewModel(string text = "")
         {
             string version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version;
 
-            AboutText = "This app isn't ensure good protection for your passwords."
+            AboutText = text
                 + Environment.NewLine + Environment.NewLine +
                 "MyPasswordCollection"
                 + Environment.NewLine +

@@ -7,45 +7,12 @@
     ShutdownMode="OnMainWindowClose">
 
     <Application.Resources>
-
-        <Style TargetType="Button">
-            <Setter Property="Margin" Value="5,3" />
-            
-            <Setter Property="Padding" Value="10,2" />
-            
-            <Setter Property="Control.Background">
-                <Setter.Value>
-                    <LinearGradientBrush Opacity="0.9" StartPoint="0.5,0" EndPoint="0.5,1">
-                        <GradientStop Offset="1" Color="LightBlue" />
-                        <GradientStop Offset="0" Color="White" />
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="5,0"/>
-            
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-
-        <Style TargetType="MenuItem">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <SolidColorBrush Opacity="1" Color="#FFE0E8FF" />
-                </Setter.Value>
-            </Setter>
-
-            <Setter Property="Padding" Value="6,2.5,6,2.5" />
-
-            <Setter Property="FontSize" Value="12" />
-        </Style>
-
-        <Style TargetType="TextBox">
-            <Setter Property="Margin" Value="5,3"/>
-        </Style>
-        
-        <Style TargetType="v:PasswordTextBox" BasedOn="{StaticResource {x:Type TextBox}}"/>
-
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles.xaml"/>
+                <ResourceDictionary Source="Resources/lang.en-us.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+     
     </Application.Resources>
 </Application>

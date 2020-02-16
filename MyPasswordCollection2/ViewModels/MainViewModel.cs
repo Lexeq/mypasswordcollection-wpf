@@ -3,6 +3,7 @@ using System;
 using System.Windows.Input;
 using System.Linq;
 using System.Windows.Data;
+using System.Collections.Generic;
 
 namespace MPC.ViewModels
 {
@@ -16,6 +17,8 @@ namespace MPC.ViewModels
         private readonly IRepositoryManager repoManager;
 
         private FilterHelper filterHelper;
+
+        private IStringsSource uiStrings;
         #endregion
 
         #region Properties
@@ -235,7 +238,7 @@ namespace MPC.ViewModels
         {
             get
             {
-                return _showAboutCommand ?? (_showAboutCommand = new Command(() => windows.ShowDialog(new AboutViewModel())));
+                return _showAboutCommand ?? (_showAboutCommand = new Command(() => windows.ShowDialog(new AboutViewModel(uiStrings.GetString(UIStrings.AboutText)))));
             }
         }
 
@@ -256,11 +259,12 @@ namespace MPC.ViewModels
         #endregion
 
         #region Ctor
-        public MainWindowViewModel(IDialogService dialogService, IWindowsManager winManager, IRepositoryManager repoManager)
+        public MainWindowViewModel(IDialogService dialogService, IWindowsManager winManager, IRepositoryManager repoManager, IStringsSource stringsSource)
         {
             dialogs = dialogService;
             windows = winManager;
             this.repoManager = repoManager;
+            uiStrings = stringsSource;
             EditMode = false;
         }
         #endregion
@@ -274,7 +278,7 @@ namespace MPC.ViewModels
 
         private void RemovePassword(PasswordItem item)
         {
-            if (!dialogs.ShowDialog($"Delete password for \"{item.Site}\"?", "Confirmation"))
+            if (!dialogs.ShowDialog(uiStrings.GetString(UIStrings.DeleteConfirmation, new Dictionary<string, string>() { [nameof(item.Site)] = item.Site }), uiStrings.GetString(UIStrings.ConfirmationWindowTitle)))
                 return;
             try
             {
@@ -290,7 +294,7 @@ namespace MPC.ViewModels
         {
             try
             {
-                if (dialogs.ShowDialog("All passwords will be removed. Continue?", "Warning"))
+                if (dialogs.ShowDialog(uiStrings.GetString(UIStrings.ClearConfirmation), uiStrings.GetString(UIStrings.ConfirmationWindowTitle)))
                 {
                     PasswordSource.Clear();
                 }
@@ -316,11 +320,11 @@ namespace MPC.ViewModels
 
         private void ChangePassword()
         {
-            var oldPassInputVM = new InputWindowViewModel(false) { Caption = "Enter old password" };
+            var oldPassInputVM = new InputWindowViewModel(false, uiStrings) { Caption = uiStrings.GetString(UIStrings.OldPasswordRequest) };
             windows.ShowDialog(oldPassInputVM);
             if (oldPassInputVM.DialogReult == false)
                 return;
-            var newPassInputVW = new InputWindowViewModel(true) { Caption = "Enter new password" };
+            var newPassInputVW = new InputWindowViewModel(true, uiStrings) { Caption = uiStrings.GetString(UIStrings.NewPasswordRequest) };
             windows.ShowDialog(newPassInputVW);
             if (newPassInputVW.DialogReult == false)
                 return;
@@ -330,13 +334,13 @@ namespace MPC.ViewModels
             }
             catch (PasswordException)
             {
-                dialogs.ShowMessage($"Can't change password.", "Failed");
+                dialogs.ShowMessage(uiStrings.GetString(UIStrings.ChangePasswordFail), uiStrings.GetString(UIStrings.Failed));
             }
         }
 
         private void CreateRepository()
         {
-            InputWindowViewModel passwordInput = new InputWindowViewModel(true);
+            InputWindowViewModel passwordInput = new InputWindowViewModel(true, uiStrings);
             windows.ShowDialog(passwordInput);
             if (passwordInput.DialogReult)
             {
@@ -369,7 +373,7 @@ namespace MPC.ViewModels
         {
             while (true)
             {
-                InputWindowViewModel passwordInput = new InputWindowViewModel(false);
+                InputWindowViewModel passwordInput = new InputWindowViewModel(false, uiStrings);
                 windows.ShowDialog(passwordInput);
                 if (passwordInput.DialogReult)
                 {
@@ -380,7 +384,7 @@ namespace MPC.ViewModels
                     }
                     catch (PasswordException)
                     {
-                        if (!dialogs.ShowDialog("Please check the password. Try again?", "Decryption failed"))
+                        if (!dialogs.ShowDialog(uiStrings.GetString(UIStrings.RetryPasswordEnter), uiStrings.GetString(UIStrings.DecryptionFail)))
                             return;
                     }
                     catch (Exception e)

@@ -72,32 +72,32 @@
                 </LinearGradientBrush>
             </Menu.Background>
 
-            <MenuItem Header="_File">
+            <MenuItem Header="{DynamicResource menu.file}">
                 <MenuItem
                     Command="{Binding CreateRepositoryCommand}"
-                    Header="_New..."
+                    Header="{DynamicResource menu.new}"
                     InputGestureText="Ctrl + N" />
 
                 <MenuItem
                     Command="{Binding OpenRepositoryCommand}"
-                    Header="_Open..."
+                    Header="{DynamicResource menu.open}"
                     InputGestureText="Ctrl + O" />
-                <MenuItem Command="{Binding CloseRepositoryCommand}" Header="_Close" />
-                <MenuItem x:Name="exitMenuItem" Header="_Exit" />
+                <MenuItem Command="{Binding CloseRepositoryCommand}" Header="{DynamicResource menu.close}" />
+                <MenuItem x:Name="exitMenuItem" Header="{DynamicResource menu.exit}" />
             </MenuItem>
 
-            <MenuItem Header="_Edit">
-                <MenuItem Command="{Binding PasswordGenerationCommand}" Header="Password generation..." />
+            <MenuItem Header="{DynamicResource menu.edit}">
+                <MenuItem Command="{Binding PasswordGenerationCommand}" Header="{DynamicResource menu.pasgen}" />
 
-                <MenuItem Command="{Binding ChangePasswordCommand}" Header="Change master password..." />
+                <MenuItem Command="{Binding ChangePasswordCommand}" Header="{DynamicResource menu.change}" />
 
-                <MenuItem Command="{Binding ClearCommand}" Header="Clear collection" />
+                <MenuItem Command="{Binding ClearCommand}" Header="{DynamicResource menu.clear}" />
 
-                <MenuItem Command="{Binding DeleteRepositoryCommand}" Header="Delete file" />
+                <MenuItem Command="{Binding DeleteRepositoryCommand}" Header="{DynamicResource menu.deleteAll}" />
             </MenuItem>
 
-            <MenuItem Header="_Help">
-                <MenuItem Command="{Binding ShowAboutCommand}" Header="_About..." />
+            <MenuItem Header="{DynamicResource menu.help}">
+                <MenuItem Command="{Binding ShowAboutCommand}" Header="{DynamicResource menu.about}" />
             </MenuItem>
         </Menu>
 
@@ -123,6 +123,7 @@
                         x:Name="tbFilter"
                         Grid.Column="0"
                         Width="auto"
+                        MinWidth="100"
                         Margin="2,2,5,2"
                         HorizontalAlignment="Stretch"
                         VerticalContentAlignment="Center"
@@ -141,12 +142,10 @@
                     <Button
                         Grid.Column="1"
                         Width="auto"
-                        MinWidth="30"
-                        MaxWidth="70"
                         Margin="2"
                         Padding="5,2,5,2"
                         Command="{Binding ClearFilterCommand}"
-                        Content="Clear">
+                        Content="{DynamicResource button.clearFilter}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Click">
                                 <local:SetFocusAction FocusElement="{Binding ElementName=tbFilter}" />
@@ -175,7 +174,7 @@
                     Grid.Column="0"
                     Margin="10"
                     Padding="2"
-                    Content="Add">
+                    Content="{DynamicResource button.add}">
                     <i:Interaction.Behaviors>
                         <local:CanExecuteToIsEnabledBehavior Command="{Binding AddCommand}" />
                     </i:Interaction.Behaviors>
@@ -192,7 +191,7 @@
                     Margin="10"
                     Padding="2"
                     Command="{Binding RemoveCommand}"
-                    Content="Delete">
+                    Content="{DynamicResource button.delete}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <local:SetFocusAction FocusElement="{Binding ElementName=tbFilter}" />
@@ -225,7 +224,7 @@
                         Grid.Row="4"
                         Grid.Column="2"
                         Margin="10,3,0,3"
-                        Content="Edit"
+                        Content="{DynamicResource button.edit}"
                         Visibility="{Binding EditMode, Converter={StaticResource InversedBoolToVisConv}}">
                         <i:Interaction.Behaviors>
                             <local:CanExecuteToIsEnabledBehavior Command="{Binding EditCommand}" />
@@ -244,7 +243,7 @@
                         Visibility="{Binding EditMode, Converter={StaticResource BoolToVisible}}">
                         <Button
                             Command="{Binding FinishEditCommand}"
-                            Content="Save"
+                            Content="{DynamicResource button.save}"
                             DockPanel.Dock="Right"
                             IsDefault="True">
                             <i:Interaction.Triggers>
@@ -257,7 +256,7 @@
 
                         <Button
                             Command="{Binding CancelEditCommand}"
-                            Content="Cancel"
+                            Content="{DynamicResource button.cancel}"
                             DockPanel.Dock="Right"
                             IsCancel="True">
                             <i:Interaction.Triggers>

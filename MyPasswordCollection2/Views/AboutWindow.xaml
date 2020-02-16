@@ -3,10 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MPC.Views"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=system.windows.interactivity"
+    xmlns:local="clr-namespace:MPC.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="About"
+    Title="{DynamicResource title.aboutWindowTitle}"
     Height="180"
     MaxWidth="300"
     ResizeMode="NoResize"
@@ -15,7 +15,7 @@
     mc:Ignorable="d">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Click" SourceObject="{Binding ElementName=okButton}">
-            <local:CloseWindowTriggerAction DialogResult="True"/>
+            <local:CloseWindowTriggerAction DialogResult="True" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <DockPanel>
@@ -30,10 +30,9 @@
             Margin="10"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
-            Content="OK"
+            Content="{DynamicResource button.ok}"
             DockPanel.Dock="Bottom"
             IsCancel="True"
-            IsDefault="True" >
-        </Button>
+            IsDefault="True" />
     </DockPanel>
 </Window>

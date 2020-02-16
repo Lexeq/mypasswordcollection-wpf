@@ -27,9 +27,9 @@
             MinHeight="15"
             Margin="15,15"
             HorizontalAlignment="Right"
-            Content="OK"
-            DockPanel.Dock="Bottom" 
-            Click="OK_Click"/>
+            Click="OK_Click"
+            Content="{DynamicResource button.ok}"
+            DockPanel.Dock="Bottom" />
         <Expander
             MaxHeight="100"
             DockPanel.Dock="Top"
