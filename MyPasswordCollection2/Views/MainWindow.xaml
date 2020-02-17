@@ -38,6 +38,11 @@
             Command="{Binding CreateRepositoryCommand}"
             Modifiers="Ctrl" />
         <KeyBinding Key="Delete" Command="{Binding RemoveCommand}" />
+
+        <KeyBinding
+            Key="W"
+            Command="{Binding CloseRepositoryCommand}"
+            Modifiers="Ctrl" />
     </Window.InputBindings>
 
     <i:Interaction.Triggers>
@@ -82,7 +87,10 @@
                     Command="{Binding OpenRepositoryCommand}"
                     Header="_Open..."
                     InputGestureText="Ctrl + O" />
-                <MenuItem Command="{Binding CloseRepositoryCommand}" Header="_Close" />
+                <MenuItem
+                    Command="{Binding CloseRepositoryCommand}"
+                    Header="_Close"
+                    InputGestureText="Ctrl + W" />
                 <MenuItem x:Name="exitMenuItem" Header="_Exit" />
             </MenuItem>
 
