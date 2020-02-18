@@ -26,7 +26,10 @@ namespace MPC.ViewModels
             set
             {
                 _filterString = value;
-                filterHelper.FilterString = value;
+                if (filterHelper != null)
+                {
+                    filterHelper.FilterString = value;
+                }
                 if (EditMode)
                 {
                     CancelEdit();
@@ -79,6 +82,8 @@ namespace MPC.ViewModels
             set
             {
                 _passwordSrc?.Dispose();
+                FilterString = string.Empty;
+
                 if (value != null)
                 {
                     var repoProxy = new PasswordRepositoryProxy(value);
