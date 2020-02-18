@@ -15,6 +15,12 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="ToolWindow"
     mc:Ignorable="d">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Click" SourceObject="{Binding ElementName=btnOk}">
+            <local:CloseWindowTriggerAction DialogResult="False" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <DockPanel LastChildFill="True">
         <TextBlock
             MaxHeight="50"
@@ -25,18 +31,15 @@
             Text="{Binding Message}"
             TextWrapping="Wrap" />
         <Button
+            x:Name="btnOk"
             MinWidth="100"
             MinHeight="15"
             Margin="15,15"
             HorizontalAlignment="Right"
             Content="OK"
-            DockPanel.Dock="Bottom">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Click">
-                    <local:CloseWindowTriggerAction DialogResult="False"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </Button>
+            DockPanel.Dock="Bottom"
+            IsCancel="True"
+            IsDefault="True" />
         <Expander
             MaxHeight="100"
             DockPanel.Dock="Top"
