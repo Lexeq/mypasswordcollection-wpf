@@ -13,6 +13,9 @@
         OldPasswordRequest,
         NewPasswordRequest,
         Failed,
-        ChangePasswordFail
+        ChangePasswordFail,
+        LoadingFail,
+        DataCorrupted,
+        AccessFail
     }
 }

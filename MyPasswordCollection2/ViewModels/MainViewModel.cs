@@ -395,11 +395,11 @@ namespace MPC.ViewModels
                     }
                     catch(RepositoryException e) when (e.InnerException is IOException)
                     {
-                        dialogs.ShowMessage("Repository already in use or no access.", "Loading failed");
+                        dialogs.ShowMessage(uiStrings.GetString(UIStrings.AccessFail), uiStrings.GetString(UIStrings.LoadingFail));
                     }
                     catch(RepositoryException)
                     {
-                        dialogs.ShowMessage("Repository corrupted.", "Loading failed");
+                        dialogs.ShowMessage(uiStrings.GetString(UIStrings.DataCorrupted), uiStrings.GetString(UIStrings.LoadingFail));
                     }
                     catch (Exception e)
                     {

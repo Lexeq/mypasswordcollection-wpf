@@ -58,4 +58,7 @@
     <system:String x:Key="msg.Failed">Неудачно</system:String>
     <system:String x:Key="msg.ChangePasswordFail">Не удалось сменить пароль.</system:String>
     <system:String x:Key="msg.AboutText">Простой менеджер паролей. Используйте на свой страх и риск.</system:String>
+    <system:String x:Key="msg.LoadingFail">Ошибка загрузки</system:String>
+    <system:String x:Key="msg.AccessFail">Нет доступа.</system:String>
+    <system:String x:Key="msg.DataCorrupted">Файл поврежден.</system:String>
 </ResourceDictionary>
