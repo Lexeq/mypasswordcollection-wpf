@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Linq;
 using System.Windows.Data;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MPC.ViewModels
 {
@@ -29,7 +30,10 @@ namespace MPC.ViewModels
             set
             {
                 _filterString = value;
-                filterHelper.FilterString = value;
+                if (filterHelper != null)
+                {
+                    filterHelper.FilterString = value;
+                }
                 if (EditMode)
                 {
                     CancelEdit();
@@ -82,6 +86,8 @@ namespace MPC.ViewModels
             set
             {
                 _passwordSrc?.Dispose();
+                FilterString = string.Empty;
+
                 if (value != null)
                 {
                     var repoProxy = new PasswordRepositoryProxy(value);
@@ -384,18 +390,28 @@ namespace MPC.ViewModels
                     }
                     catch (PasswordException)
                     {
-                        if (!dialogs.ShowDialog(uiStrings.GetString(UIStrings.RetryPasswordEnter), uiStrings.GetString(UIStrings.DecryptionFail)))
-                            return;
+                        if (dialogs.ShowDialog(uiStrings.GetString(UIStrings.RetryPasswordEnter), uiStrings.GetString(UIStrings.DecryptionFail)))
+                            continue;
+                    }
+                    catch(RepositoryException e) when (e.InnerException is IOException)
+                    {
+                        dialogs.ShowMessage("Repository already in use or no access.", "Loading failed");
+                    }
+                    catch(RepositoryException)
+                    {
+                        dialogs.ShowMessage("Repository corrupted.", "Loading failed");
                     }
                     catch (Exception e)
                     {
                         PasswordSource = null;
                         HandleException(e);
-                        return;
                     }
+                    return;
                 }
                 else
+                {
                     return;
+                }
             }
         }
 
@@ -418,7 +434,14 @@ namespace MPC.ViewModels
         private void FinishEdit()
         {
             EditMode = false;
-            PasswordSource.Save(SelectedItem);
+            try
+            {
+                PasswordSource.Save(SelectedItem);
+            }
+            catch (Exception e)
+            {
+                HandleException(e);
+            }
             SelectedItem = (PasswordItem)CollectionView.CurrentItem;
         }
 
