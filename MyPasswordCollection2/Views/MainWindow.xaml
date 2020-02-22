@@ -20,8 +20,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisible" />
         <convs:InverseBooleanConverter x:Key="InverseBoolConv" />
         <convs:MultiConverter x:Key="InversedBoolToVisConv">
-            <convs:InverseBooleanConverter />
-            <BooleanToVisibilityConverter />
+            <convs:BoolToHidden/>
         </convs:MultiConverter>
         <convs:NullToBoolConverter x:Key="NullToBoolConv" />
 
