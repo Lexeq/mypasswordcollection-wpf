@@ -3,6 +3,7 @@ using System;
 using System.Windows.Input;
 using System.Linq;
 using System.Windows.Data;
+using System.IO;
 
 namespace MPC.ViewModels
 {
@@ -385,18 +386,28 @@ namespace MPC.ViewModels
                     }
                     catch (PasswordException)
                     {
-                        if (!dialogs.ShowDialog("Please check the password. Try again?", "Decryption failed"))
-                            return;
+                        if (dialogs.ShowDialog("Please check the password. Try again?", "Decryption failed"))
+                            continue;
+                    }
+                    catch(RepositoryException e) when (e.InnerException is IOException)
+                    {
+                        dialogs.ShowMessage("Repository already in use or no access.", "Loading failed");
+                    }
+                    catch(RepositoryException)
+                    {
+                        dialogs.ShowMessage("Repository corrupted.", "Loading failed");
                     }
                     catch (Exception e)
                     {
                         PasswordSource = null;
                         HandleException(e);
-                        return;
                     }
+                    return;
                 }
                 else
+                {
                     return;
+                }
             }
         }
 
@@ -419,7 +430,14 @@ namespace MPC.ViewModels
         private void FinishEdit()
         {
             EditMode = false;
-            PasswordSource.Save(SelectedItem);
+            try
+            {
+                PasswordSource.Save(SelectedItem);
+            }
+            catch (Exception e)
+            {
+                HandleException(e);
+            }
             SelectedItem = (PasswordItem)CollectionView.CurrentItem;
         }
 
