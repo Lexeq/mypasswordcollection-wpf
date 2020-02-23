@@ -6,7 +6,7 @@
     xml:space="preserve">
 
     <system:String x:Key="button.delete">Удалить</system:String>
-    <system:String x:Key="button.copy">В буффер</system:String>
+    <system:String x:Key="button.copy">Копировать</system:String>
     <system:String x:Key="button.ok">OK</system:String>
     <system:String x:Key="button.cancel">Отмена</system:String>
     <system:String x:Key="button.save">Сохранить</system:String>
@@ -15,7 +15,7 @@
     <system:String x:Key="button.edit">Изменить</system:String>
     <system:String x:Key="button.yes">Да</system:String>
     <system:String x:Key="button.no">Нет</system:String>
-    <system:String x:Key="button.copyAndClose">В буффер и закрыть</system:String>
+    <system:String x:Key="button.copyAndClose">Копировать и закрыть</system:String>
     <system:String x:Key="button.generate">Сгенерировать</system:String>
     <system:String x:Key="button.close">Закрыть</system:String>
     
