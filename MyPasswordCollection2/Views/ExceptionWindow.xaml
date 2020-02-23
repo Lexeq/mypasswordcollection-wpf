@@ -36,8 +36,7 @@
             MinHeight="15"
             Margin="15,15"
             HorizontalAlignment="Right"
-            Content="OK"
-            DockPanel.Dock="Bottom"
+            Content="{DynamicResource button.ok}"
             IsCancel="True"
             IsDefault="True" />
         <Expander

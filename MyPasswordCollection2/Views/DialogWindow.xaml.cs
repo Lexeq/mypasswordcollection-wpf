@@ -31,15 +31,15 @@ namespace MPC.Views
             switch (buttons)
             {
                 case DialogButtons.OK:
-                    AddButton("OK", true);
+                    AddButton("button.ok", true);
                     break;
                 case DialogButtons.YesNo:
-                    AddButton("Yes", true);
-                    AddButton("No", false);
+                    AddButton("button.yes", true);
+                    AddButton("button.no", false);
                     break;
                 case DialogButtons.OkCancel:
-                    AddButton("OK", true);
-                    AddButton("Cancel", false);
+                    AddButton("button.ok", true);
+                    AddButton("button.cancel", false);
                     break;
                 default:
                     throw new ArgumentException("Invalid value", nameof(buttons));
@@ -48,7 +48,8 @@ namespace MPC.Views
 
         private void AddButton(string text, bool result)
         {
-            var button = new Button() { Content = text, IsDefault = result, IsCancel = !result };
+            var button = new Button() { IsDefault = result, IsCancel = !result };
+            button.SetResourceReference(Button.ContentProperty, text);
             button.Click += (o, args) => { DialogResult = result; };
             buttonContainer.Children.Add(button);
         }

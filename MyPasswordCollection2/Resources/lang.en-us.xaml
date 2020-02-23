@@ -1,0 +1,64 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:MPC"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xml:space="preserve">
+
+    <system:String x:Key="button.delete">Delete</system:String>
+    <system:String x:Key="button.copy">Copy</system:String>
+    <system:String x:Key="button.ok">OK</system:String>
+    <system:String x:Key="button.cancel">Cancel</system:String>
+    <system:String x:Key="button.save">Save</system:String>
+    <system:String x:Key="button.clearFilter">Clear</system:String>
+    <system:String x:Key="button.add">Add</system:String>
+    <system:String x:Key="button.edit">Edit</system:String>
+    <system:String x:Key="button.yes">Yes</system:String>
+    <system:String x:Key="button.no">No</system:String>
+    <system:String x:Key="button.copyAndClose">Copy &amp; close</system:String>
+    <system:String x:Key="button.generate">Generate</system:String>
+    <system:String x:Key="button.close">Close</system:String>
+
+    <system:String x:Key="text.length">Length</system:String>
+    <system:String x:Key="text.useLetters">Use letters</system:String>
+    <system:String x:Key="text.useDigits">Use digits</system:String>
+    <system:String x:Key="text.useSymbols">Use symbols</system:String>
+    <system:String x:Key="text.site">Site</system:String>
+    <system:String x:Key="text.login">Login</system:String>
+    <system:String x:Key="text.password">Password</system:String>
+    <system:String x:Key="text.confirmation">Confirmation</system:String>
+
+    <system:String x:Key="checkbox.showPassword">Show password</system:String>
+
+    <system:String x:Key="menu.file">_File</system:String>
+    <system:String x:Key="menu.edit">_Edit</system:String>
+    <system:String x:Key="menu.help">_Help</system:String>
+    <system:String x:Key="menu.open">_Open...</system:String>
+    <system:String x:Key="menu.new">_New...</system:String>
+    <system:String x:Key="menu.close">_Close</system:String>
+    <system:String x:Key="menu.exit">_Exit</system:String>
+    <system:String x:Key="menu.pasgen">_Password generator...</system:String>
+    <system:String x:Key="menu.change">Change _master password...</system:String>
+    <system:String x:Key="menu.clear">_Clear</system:String>
+    <system:String x:Key="menu.deleteAll">_Delete ropository</system:String>
+    <system:String x:Key="menu.about">_About...</system:String>
+
+    <system:String x:Key="title.genWindowTitle">Password generator</system:String>
+    <system:String x:Key="title.aboutWindowTitle">About</system:String>
+
+    <system:String x:Key="msg.DecryptionFail">Failed</system:String>
+    <system:String x:Key="msg.RetryPasswordEnter">Can't open the file. Please, check password.&#13;Try again?</system:String>
+    <system:String x:Key="msg.DeleteConfirmation">Delete record for &quot;%Site%&quot;?</system:String>
+    <system:String x:Key="msg.ConfirmationWindowTitle">MyPasswordCollection</system:String>
+    <system:String x:Key="msg.ClearConfirmation">All passwords will be deleted.&#13;Continue?</system:String>
+    <system:String x:Key="msg.EmptyPasswordError">Password can't be empty.</system:String>
+    <system:String x:Key="msg.PasswordsAreNotSameError">Passwords are not same.</system:String>
+    <system:String x:Key="msg.OldPasswordRequest">Enter current password</system:String>
+    <system:String x:Key="msg.NewPasswordRequest">Enter new password</system:String>
+    <system:String x:Key="msg.Failed">Failed</system:String>
+    <system:String x:Key="msg.ChangePasswordFail">Can't change password.</system:String>
+    <system:String x:Key="msg.AboutText">Simple password manager. Use at your own risk.</system:String>
+    <system:String x:Key="msg.LoadingFail">Can't load file</system:String>
+    <system:String x:Key="msg.AccessFail">No access.</system:String>
+    <system:String x:Key="msg.DataCorrupted">Data corrupted.</system:String>
+</ResourceDictionary>
