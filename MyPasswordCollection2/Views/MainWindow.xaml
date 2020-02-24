@@ -215,7 +215,7 @@
             Grid.IsSharedSizeScope="True">
             <local:PasswordView
                 x:Name="passwordView"
-                DataContext="{Binding Path=SelectedItem, Mode=OneWay}"
+                DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                 Focusable="True"
                 IsEnabled="{Binding RelativeSource={RelativeSource Mode=Self}, Path=DataContext, Converter={StaticResource ResourceKey=NullToBoolConv}}">
                 <i:Interaction.Behaviors>
