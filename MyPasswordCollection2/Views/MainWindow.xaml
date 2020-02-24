@@ -222,63 +222,7 @@
                     <local:PasswordViewFocusBehavior />
                 </i:Interaction.Behaviors>
             </local:PasswordView>
-            <Border Padding="15,3">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition SharedSizeGroup="RightColumn" />
-                    </Grid.ColumnDefinitions>
-                    <Button
-                        Grid.Row="4"
-                        Grid.Column="2"
-                        Margin="10,3,0,3"
-                        Content="{DynamicResource button.edit}"
-                        Visibility="{Binding EditMode, Converter={StaticResource InversedBoolToVisConv}}">
-                        <i:Interaction.Behaviors>
-                            <local:CanExecuteToIsEnabledBehavior Command="{Binding EditCommand}" />
-                        </i:Interaction.Behaviors>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <i:InvokeCommandAction Command="{Binding EditCommand}" />
-                                <local:SetFocusAction FocusElement="{Binding ElementName=passwordView}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </Button>
 
-                    <UniformGrid
-                        HorizontalAlignment="Right"
-                        Columns="2"
-                        Visibility="{Binding EditMode, Converter={StaticResource BoolToVisible}}">
-                        <Button
-                            Command="{Binding FinishEditCommand}"
-                            Content="{DynamicResource button.save}"
-                            DockPanel.Dock="Right"
-                            IsDefault="True">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="Click">
-                                    <local:UpdateBindingSourceAction View="{Binding ElementName=passwordView}" />
-                                    <local:SetFocusAction FocusElement="{Binding ElementName=tbFilter}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </Button>
-
-                        <Button
-                            Command="{Binding CancelEditCommand}"
-                            Content="{DynamicResource button.cancel}"
-                            DockPanel.Dock="Right"
-                            IsCancel="True">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="Click">
-                                    <local:UpdateBindingTargetAction View="{Binding ElementName=passwordView}" />
-                                    <local:SetFocusAction FocusElement="{Binding ElementName=tbFilter}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </Button>
-                    </UniformGrid>
-
-
-                </Grid>
-            </Border>
         </StackPanel>
 
     </Grid>
