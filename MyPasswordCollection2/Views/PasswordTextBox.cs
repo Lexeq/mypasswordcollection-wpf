@@ -134,7 +134,7 @@ namespace MPC.Views
             base.OnPreviewKeyDown(e);
         }
 
-        protected override void OnPreviewTextInput(TextCompositionEventArgs e)
+        protected override void OnPreviewTextInput(TextCompositionEventArgs e)        
         {
             if (e.Text == "\r" || e.Text == '\u001b'.ToString())  //u001b - ESC
                 return;

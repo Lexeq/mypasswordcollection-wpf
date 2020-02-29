@@ -19,10 +19,12 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisible" />
         <convs:InverseBooleanConverter x:Key="InverseBoolConv" />
-        <convs:MultiConverter x:Key="InversedBoolToVisConv">
+        <convs:BoolToHidden x:Key="BoolToHidden"/>
+        <convs:NullToBoolConverter x:Key="NullToBoolConv" />
+        <convs:MultiConverter x:Key="InversedBoolToHidden">
+            <convs:InverseBooleanConverter />
             <convs:BoolToHidden />
         </convs:MultiConverter>
-        <convs:NullToBoolConverter x:Key="NullToBoolConv" />
     </Window.Resources>
 
     <Window.InputBindings>
@@ -268,9 +270,19 @@
                 <Button
                     Grid.Row="0"
                     Grid.Column="2"
-                    Content="{DynamicResource button.copy}">
+                    Content="{DynamicResource button.copy}"
+                    Visibility="{Binding EditMode, Converter={StaticResource BoolToHidden}}">
                     <i:Interaction.Behaviors>
                         <local:CopyToClipboardBehavior Text="{Binding ElementName=tbSite, Path=Text}" />
+                    </i:Interaction.Behaviors>
+                </Button>
+                <Button
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Content="{DynamicResource button.paste}"
+                    Visibility="{Binding EditMode, Converter={StaticResource InversedBoolToHidden}}">
+                    <i:Interaction.Behaviors>
+                        <local:PasteFromClipboardBehavior Text="{Binding ElementName=tbSite, Path=Text, Mode=OneWayToSource}" />
                     </i:Interaction.Behaviors>
                 </Button>
 
@@ -278,9 +290,19 @@
                 <Button
                     Grid.Row="1"
                     Grid.Column="2"
-                    Content="{DynamicResource button.copy}">
+                    Content="{DynamicResource button.copy}"
+                    Visibility="{Binding EditMode, Converter={StaticResource BoolToHidden}}">
                     <i:Interaction.Behaviors>
                         <local:CopyToClipboardBehavior Text="{Binding ElementName=tbLogin, Path=Text}" />
+                    </i:Interaction.Behaviors>
+                </Button>
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Content="{DynamicResource button.paste}"
+                    Visibility="{Binding EditMode, Converter={StaticResource InversedBoolToHidden}}">
+                    <i:Interaction.Behaviors>
+                        <local:PasteFromClipboardBehavior Text="{Binding ElementName=tbLogin, Path=Text, Mode=OneWayToSource}" />
                     </i:Interaction.Behaviors>
                 </Button>
 
@@ -288,9 +310,19 @@
                 <Button
                     Grid.Row="2"
                     Grid.Column="2"
-                    Content="{DynamicResource button.copy}">
+                    Content="{DynamicResource button.copy}"
+                    Visibility="{Binding EditMode, Converter={StaticResource BoolToHidden}}">
                     <i:Interaction.Behaviors>
                         <local:CopyToClipboardBehavior Text="{Binding ElementName=ptbPassword, Path=Password}" />
+                    </i:Interaction.Behaviors>
+                </Button>
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Content="{DynamicResource button.paste}"
+                    Visibility="{Binding EditMode, Converter={StaticResource InversedBoolToHidden}}">
+                    <i:Interaction.Behaviors>
+                        <local:PasteFromClipboardBehavior Text="{Binding ElementName=ptbPassword, Path=Password}" />
                     </i:Interaction.Behaviors>
                 </Button>
 
@@ -313,7 +345,7 @@
                     Grid.Row="4"
                     Grid.Column="2"
                     Content="{DynamicResource button.edit}"
-                    Visibility="{Binding Path=EditMode, Converter={StaticResource InversedBoolToVisConv}}">
+                    Visibility="{Binding Path=EditMode, Converter={StaticResource BoolToHidden}}">
                     <i:Interaction.Behaviors>
                         <local:CanExecuteToIsEnabledBehavior Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.EditCommand}" />
                     </i:Interaction.Behaviors>
