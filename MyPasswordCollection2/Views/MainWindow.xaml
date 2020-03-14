@@ -282,7 +282,7 @@
                     Content="{DynamicResource button.paste}"
                     Visibility="{Binding EditMode, Converter={StaticResource InversedBoolToHidden}}">
                     <i:Interaction.Behaviors>
-                        <local:PasteFromClipboardBehavior Text="{Binding ElementName=tbSite, Path=Text, Mode=OneWayToSource}" />
+                        <local:PasteFromClipboardBehavior Target="{Binding ElementName=tbSite, Mode=OneTime}" />
                     </i:Interaction.Behaviors>
                 </Button>
 
@@ -302,7 +302,7 @@
                     Content="{DynamicResource button.paste}"
                     Visibility="{Binding EditMode, Converter={StaticResource InversedBoolToHidden}}">
                     <i:Interaction.Behaviors>
-                        <local:PasteFromClipboardBehavior Text="{Binding ElementName=tbLogin, Path=Text, Mode=OneWayToSource}" />
+                        <local:PasteFromClipboardBehavior Target="{Binding ElementName=tbLogin, Mode=OneTime}" />
                     </i:Interaction.Behaviors>
                 </Button>
 
@@ -322,7 +322,7 @@
                     Content="{DynamicResource button.paste}"
                     Visibility="{Binding EditMode, Converter={StaticResource InversedBoolToHidden}}">
                     <i:Interaction.Behaviors>
-                        <local:PasteFromClipboardBehavior Text="{Binding ElementName=ptbPassword, Path=Password}" />
+                        <local:PasteFromClipboardBehavior Target="{Binding ElementName=ptbPassword, Mode=OneTime}" />
                     </i:Interaction.Behaviors>
                 </Button>
 
@@ -337,9 +337,6 @@
                     VerticalAlignment="Center"
                     VerticalContentAlignment="Center"
                     Content="{DynamicResource checkbox.showPassword}" />
-
-
-
 
                 <Button
                     Grid.Row="4"

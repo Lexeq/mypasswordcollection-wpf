@@ -5,21 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interactivity;
 
 namespace MPC.Views
 {
     class PasteFromClipboardBehavior : Behavior<Button>
     {
-
-        public string Text
+        public IInputElement Target
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get { return (TextBox)GetValue(TargetProperty); }
+            set { SetValue(TargetProperty, value); }
         }
 
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(PasteFromClipboardBehavior), new FrameworkPropertyMetadata() { DefaultUpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged, BindsTwoWayByDefault = true });
+        public static readonly DependencyProperty TargetProperty =
+            DependencyProperty.Register("Target", typeof(IInputElement), typeof(PasteFromClipboardBehavior));
 
 
         protected override void OnAttached()
@@ -38,7 +38,7 @@ namespace MPC.Views
 
         private void AssociatedObject_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            Text = Clipboard.GetText();
+               ApplicationCommands.Paste.Execute(Clipboard.GetText(), Target);
         }
     }
 }
