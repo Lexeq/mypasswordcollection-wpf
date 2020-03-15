@@ -42,8 +42,7 @@ namespace MPC
             var defPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "passwords.pw");
             if (File.Exists(defPath))
             {
-                var met = mainVM.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).First(mi => mi.Name == "OpenRepository" && mi.GetParameters().Length == 1);
-                met.Invoke(mainVM, new[] { defPath });
+                 mainVM.OpenPathCommand.Execute(defPath);
             }
         }
 

@@ -175,6 +175,17 @@ namespace MPC.ViewModels
             set { _openRepositoryCommand = value; }
         }
 
+        private ICommand _openPathCommand;
+        public ICommand OpenPathCommand
+        {
+            get
+            {
+                return _openPathCommand ??
+                    (_openPathCommand = new Command<string>(OpenRepository));
+            }
+        }
+
+
         private ICommand _cancelAddingCommand;
         public ICommand CancelEditCommand
         {
