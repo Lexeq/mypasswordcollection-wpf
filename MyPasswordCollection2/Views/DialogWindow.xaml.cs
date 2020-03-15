@@ -52,6 +52,10 @@ namespace MPC.Views
             button.SetResourceReference(Button.ContentProperty, text);
             button.Click += (o, args) => { DialogResult = result; };
             buttonContainer.Children.Add(button);
+            if (button.IsDefault)
+            {
+                button.Focus();
+            }
         }
 
         public static bool Show(string message, string caption, DialogButtons buttons)
