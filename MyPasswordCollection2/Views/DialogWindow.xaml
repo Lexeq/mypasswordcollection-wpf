@@ -12,7 +12,7 @@
     SizeToContent="Height"
     mc:Ignorable="d">
     <StackPanel>
-        
+
         <TextBlock x:Name="tbMessage" VerticalAlignment="Center" Padding="10" TextWrapping="Wrap"/>
         <StackPanel
             x:Name="buttonContainer"
