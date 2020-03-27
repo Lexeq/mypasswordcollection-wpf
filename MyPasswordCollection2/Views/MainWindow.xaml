@@ -13,6 +13,7 @@
     Height="300"
     MinWidth="250"
     MinHeight="200"
+    AllowDrop="True"
     d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
     mc:Ignorable="d">
 
@@ -49,6 +50,9 @@
             <local:CloseWindowTriggerAction />
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <i:Interaction.Behaviors>
+        <local:DropBehavior Command="{Binding OpenPathCommand}"/>
+    </i:Interaction.Behaviors>
 
     <Grid>
         <Grid.RowDefinitions>
