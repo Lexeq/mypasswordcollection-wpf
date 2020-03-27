@@ -404,12 +404,10 @@ namespace MPC.ViewModels
                     try
                     {
                         PasswordSource = repoManager.Get(path, passwordInput.Password);
-                        return;
                     }
                     catch (PasswordException)
                     {
-                        if (dialogs.ShowMessageDialog(uiStrings.GetString(UIStrings.RetryPasswordEnter), uiStrings.GetString(UIStrings.DecryptionFail), DialogButtons.YesNo))
-                            continue;
+                        continue;
                     }
                     catch(RepositoryException e) when (e.InnerException is IOException)
                     {
