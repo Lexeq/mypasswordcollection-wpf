@@ -13,22 +13,33 @@ namespace MPC.Views
     {
 
 
-        public PasswordView View
+        public Control View
         {
-            get { return (PasswordView)GetValue(ViewProperty); }
+            get { return (Control)GetValue(ViewProperty); }
             set { SetValue(ViewProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for View.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ViewProperty =
-            DependencyProperty.Register(nameof(View), typeof(PasswordView), typeof(UpdateBindingSourceAction));
+            DependencyProperty.Register(nameof(View), typeof(Control), typeof(UpdateBindingSourceAction));
+
+
+
+        public DependencyProperty Property
+        {
+            get { return (DependencyProperty)GetValue(PropertyProperty); }
+            set { SetValue(PropertyProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Property.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty PropertyProperty =
+            DependencyProperty.Register("Property", typeof(DependencyProperty), typeof(UpdateBindingSourceAction));
+
 
 
         protected override void Invoke(object parameter)
         {
-            View.tbSite.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-            View.tbLogin.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-            View.ptbPassword.GetBindingExpression(PasswordTextBox.PasswordProperty).UpdateSource();
+            View.GetBindingExpression(Property).UpdateSource();
         }
     }
 }

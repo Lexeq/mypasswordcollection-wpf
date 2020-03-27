@@ -18,6 +18,7 @@
     <system:String x:Key="button.copyAndClose">Copy &amp; close</system:String>
     <system:String x:Key="button.generate">Generate</system:String>
     <system:String x:Key="button.close">Close</system:String>
+    <system:String x:Key="button.paste">Paste</system:String>
 
     <system:String x:Key="text.length">Length</system:String>
     <system:String x:Key="text.useLetters">Use letters</system:String>

@@ -7,7 +7,7 @@ using System.Windows.Interactivity;
 
 namespace MPC.Views
 {
-    class PasswordViewFocusBehavior : Behavior<PasswordView>
+    class PasswordViewFocusBehavior : Behavior<MainWindow>
     {
         protected override void OnAttached()
         {
