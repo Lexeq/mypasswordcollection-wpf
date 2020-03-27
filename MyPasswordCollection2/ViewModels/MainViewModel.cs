@@ -175,6 +175,17 @@ namespace MPC.ViewModels
             set { _openRepositoryCommand = value; }
         }
 
+        private ICommand _openPathCommand;
+        public ICommand OpenPathCommand
+        {
+            get
+            {
+                return _openPathCommand ??
+                    (_openPathCommand = new Command<string>(OpenRepository));
+            }
+        }
+
+
         private ICommand _cancelAddingCommand;
         public ICommand CancelEditCommand
         {
@@ -284,8 +295,16 @@ namespace MPC.ViewModels
 
         private void RemovePassword(PasswordItem item)
         {
-            if (!dialogs.ShowDialog(uiStrings.GetString(UIStrings.DeleteConfirmation, new Dictionary<string, string>() { [nameof(item.Site)] = item.Site }), uiStrings.GetString(UIStrings.ConfirmationWindowTitle)))
+            if (!dialogs.ShowMessageDialog(
+                    uiStrings.GetString(UIStrings.DeleteConfirmation,
+                    new Dictionary<string, string>() { [nameof(item.Site)] = item.Site }),
+                    uiStrings.GetString(UIStrings.ConfirmationWindowTitle),
+                    DialogButtons.YesNo)
+                )
+            {
                 return;
+            }
+
             try
             {
                 PasswordSource.Remove(item);
@@ -300,7 +319,7 @@ namespace MPC.ViewModels
         {
             try
             {
-                if (dialogs.ShowDialog(uiStrings.GetString(UIStrings.ClearConfirmation), uiStrings.GetString(UIStrings.ConfirmationWindowTitle)))
+                if (dialogs.ShowMessageDialog(uiStrings.GetString(UIStrings.ClearConfirmation), uiStrings.GetString(UIStrings.ConfirmationWindowTitle), DialogButtons.YesNo))
                 {
                     PasswordSource.Clear();
                 }
@@ -340,7 +359,7 @@ namespace MPC.ViewModels
             }
             catch (PasswordException)
             {
-                dialogs.ShowMessage(uiStrings.GetString(UIStrings.ChangePasswordFail), uiStrings.GetString(UIStrings.Failed));
+                dialogs.ShowMessageDialog(uiStrings.GetString(UIStrings.ChangePasswordFail), uiStrings.GetString(UIStrings.Failed), DialogButtons.OK);
             }
         }
 
@@ -353,7 +372,6 @@ namespace MPC.ViewModels
                 var result = dialogs.ShowSaveDialog(out string path);
                 if (result)
                 {
-
                     try
                     {
                         PasswordSource = repoManager.Create(path, passwordInput.Password);
@@ -390,16 +408,16 @@ namespace MPC.ViewModels
                     }
                     catch (PasswordException)
                     {
-                        if (dialogs.ShowDialog(uiStrings.GetString(UIStrings.RetryPasswordEnter), uiStrings.GetString(UIStrings.DecryptionFail)))
+                        if (dialogs.ShowMessageDialog(uiStrings.GetString(UIStrings.RetryPasswordEnter), uiStrings.GetString(UIStrings.DecryptionFail), DialogButtons.YesNo))
                             continue;
                     }
                     catch(RepositoryException e) when (e.InnerException is IOException)
                     {
-                        dialogs.ShowMessage(uiStrings.GetString(UIStrings.AccessFail), uiStrings.GetString(UIStrings.LoadingFail));
+                        dialogs.ShowMessageDialog(uiStrings.GetString(UIStrings.AccessFail), uiStrings.GetString(UIStrings.LoadingFail), DialogButtons.OK);
                     }
                     catch(RepositoryException)
                     {
-                        dialogs.ShowMessage(uiStrings.GetString(UIStrings.DataCorrupted), uiStrings.GetString(UIStrings.LoadingFail));
+                        dialogs.ShowMessageDialog(uiStrings.GetString(UIStrings.DataCorrupted), uiStrings.GetString(UIStrings.LoadingFail), DialogButtons.OK);
                     }
                     catch (Exception e)
                     {

@@ -8,8 +8,6 @@ namespace MPC.ViewModels
 
         bool ShowSaveDialog(out string path);
 
-        void ShowMessage(string message, string caption);
-
-        bool ShowDialog(string message, string caption);
+        bool ShowMessageDialog(string message, string caption, DialogButtons buttons);
     }
 }

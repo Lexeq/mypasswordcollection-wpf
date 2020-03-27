@@ -1,29 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MPC.ViewModels;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace MPC.Views
 {
-    public enum DialogButtons { OK, YesNo, OkCancel }
 
     /// <summary>
     /// Interaction logic for DialogWindow.xaml
     /// </summary>
     public sealed partial class DialogWindow : Window
     {
-        private DialogWindow()
+        private DialogWindow(DialogButtons buttons)
         {
             InitializeComponent();
+            SetButtons(buttons);
         }
 
         private void SetButtons(DialogButtons buttons)
@@ -52,15 +43,19 @@ namespace MPC.Views
             button.SetResourceReference(Button.ContentProperty, text);
             button.Click += (o, args) => { DialogResult = result; };
             buttonContainer.Children.Add(button);
+            if (button.IsDefault)
+            {
+                button.Focus();
+            }
         }
 
-        public static bool Show(string message, string caption, DialogButtons buttons)
+        public static bool Show(string message, string caption, DialogButtons buttons, Window owner)
         {
-            var dialog = new DialogWindow();
+            var dialog = new DialogWindow(buttons);
             dialog.tbMessage.Text = message;
             dialog.Title = caption;
-            dialog.SetButtons(buttons);
-            dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            dialog.Owner = owner;
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             dialog.ShowDialog();
             return dialog.DialogResult.HasValue && dialog.DialogResult == true;
         }

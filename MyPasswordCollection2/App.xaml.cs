@@ -20,7 +20,6 @@ namespace MPC
             InitializeResourceDictionary();
 
             Current.Dispatcher.UnhandledException += LogException;
-            FileDialogService dService = new FileDialogService();
             WindowsManager winManager = new WindowsManager();
             FileRepositoryManager fileManager = new FileRepositoryManager();
             IStringsSource ss = new TextService(Resources);
@@ -30,7 +29,7 @@ namespace MPC
             winManager.Register<ExceptionViewModel, ExceptionWindow>();
             winManager.Register<PasswordGenerationViewModel, PasswordGenerationWindows>();
 
-            var mainVM = new MainWindowViewModel(dService, winManager, fileManager, ss);
+            var mainVM = new MainWindowViewModel(winManager, winManager, fileManager, ss);
             MainWindow mw = new MainWindow()
             {
                 DataContext = mainVM
@@ -42,8 +41,7 @@ namespace MPC
             var defPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "passwords.pw");
             if (File.Exists(defPath))
             {
-                var met = mainVM.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).First(mi => mi.Name == "OpenRepository" && mi.GetParameters().Length == 1);
-                met.Invoke(mainVM, new[] { defPath });
+                 mainVM.OpenPathCommand.Execute(defPath);
             }
         }
 
