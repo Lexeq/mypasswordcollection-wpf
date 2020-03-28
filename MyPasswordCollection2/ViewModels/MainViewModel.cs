@@ -332,15 +332,18 @@ namespace MPC.ViewModels
 
         private void DeleteRepository()
         {
-            try
+            if (dialogs.ShowMessageDialog(uiStrings.GetString(UIStrings.DeleteRepoConfirmation), "", DialogButtons.YesNo))
             {
-                var proxy = PasswordSource as PasswordRepositoryProxy;
-                repoManager.DeleteRepository(proxy == null ? PasswordSource : proxy.Original);
-                PasswordSource = null;
-            }
-            catch (Exception ex)
-            {
-                HandleException(ex);
+                try
+                {
+                    var proxy = PasswordSource as PasswordRepositoryProxy;
+                    repoManager.DeleteRepository(proxy == null ? PasswordSource : proxy.Original);
+                    PasswordSource = null;
+                }
+                catch (Exception ex)
+                {
+                    HandleException(ex);
+                }
             }
         }
 

@@ -63,4 +63,5 @@
     <system:String x:Key="msg.LoadingFail">Can't load file</system:String>
     <system:String x:Key="msg.AccessFail">No access.</system:String>
     <system:String x:Key="msg.DataCorrupted">Data corrupted.</system:String>
+    <system:String x:Key="msg.DeleteRepoConfirmation">Repository will be deleted. Continue?</system:String>
 </ResourceDictionary>

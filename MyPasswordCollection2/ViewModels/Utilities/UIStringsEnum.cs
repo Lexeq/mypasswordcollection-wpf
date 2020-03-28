@@ -16,6 +16,7 @@
         ChangePasswordFail,
         LoadingFail,
         DataCorrupted,
-        AccessFail
+        AccessFail,
+        DeleteRepoConfirmation
     }
 }
