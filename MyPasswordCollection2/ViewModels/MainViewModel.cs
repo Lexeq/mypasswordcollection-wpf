@@ -395,9 +395,13 @@ namespace MPC.ViewModels
 
         private void OpenRepository(string path)
         {
+            var name = new Uri(path).Segments.Last();
             while (true)
             {
-                InputWindowViewModel passwordInput = new InputWindowViewModel(false, uiStrings);
+                InputWindowViewModel passwordInput = new InputWindowViewModel(false, uiStrings)
+                {
+                    Caption = name
+                };
                 windows.ShowDialog(passwordInput);
                 if (passwordInput.DialogReult)
                 {
