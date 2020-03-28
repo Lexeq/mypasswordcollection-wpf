@@ -334,7 +334,8 @@ namespace MPC.ViewModels
         {
             try
             {
-                repoManager.DeleteRepository(PasswordSource);
+                var proxy = PasswordSource as PasswordRepositoryProxy;
+                repoManager.DeleteRepository(proxy == null ? PasswordSource : proxy.Original);
                 PasswordSource = null;
             }
             catch (Exception ex)
@@ -413,11 +414,11 @@ namespace MPC.ViewModels
                     {
                         continue;
                     }
-                    catch(RepositoryException e) when (e.InnerException is IOException)
+                    catch (RepositoryException e) when (e.InnerException is IOException)
                     {
                         dialogs.ShowMessageDialog(uiStrings.GetString(UIStrings.AccessFail), uiStrings.GetString(UIStrings.LoadingFail), DialogButtons.OK);
                     }
-                    catch(RepositoryException)
+                    catch (RepositoryException)
                     {
                         dialogs.ShowMessageDialog(uiStrings.GetString(UIStrings.DataCorrupted), uiStrings.GetString(UIStrings.LoadingFail), DialogButtons.OK);
                     }

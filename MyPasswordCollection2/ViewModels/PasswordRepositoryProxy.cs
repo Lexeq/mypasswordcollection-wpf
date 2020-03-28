@@ -9,11 +9,11 @@ namespace MPC.ViewModels
 {
     internal class PasswordRepositoryProxy : IPasswordRepository, IList, INotifyCollectionChanged
     {
-        private readonly IPasswordRepository original;
+        public IPasswordRepository Original { get; }
 
         public PasswordRepositoryProxy(IPasswordRepository original)
         {
-            this.original = original ?? throw new ArgumentNullException(nameof(original));
+            this.Original = original ?? throw new ArgumentNullException(nameof(original));
         }
 
         #region INotifyCollectionChanged
@@ -31,21 +31,21 @@ namespace MPC.ViewModels
         //Implementation IPasswordRepository with INotifyCollectionChanged
         #region IPasswordRepository
 
-        public PasswordItem this[int index] => original[index];
+        public PasswordItem this[int index] => Original[index];
 
-        public void ChangePassword(string oldPassword, string newPassword) => original.ChangePassword(oldPassword, newPassword);
+        public void ChangePassword(string oldPassword, string newPassword) => Original.ChangePassword(oldPassword, newPassword);
 
-        public int Count => original.Count;
+        public int Count => Original.Count;
 
         public void Clear()
         {
-            original.Clear();
+            Original.Clear();
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         public bool Remove(PasswordItem item)
         {
-            if (original.Remove(item))
+            if (Original.Remove(item))
             {
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
             }
@@ -54,19 +54,19 @@ namespace MPC.ViewModels
 
         public void Save(PasswordItem item)
         {
-            bool isNewItem = !original.Contains(item);
+            bool isNewItem = !Original.Contains(item);
 
-            original.Save(item);
+            Original.Save(item);
             var args = isNewItem ? new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item) : new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, item, item);
 
             OnCollectionChanged(args);
         }
 
-        public IEnumerator<PasswordItem> GetEnumerator() => original.GetEnumerator();
+        public IEnumerator<PasswordItem> GetEnumerator() => Original.GetEnumerator();
 
-        public void Dispose() => original.Dispose();
+        public void Dispose() => Original.Dispose();
 
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)original).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)Original).GetEnumerator();
 
         #endregion
 
