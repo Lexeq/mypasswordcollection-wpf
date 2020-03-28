@@ -37,12 +37,13 @@
             Margin="15,15"
             HorizontalAlignment="Right"
             Content="{DynamicResource button.ok}"
+            DockPanel.Dock="Bottom"
             IsCancel="True"
             IsDefault="True" />
         <Expander
             MaxHeight="100"
             DockPanel.Dock="Top"
-            Header="Details"
+            Header="{StaticResource text.showMore}"
             IsExpanded="False">
             <TextBox
                 IsReadOnly="True"

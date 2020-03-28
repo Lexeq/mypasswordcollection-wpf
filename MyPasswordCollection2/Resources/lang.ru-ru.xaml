@@ -28,6 +28,7 @@
     <system:String x:Key="text.login">Логин</system:String>
     <system:String x:Key="text.password">Пароль</system:String>
     <system:String x:Key="text.confirmation">Подтверждение</system:String>
+    <system:String x:Key="text.showMore">Подробнее</system:String>
 
     <system:String x:Key="checkbox.showPassword">Показать пароль</system:String>
 

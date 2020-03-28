@@ -28,6 +28,7 @@
     <system:String x:Key="text.login">Login</system:String>
     <system:String x:Key="text.password">Password</system:String>
     <system:String x:Key="text.confirmation">Confirmation</system:String>
+    <system:String x:Key="text.showMore">Details</system:String>
 
     <system:String x:Key="checkbox.showPassword">Show password</system:String>
 
