@@ -18,6 +18,7 @@
     <system:String x:Key="button.copyAndClose">Копировать и закрыть</system:String>
     <system:String x:Key="button.generate">Сгенерировать</system:String>
     <system:String x:Key="button.close">Закрыть</system:String>
+    <system:String x:Key="button.paste">Вставить</system:String>
     
     <system:String x:Key="text.length">Длина</system:String>
     <system:String x:Key="text.useLetters">Буквы</system:String>
