@@ -8,6 +8,9 @@ namespace MPC.Converters
 {
     public class MultiConverter : List<IValueConverter>, IValueConverter
     {
+        /// <summary>
+        /// Convert the value using each converter in the collection.
+        /// </summary>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return this.Aggregate(value, (current, converter) => converter.Convert(current, targetType, parameter, culture));
@@ -15,7 +18,7 @@ namespace MPC.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

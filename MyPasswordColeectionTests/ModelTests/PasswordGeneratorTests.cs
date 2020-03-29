@@ -15,7 +15,7 @@ namespace MyPasswordColeectionTests.ModelTests
         {
             int passwordLength = 14;
             PasswordGenerator gen = new PasswordGenerator();
-            var password = gen.Generate(CharSet.Digits, passwordLength);
+            var password = gen.Generate(CharSets.Digits, passwordLength);
 
             Assert.AreEqual(passwordLength, password.Length);
             Assert.IsTrue(password.All(c => char.IsDigit(c)));
@@ -25,7 +25,7 @@ namespace MyPasswordColeectionTests.ModelTests
         {
             int passwordLength = 64;
             PasswordGenerator gen = new PasswordGenerator();
-            var password = gen.Generate(CharSet.AllLetters, passwordLength);
+            var password = gen.Generate(CharSets.AllLetters, passwordLength);
 
             Assert.AreEqual(passwordLength, password.Length);
             Assert.IsTrue(password.All(c => char.IsLetter(c)));
@@ -36,7 +36,7 @@ namespace MyPasswordColeectionTests.ModelTests
         {
             PasswordGenerator gen = new PasswordGenerator();
 
-            Assert.Throws<ArgumentException>(() => gen.Generate(CharSet.AllLetters, length));
+            Assert.Throws<ArgumentException>(() => gen.Generate(CharSets.AllLetters, length));
         }
     }
 }

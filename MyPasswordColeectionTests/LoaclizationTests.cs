@@ -14,8 +14,10 @@ namespace MyPasswordColeectionTests
         [Test, TestCase("ru-ru"), TestCase("en-us")]
         public void DictionaryContainsAllUIStings(string culture)
         {
-            ResourceDictionary dictionary = new ResourceDictionary();
-            dictionary.Source = new Uri($"pack://application:,,,/MyPasswordCollection;component/Resources/lang.{culture}.xaml", UriKind.Absolute);
+            ResourceDictionary dictionary = new ResourceDictionary
+            {
+                Source = new Uri($"pack://application:,,,/MyPasswordCollection;component/Resources/lang.{culture}.xaml", UriKind.Absolute)
+            };
             TextService localized = new TextService(dictionary);
             TextService nonlocalized = new TextService(new ResourceDictionary());
             foreach (UIStrings item in Enum.GetValues(typeof(UIStrings)))

@@ -12,7 +12,7 @@ namespace MPC.ViewModels
     class PasswordGenerationViewModel : DataErrorNotifyingViewModel
     {
         private readonly PasswordGenerator generator = new PasswordGenerator();
-        private CharSet sets = 0;
+        private CharSets sets = 0;
 
         private string errorText;
         private int passwordLength;
@@ -41,30 +41,30 @@ namespace MPC.ViewModels
 
         public bool UseDigits
         {
-            get => sets.HasFlag(CharSet.Digits);
+            get => sets.HasFlag(CharSets.Digits);
             set
             {
-                SetFlag(CharSet.Digits, value);
+                SetFlag(CharSets.Digits, value);
                 OnPropertyChanged();
             }
         }
 
         public bool UseSymbols
         {
-            get => sets.HasFlag(CharSet.Symbols);
+            get => sets.HasFlag(CharSets.Symbols);
             set
             {
-                SetFlag(CharSet.Symbols, value);
+                SetFlag(CharSets.Symbols, value);
                 OnPropertyChanged();
             }
         }
 
         public bool UseLetters
         {
-            get => sets.HasFlag(CharSet.AllLetters);
+            get => sets.HasFlag(CharSets.AllLetters);
             set
             {
-                SetFlag(CharSet.AllLetters, value);
+                SetFlag(CharSets.AllLetters, value);
                 OnPropertyChanged();
             }
         }
@@ -115,7 +115,7 @@ namespace MPC.ViewModels
             Clipboard.SetText(GeneratedPassword);
         }
 
-        private void SetFlag(CharSet set, bool isDefined)
+        private void SetFlag(CharSets set, bool isDefined)
         {
             sets = isDefined ? sets | set : sets & ~set;
             Validate();

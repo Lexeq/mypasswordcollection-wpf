@@ -3,11 +3,11 @@
 namespace MPC.Model
 {
     [Serializable]
-    public class RepositoryException: Exception
+    public class RepositoryException : Exception
     {
         public RepositoryException() { }
 
-        public RepositoryException(string message) 
+        public RepositoryException(string message)
             : base(message) { }
 
         public RepositoryException(string message, Exception innerException)

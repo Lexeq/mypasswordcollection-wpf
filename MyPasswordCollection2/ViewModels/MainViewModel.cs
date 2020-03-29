@@ -411,7 +411,7 @@ namespace MPC.ViewModels
                 {
                     try
                     {
-                        PasswordSource = repoManager.Get(path, passwordInput.Password);
+                        PasswordSource = repoManager.Open(path, passwordInput.Password);
                     }
                     catch (PasswordException)
                     {

@@ -11,7 +11,7 @@ namespace MPC.Model.Repository
 
         private byte[] key;
         private byte[] iv;
-        
+
         public AesCrypter(string password, byte[] salt = null)
         {
             if (password == null)
@@ -75,10 +75,11 @@ namespace MPC.Model.Repository
 
         private void GetKeyAndIVFromPassword(string password, byte[] salt)
         {
-            Rfc2898DeriveBytes rfc2898DeriveBytes =
-                new Rfc2898DeriveBytes(password, salt);
-            key = rfc2898DeriveBytes.GetBytes(32);
-            iv = rfc2898DeriveBytes.GetBytes(16);
+            using (Rfc2898DeriveBytes rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt))
+            {
+                key = rfc2898DeriveBytes.GetBytes(32);
+                iv = rfc2898DeriveBytes.GetBytes(16);
+            }
         }
     }
 }

@@ -16,7 +16,7 @@ namespace MPC.Model.Repository
         public byte[] ToBytes(PasswordItem item)
         {
             if (item == null)
-                throw new ArgumentNullException("PasswordItem is null");
+                throw new ArgumentNullException(nameof(item));
 
             using (MemoryStream ms = new MemoryStream())
             {
@@ -47,12 +47,17 @@ namespace MPC.Model.Repository
                 item.Password = DecryptString(reader.ReadBytes(passwordLength));
 
                 if (ms.Position != bytes.Length)
-                    throw new ArgumentException("Invalid data. Array is to big.");
+                    throw new ArgumentException("Invalid data. Source array is to big.");
             }
 
             return item;
         }
 
+        /// <summary>
+        /// Encrypt string and write it to stream.
+        /// </summary>
+        /// <param name="stream">Target stream.</param>
+        /// <param name="str">String to encrypt.</param>
         private void WriteCryptedString(Stream stream, string str)
         {
             var bytes = crypter.Encrypt(Encoding.Unicode.GetBytes(str));
@@ -60,6 +65,11 @@ namespace MPC.Model.Repository
             stream.Write(bytes,0,bytes.Length);
         }
 
+        /// <summary>
+        /// Decrypt string from byte array.
+        /// </summary>
+        /// <param name="data">Array with bytes to decrypt.</param>
+        /// <returns>Decrypted string.<returns>
         private string DecryptString(byte[] data)
         {
             return Encoding.Unicode.GetString(crypter.Decrypt(data));

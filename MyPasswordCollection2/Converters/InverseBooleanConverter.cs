@@ -6,12 +6,13 @@ namespace MPC.Converters
     [ValueConversion(typeof(bool), typeof(bool))]
     public class InverseBooleanConverter : IValueConverter
     {
+        /// <summary>
+        /// Return inversed bool value.
+        /// </summary>
         public object Convert(object value, Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {
-            if (value is bool)
-                return !(bool)value;
-            throw new ArgumentException("Value must be bool.", nameof(value));
+            return !((bool)value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter,

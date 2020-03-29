@@ -17,7 +17,7 @@ namespace MPC.Model.Repository
             }
         }
 
-        public IPasswordRepository Get(string path, string password)
+        public IPasswordRepository Open(string path, string password)
         {
             try
             {
